@@ -8,7 +8,8 @@
       "id_name": true,
       "id_code": false,
       "id_date": false,
-      "id_img": true
+      "id_img": true,
+      "partner": 1
     }
   },
   {
@@ -17,8 +18,8 @@
     "fields": {
       "name": "link1",
       "repeatable": false,
-      "created_date": "2021-09-17T16:00:30",
-      "expriation_date": "2021-09-17T16:16:30",
+      "created_date": "2021-09-17T16:00:30+09:00",
+      "expriation_date": "2021-09-17T16:16:30+09:00",
       "partner": 1,
       "template": 1,
       "manage_users": [1]

@@ -12,6 +12,7 @@ class Template(models.Model):
     id_code = models.BooleanField()
     id_date = models.BooleanField()
     id_img = models.BooleanField()
+    partner = models.ForeignKey(Partner, on_delete=models.CASCADE)
 
 
 class Link(models.Model):
