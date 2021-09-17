@@ -1,0 +1,35 @@
+[
+  {
+    "model": "info.Template",
+    "pk": 1,
+    "fields": {
+      "name": "template1",
+      "motion": true,
+      "id_name": true,
+      "id_code": false,
+      "id_date": false,
+      "id_img": true
+    }
+  },
+  {
+    "model": "info.Link",
+    "pk": 1,
+    "fields": {
+      "name": "link1",
+      "repeatable": false,
+      "created_date": "2021-09-17T16:00:30",
+      "expriation_date": "2021-09-17T16:16:30",
+      "partner": 1,
+      "template": 1,
+      "manage_users": [1]
+    }
+  },
+  {
+    "model": "info.Customer",
+    "pk": 1,
+    "fields": {
+      "link": 1,
+      "name": "customer1"
+    }
+  }
+]
