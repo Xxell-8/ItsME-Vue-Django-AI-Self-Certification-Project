@@ -6,3 +6,10 @@ class TemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Template
         fields = '__all__'
+        read_only_fields = ['partner']
+
+class LinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Link
+        fields = '__all__'
+        read_only_fields = ['partner']
