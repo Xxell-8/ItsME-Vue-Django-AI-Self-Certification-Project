@@ -1,7 +1,8 @@
 from django.shortcuts import get_list_or_404, get_object_or_404
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from .models import Link, Template
 from .serializers import TemplateSerializer, LinkSerializer
 
@@ -9,6 +10,7 @@ from .serializers import TemplateSerializer, LinkSerializer
 
 # Create your views here.
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def link(request):
     if request.method == 'GET':
         # 링크 목록 조회
@@ -28,6 +30,7 @@ def link(request):
 
 
 @api_view(['GET', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def link_detail(request, link_id):
     link = get_object_or_404(Link, pk=link_id)
 
@@ -57,6 +60,7 @@ def customer(request):
 
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def template(request):
     if request.method == 'GET':
         # 템플릿 목록 조회
@@ -76,6 +80,7 @@ def template(request):
     
 
 @api_view(['GET', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def template_detail(request, template_id):
     template = get_object_or_404(Template, pk=template_id)
 
