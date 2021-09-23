@@ -6,6 +6,7 @@ import createPersistedState from "vuex-persistedstate";
 const store = createStore({
   plugins: [createPersistedState()],
   modules: {
+    accounts,
     partner,
     customer
   }
