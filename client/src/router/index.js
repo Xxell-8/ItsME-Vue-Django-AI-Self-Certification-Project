@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/intro/Home.vue'
-import Login from '@/views/partner/accounts/Login'
+import Accounts from '@/views/partner/Accounts'
 
 const routes = [
   // B2B Home
@@ -11,9 +11,9 @@ const routes = [
   },
   // Partner
   {
-    path: '/partners/login',
-    name: 'Login',
-    component: Login
+    path: '/partners/accounts/:page',
+    name: 'Accounts',
+    component: Accounts
   },
   // Customer
 ]
