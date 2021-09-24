@@ -2,7 +2,19 @@
 @import '@/assets/style/_mixin.scss';
 
 .face-recognition {
-    background: $grey-dark;
-    min-height: 100vh;
-    height: 100%;  
+  background: $grey-dark;
+  min-height: 100vh;
+  height: 100%;  
+  .camera-header {
+    width: 320px;
+    height: 50px;
+    text-align: center;
+    font-size: 30px;
+  }
+  .camera-stream {
+    width: 320px;
+  }
 }
+
+
+
