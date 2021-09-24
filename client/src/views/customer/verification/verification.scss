@@ -1,0 +1,8 @@
+@import "@/assets/style/_color.scss";
+@import '@/assets/style/_mixin.scss';
+
+.face-recognition {
+    background: $grey-dark;
+    min-height: 100vh;
+    height: 100%;  
+}
