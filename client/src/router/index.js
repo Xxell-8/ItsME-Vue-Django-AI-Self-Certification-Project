@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/intro/Home.vue'
 import Login from '@/views/partner/accounts/Login'
+import Introduction from '@/views/customer/info/Introduction'
 
 const routes = [
   // B2B Home
@@ -16,6 +17,11 @@ const routes = [
     component: Login
   },
   // Customer
+  {
+    path: '/customer/introduction/',
+    name: 'Index',
+    component: Introduction
+  }
 ]
 
 const router = createRouter({
