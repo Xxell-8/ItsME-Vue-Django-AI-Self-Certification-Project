@@ -3,11 +3,12 @@ import pytesseract
 import cv2
 import time
 import numpy as np
+from PIL import ImageFont, ImageDraw, Image
 
 min_confidence = 0.5
 width, height = 320, 320
 
-def text_detection(file_name):
+def east_text_detection(file_name):
     # 이미지 load
     image = cv2.imread(file_name)
     orig = image.copy()
@@ -106,7 +107,83 @@ def text_recognition(file_name):
     result = pytesseract.image_to_string(image, config=config)
     return result
 
+def text_detection(file_name):
+    # min_conf = 50
+
+    image = cv2.imread(file_name)   # 이미지 로드
+    orig = image.copy()             # 원본 이미지 복사
+
+    # 이미지 전처리
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)     # 바이너리 이미지로 변환
+    erosion = cv2.erode(gray, np.ones((2, 2), np.uint8), iterations=1)   # Erosion(침식): 바이너리 이미지에서 흰색(1) 오브젝트의 외곽픽셀을 검은색(0)으로 만든다.
+    dilate = cv2.dilate(gray, np.ones((2, 2), np.uint8), iterations=1)   # Dilate(팽창): 바이너리 이미지에서 검은색(0) 오브젝트의 외곽픽셀을 횐색(1)으로 만든다.
+    image = dilate - erosion    # Morph Gradient = dilate - erosion
+    cv2.imshow('Morph Gradient', image)
+    cv2.waitKey(0)
+    cv2.destroyWindow('Morph Gradient')
+    _, image = cv2.threshold(image, 30, 255, cv2.THRESH_BINARY)     # global threshold: 신분증 배경을 제거하기 위해
+    cv2.imshow('Threshold', image)
+    cv2.waitKey(0)
+    cv2.destroyWindow('Threshold')
+    image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 5, 5)
+    cv2.imshow('Adaptive Threshold', image)
+    cv2.waitKey(0)
+    cv2.destroyWindow('Adaptive Threshold')
+    image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel=np.ones((3, 30)), iterations=1)
+    cv2.imshow('Morph Close', image)
+    cv2.waitKey(0)
+    cv2.destroyWindow('Morph Close')
+
+    contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    boxes = []
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+
+        if w < 23 or h < 23: continue
+
+        cv2.rectangle(image, (x, y), (x+w, y+h), (255, 0, 0), 2)
+        boxes.append((x, y, w, h))
+        cv2.imshow('Box', gray[y:y+h, x:x+w])
+        cv2.waitKey(0)
+        cv2.destroyWindow('Box')
+
+    cv2.imshow('Contour', image)
+    cv2.waitKey(0)
+    cv2.destroyWindow('Contour')
+
+    for x, y, w, h in boxes:
+        print(pytesseract.image_to_string(gray[y:y+h, x:x+w], lang='kor'))
+    
+    # results = pytesseract.image_to_data(image, output_type=pytesseract.Output.DICT, lang='kor')
+
+    # font = ImageFont.truetype('fonts/gulim.ttc', 35)
+
+    # for i in range(len(results['text'])):
+    #     x = results['left'][i]
+    #     y = results['top'][i]
+    #     w = results['width'][i]
+    #     h = results['height'][i]
+
+    #     text = results['text'][i]
+    #     conf = float(results['conf'][i])
+
+    #     if conf > min_conf:
+    #         print(f'Confidence: {conf}')
+    #         print(f'Text: {text}')
+    #         print('')
+
+    #         text = ''.join(text).strip()
+    #         cv2.rectangle(orig, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    #         orig = Image.fromarray(orig)
+    #         draw = ImageDraw.Draw(orig)
+    #         draw.text((x, y - 30), text, font=font, fill=(0, 0, 255))
+    #         orig = np.array(orig)
+    
+    # cv2.imshow('Image', orig)
+    # cv2.waitKey(0)
+    return boxes
 
 if __name__ == '__main__':
-    print(text_detection('./warped_sample.jpg'))
+    # print(text_detection('./warped_sample.jpg'))
     # print(text_recognition('./warped_sample.jpg'))
+    text_detection('./warped_sample.jpg')
