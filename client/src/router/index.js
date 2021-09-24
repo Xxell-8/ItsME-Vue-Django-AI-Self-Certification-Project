@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/intro/Home.vue'
-import Login from '@/views/partner/accounts/Login'
 import Introduction from '@/views/customer/info/Introduction'
 import FaceRecognition from '@/views/customer/verification/FaceRecognition'
+import Accounts from '@/views/partner/Accounts'
+import PageNotFound from '@/views/error/PageNotFound'
+import ServerError from '@/views/error/ServerError'
 
 const routes = [
   // B2B Home
@@ -13,9 +15,9 @@ const routes = [
   },
   // Partner
   {
-    path: '/partners/login',
-    name: 'Login',
-    component: Login
+    path: '/partners/accounts/:page',
+    name: 'Accounts',
+    component: Accounts
   },
   // Customer
   {
@@ -27,7 +29,22 @@ const routes = [
     path: '/customer/face-recognition/',
     name: 'FaceRecognition',
     component: FaceRecognition
-  }
+  },
+  // Error
+  { 
+    path: '/:pathMatch(.*)*', 
+    redirect: '/404'
+  },
+  {
+    path: '/404',
+    name: 'PageNotFound',
+    component: PageNotFound
+  },
+  {
+    path: '/500',
+    name: 'ServerError',
+    component: ServerError
+  },
 ]
 
 const router = createRouter({
