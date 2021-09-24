@@ -1,23 +1,25 @@
-from django.shortcuts import get_list_or_404, get_object_or_404
-from rest_framework import status, viewsets, permissions
-from rest_framework.decorators import api_view, permission_classes
+from django.http import JsonResponse
+from rest_framework import status, viewsets, generics
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+
+from rest_framework.views import APIView
 from .models import Partner, User
-from .serializers import PartnerSerializer, UserSerializer, UserLoginSerializer
+from .serializers import ChangePasswordSerializer, PartnerRegisterSerializer, UserSerializer, ProfileSerializer, UserApprovalSerializer, UpdateProfileSerializer
 
-# Create your views here.
+# 테스트용으로 AllowAny 로 된 부분들 나중에 IsAuthenticated로 변경해야 합니다.
+
+# postman csrftoken error 해결: https://han-py.tistory.com/352
+
+# 파트너 등록: PUT method를 통해 user의 auth를 0에서 1로, 1이면 0으로 바꿔줍니다.
+class PartnerRegisterView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = PartnerRegisterSerializer
+
+
 @api_view(['POST'])
-@permission_classes([AllowAny])
-def partner(request):
-    serializer = PartnerSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
-        partner = serializer.save()
-        partner.set_password(request.data.get('password'))
-        partner.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
 def partner_auth(request):
     # 만약 db에 일치하는 코드가 있다면
     if Partner.objects.filter(code=request.data.get('code')):
@@ -25,60 +27,64 @@ def partner_auth(request):
         return Response(status=status.HTTP_200_OK)
     else:
         # 400 리턴
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response({"code": ["일치하는 코드가 없습니다."]}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# 가입신청 승인: PUT method를 통해 user의 approval을 0에서 1로, 1이면 0으로 바꿔줍니다.
+class UserApprovalView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = UserApprovalSerializer
+
+
+# @renderer_classes((TemplateHTMLRenderer, JSONRenderer))
+def profile(request, pk):
+    user = User.objects.get(pk=pk)
+    serializer = ProfileSerializer(user)
+    return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+
+
+# 참고 URL: https://stackoverflow.com/questions/38845051/how-to-update-user-password-in-django-rest-framework
+class ChangePasswordView(APIView):
+    permission_classes = (AllowAny,)
+
+    def get_object(self, queryset=None):
+        return self.request.user
+    
+    def patch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = ChangePasswordSerializer(data=request.data)
+
+        if serializer.is_valid():
+            old_password = serializer.data.get('old_password')
+            if not self.object.check_password(old_password):
+                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+            
+            self.object.set_password(serializer.data.get('new_password'))
+            self.object.save()
+            return Response(status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateProfileView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = UpdateProfileSerializer
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def approval(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
-        user = serializer.save()
-        # 만약 사용자의 approval 이 1이면 0으로(승인 취소), 0이면 1로(승인)
-        if user.approval:
-            user.approval = 0
-        else:
-            user.approval = 1
-        user.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def join(request):
-    serializer = UserSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
-        user = serializer.save()
-        user.set_password(request.data.get('password'))
-        user.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def login(request):
-    if request.method == 'POST':
-        serializer = UserLoginSerializer(data=request.data)
-
-        if not serializer.is_valid(raise_exception=True):
-            return Response({'message': 'Request body error.'}, status=status.HTTP_409_CONFLICT)
-        if serializer.validated_data['username'] == "None":
-            return Response({'message': 'fail'}, status=status.HTTP_200_OK)
-
-        response = {
-            'success': 'True',
-            'token': serializer.data['token']
-        }
-        return Response(response, status=status.HTTP_200_OK)
-
-
-def profile(request):
-    pass
-
-
-def changepwd(request):
-    pass
+def delete(request, pk):
+    user = User.objects.get(pk=pk)
+    user.delete()
+    return Response(status=status.HTTP_200_OK)
 
 
 def findpwd(request):
     pass
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
