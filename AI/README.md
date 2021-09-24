@@ -10,3 +10,7 @@
 - `ocr.py` : pytesseract 활용해서 한글 OCR 추출
   - 추출은 되는데, 정확성은 떨어집니당 ~
 
+#### 2. OCR (기웅)
+
+- `ocr.py` : OpenCV 활용해서 text detection
+  - 영어로 학습된 모델을 사용해서 한글 detection은 부정확한 것 같습니다.
