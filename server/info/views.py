@@ -12,9 +12,11 @@ from .serializers import TemplateSerializer, LinkSerializer
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def link(request):
+    partner = request.user.partner
+
     if request.method == 'GET':
         # 링크 목록 조회
-        links = get_list_or_404(Link)
+        links = Link.objects.filter(partner=partner)
         serializer = LinkSerializer(links, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -22,7 +24,7 @@ def link(request):
         # 링크 생성
         serializer = LinkSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save(partner=request.user.partner)
+            serializer.save(partner=partner)
             data = {
                 'success': True
             }
@@ -34,6 +36,12 @@ def link(request):
 def link_detail(request, link_id):
     link = get_object_or_404(Link, pk=link_id)
 
+    if link.partner != request.user.partner:
+        data = {
+            'message': '권한이 없습니다.'
+        }
+        return Response(data, status=status.HTTP_403_FORBIDDEN)
+
     if request.method == 'GET':
         # 링크 상세 조회
         serializer = LinkSerializer(link)
@@ -41,7 +49,7 @@ def link_detail(request, link_id):
 
     elif request.method == 'PATCH':
         # 링크 수정
-        serializer = LinkSerializer(link, data=request.data)
+        serializer = LinkSerializer(link, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -62,9 +70,11 @@ def customer(request):
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def template(request):
+    partner = request.user.partner
+
     if request.method == 'GET':
         # 템플릿 목록 조회
-        templates = get_list_or_404(Template)
+        templates = Template.objects.filter(partner=partner)
         serializer = TemplateSerializer(templates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -84,6 +94,12 @@ def template(request):
 def template_detail(request, template_id):
     template = get_object_or_404(Template, pk=template_id)
 
+    if template.partner != request.user.partner:
+        data = {
+            'message': '권한이 없습니다.'
+        }
+        return Response(data, status=status.HTTP_403_FORBIDDEN)
+
     if request.method == 'GET':
         # 템플릿 상세 조회
         serializer = TemplateSerializer(template)
@@ -91,7 +107,7 @@ def template_detail(request, template_id):
 
     elif request.method == 'PATCH':
         # 템플릿 수정
-        serializer = TemplateSerializer(template, data=request.data)
+        serializer = TemplateSerializer(template, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

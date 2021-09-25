@@ -1,4 +1,5 @@
 from .models import Template, Link, Customer
+from accounts.serializers import UserSerializer
 from rest_framework import serializers
 
 
@@ -12,4 +13,4 @@ class LinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Link
         fields = '__all__'
-        read_only_fields = ['partner']
+        read_only_fields = ['partner', 'created_date']
