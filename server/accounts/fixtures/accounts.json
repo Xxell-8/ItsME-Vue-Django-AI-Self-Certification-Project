@@ -1,0 +1,28 @@
+[
+  {
+    "model": "accounts.Partner",
+    "pk": 1,
+    "fields": {
+      "code": "54921356",
+      "name": "삼성"
+    }
+  },
+  {
+    "model": "accounts.User",
+    "pk": 1,
+    "fields": {
+      "partner": 1,
+      "auth": "1",
+      "username": "user1"
+    }
+  },
+  {
+    "model": "accounts.User",
+    "pk": 2,
+    "fields": {
+      "partner": 1,
+      "auth": "0",
+      "username": "user2"
+    }
+  }
+]
