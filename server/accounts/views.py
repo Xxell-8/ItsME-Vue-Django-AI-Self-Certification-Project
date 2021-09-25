@@ -41,7 +41,8 @@ class UserApprovalView(generics.UpdateAPIView):
 def profile(request, pk):
     user = User.objects.get(pk=pk)
     serializer = ProfileSerializer(user)
-    return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+    # JsonResponse 한글 깨짐 해결 완료
+    return JsonResponse(serializer.data, json_dumps_params={'ensure_ascii': False}, status=status.HTTP_200_OK)
 
 
 # 참고 URL: https://stackoverflow.com/questions/38845051/how-to-update-user-password-in-django-rest-framework

@@ -2,14 +2,10 @@ from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 from .models import Partner, User
 from rest_framework import serializers
-from rest_framework_jwt.settings import api_settings
-from django.contrib.auth.models import update_last_login
-from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from dj_rest_auth.registration.serializers import RegisterSerializer
 
-JWT_PAYLOAD_HANDLER = api_settings.JWT_PAYLOAD_HANDLER
-JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
+
 
 # 커스텀 회원가입 serializer
 # custom field 저장 안되는 문제 해결 : https://stackoverflow.com/questions/37841612/django-rest-auth-custom-registration-fails-to-save-extra-fields
@@ -59,7 +55,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['partner', 'email', 'phone']
+        fields = ['auth', 'name', 'email', 'phone']
 
 
 class ChangePasswordSerializer(serializers.Serializer):
