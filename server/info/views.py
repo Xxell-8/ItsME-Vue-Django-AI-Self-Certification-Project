@@ -165,7 +165,7 @@ def customer_detail(request, customer_id):
     template = link.template
 
     if request.method == 'PATCH':
-        # 고객 정보 수정
+        # 고객 신분증 정보 저장
         if customer.is_completed:
             data = {
                 'message': '본인인증이 이미 완료되었습니다.'
