@@ -14,3 +14,9 @@ class LinkSerializer(serializers.ModelSerializer):
         model = Link
         fields = '__all__'
         read_only_fields = ['partner', 'created_date']
+
+class CustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = '__all__'
+        read_only_fields = ['link']

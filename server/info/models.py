@@ -28,7 +28,7 @@ class Link(models.Model):
 class Customer(models.Model):
     link = models.ForeignKey(Link, on_delete=models.CASCADE)
     is_completed = models.BooleanField(default=False)
-    completed_time = models.DateTimeField(null=True)
+    completed_time = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=45)
     img = models.ImageField(null=True)
     code = models.CharField(max_length=45, null=True)
