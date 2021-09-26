@@ -1,127 +1,123 @@
-from imutils.object_detection import non_max_suppression
 import pytesseract
 import cv2
-import time
 import numpy as np
-from PIL import ImageFont, ImageDraw, Image
+import argparse
 
-min_confidence = 0.5
-width, height = 320, 320
 
-def east_text_detection(file_name):
-    # 이미지 load
-    image = cv2.imread(file_name)
+
+def image_detection(image_path):
+    # 1-1. 이미지 읽어오기
+    image = cv2.imread(image_path)
     orig = image.copy()
-    # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)     # gray scale로 변경
-    # _ ,image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)
-    # image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
-    # image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-    cv2.imshow('Image Binarization', image)
+
+    # 2-1. 이미지 리사이즈
+    r = 800.0 / image.shape[0]
+    dim = (int(image.shape[1] * r), 800)
+    image = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
+
+    # 2-2. 가장자리 검출
+    # 2-2-1. 흑백 변환
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # 2-2-2. 블러로 노이즈 제거
+    gray = cv2.GaussianBlur(gray, (3, 3), 0)
+    # 2-2-3. 이미지 가장자리 검출
+    edged = cv2.Canny(gray, 75, 200)
+
+    print('Step 1: Edge Detection')
+
+    cv2.namedWindow('image', cv2.WINDOW_NORMAL)
+    cv2.namedWindow('Edged', cv2.WINDOW_NORMAL)
+    cv2.imshow('image', image)
+    cv2.imshow('edged', edged)
+
     cv2.waitKey(0)
-    print(image.shape)
-    h, w = image.shape[:2]
+    cv2.destroyAllWindows()
 
-    # 새로운 width, height 설정
-    new_h, new_w = width, height
-    ratio_w = w / float(new_w)
-    ratio_h = h / float(new_h)
+    # contour 반환
+    (cnts, _) = cv2.findContours(edged.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    # contour를 외곽이 그린 면적이 큰 순대로 정렬해 최대 5개 추출
+    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:5]
 
-    # 이미지 resize
-    image = cv2.resize(image, (new_w, new_h))
-    h, w = image.shape[:2]
+    # contour를 순회하면서
+    for c in cnts:
+        # contour가 그리는 길이 계산
+        peri = cv2.arcLength(c, True)
+        # peri에 2% 정도 오차를 두고 도형을 근사해서 구함
+        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
 
-    # EAST text detector model의 layer를 정의
-    layer_names = [
-        'feature_fusion/Conv_7/Sigmoid',
-        'feature_fusion/concat_3'
-    ]
+        # 외곽의 꼭지점이 4개면 신분증 외곽으로 계산
+        # 찾은 외곽들 중 큰 순서대로 5개를 찾아 꼭지점 4개인 도형을 찾는 것
+        if len(approx) == 4:
+            screenCnt = approx
+            break
 
-    # 미리 학습된 EAST text detector 불러오기
-    print("[INFO] loading EAST text detector...")
-    net = cv2.dnn.readNet('./frozen_east_text_detection.pb')
+    print('Step2: Find contours of paper')
 
-    # blob 객체로 생성 및 forward 실행
-    blob = cv2.dnn.blobFromImage(image, 1.0, (w, h), (123.68, 116.78, 103.94), swapRB=True, crop=False)
-    start = time.time()
-    net.setInput(blob)
-    scores, geometry = net.forward(layer_names)
-    end = time.time()
-    print("[INFO] text detection took {:.6f} seconds".format(end - start))
+    # contour 그리기
+    cv2.drawContours(image, [screenCnt], -1, (0, 255, 0), 2)
+    cv2.imshow('outline', image)
 
-    # bounding box의 좌표와 확률값 저장
-    # 초기화
-    num_rows, num_cols = scores.shape[2:]
-    rects = []          # box의 좌표 저장
-    confidences = []    # box의 확률 저장
-
-    for y in range(num_rows):
-        scores_data = scores[0, 0, y]
-        x_data0 = geometry[0, 0, y]
-        x_data1 = geometry[0, 1, y]
-        x_data2 = geometry[0, 2, y]
-        x_data3 = geometry[0, 3, y]
-        angle_data = geometry[0, 4, y]
-
-        for x in range(num_cols):
-            if scores_data[x] < min_confidence: continue
-
-            offset_x, offset_y = x * 4.0, y * 4.0
-
-            angle = angle_data[x]
-            cos = np.cos(angle)
-            sin = np.sin(angle)
-
-            h = x_data0[x] + x_data2[x]
-            w = x_data1[x] + x_data3[x]
-
-            end_x = int(offset_x + (cos * x_data1[x]) + (sin * x_data2[x]))
-            end_y = int(offset_y + (sin * x_data1[x]) + (cos * x_data2[x]))
-            start_x = int(end_x - w)
-            start_y = int(end_y - h)
-
-            rects.append((start_x, start_y, end_x, end_y))
-            confidences.append(scores_data[x])
-
-    # Non-Maximum Suppression(NMS) 적용
-    # NMS: 곂쳐져 있는 검출 박스를 제거하는 방법
-    boxes = non_max_suppression(np.array(rects), probs=confidences)
-
-    for start_x, start_y, end_x, end_y in boxes:
-        start_x = int(start_x * ratio_w)
-        start_y = int(start_y * ratio_h)
-        end_x = int(end_x * ratio_w)
-        end_y = int(end_y * ratio_h)
-        # 이미지에 bounding box 추가
-        cv2.rectangle(orig, (start_x, start_y), (end_x, end_y), (0, 255, 0), 2)
-
-    cv2.imshow('Text Detection', orig)
     cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
-    return boxes
+    def order_points(pts):
+        rect = np.zeros((4, 2), dtype=np.float32)
 
-pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
+        # 넘겨받은 배열의 각 행에 대한 합을 계산
+        s = pts.sum(axis=1)
+        rect[0] = pts[np.argmin(s)] # x+y 최대값
+        rect[2] = pts[np.argmax(s)] # x+y 최소값
 
-def text_recognition(file_name):
-    config = '-l kor --oem 3 --psm 4'
-    image = cv2.imread(file_name)
-    result = pytesseract.image_to_string(image, config=config)
-    return result
+        diff = np.diff(pts, axis=1)
+        rect[1] = pts[np.argmin(diff)] # y-x 최대값
+        rect[3] = pts[np.argmax(diff)] # y-x 최소값
 
-def text_detection(file_name):
-    # min_conf = 50
+        return rect / r
 
-    image = cv2.imread(file_name)   # 이미지 로드
+    rect = order_points(screenCnt.reshape(4, 2))
+    (tl, tr, br, bl) = rect
+
+    # 각각의 기리를 계산
+    widthA = np.sqrt(((br[0] - bl[0]) ** 2) + ((br[1] - bl[1]) ** 2))
+    widthB = np.sqrt(((tr[0] - tl[0]) ** 2) + ((tr[1] - tl[1]) ** 2))
+    heightA = np.sqrt(((tr[0] - br[0]) ** 2) + ((tr[1] - br[1]) ** 2))
+    heightB = np.sqrt(((tl[0] - bl[0]) ** 2) + ((tl[1] - bl[1]) ** 2))
+
+    # 최대 높이와 너비 계산
+    maxWidth = max(int(widthA), int(widthB))
+    maxHeight = max(int(heightA), int(heightB))
+
+    # 변환될 좌표 위치 초기화
+    dst = np.array([[0, 0], [maxWidth - 1, 0], [maxWidth - 1, maxHeight - 1], [0, maxHeight - 1]], dtype=np.float32)
+
+    # 나머지 픽셀을 옯기는 matrix 생성
+    M = cv2.getPerspectiveTransform(rect, dst)
+    # 최종적으로 반듯한 사각형으로 변환
+    warped = cv2.warpPerspective(orig, M, (maxWidth, maxHeight))
+
+    print('Step3: Apply Perspective Transform')
+    cv2.imshow('warped', warped)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    return warped
+
+
+def text_detection(image):
     orig = image.copy()             # 원본 이미지 복사
 
     # 이미지 전처리
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)     # 바이너리 이미지로 변환
     erosion = cv2.erode(gray, np.ones((2, 2), np.uint8), iterations=1)   # Erosion(침식): 바이너리 이미지에서 흰색(1) 오브젝트의 외곽픽셀을 검은색(0)으로 만든다.
     dilate = cv2.dilate(gray, np.ones((2, 2), np.uint8), iterations=1)   # Dilate(팽창): 바이너리 이미지에서 검은색(0) 오브젝트의 외곽픽셀을 횐색(1)으로 만든다.
-    image = dilate - erosion    # Morph Gradient = dilate - erosion
+    image = cv2.subtract(dilate, erosion)    # Morph Gradient = dilate - erosion
     cv2.imshow('Morph Gradient', image)
     cv2.waitKey(0)
     cv2.destroyWindow('Morph Gradient')
-    _, image = cv2.threshold(image, 30, 255, cv2.THRESH_BINARY)     # global threshold: 신분증 배경을 제거하기 위해
+
+    mean = cv2.mean(image)
+
+    _, image = cv2.threshold(image, mean[0]*6, 255, cv2.THRESH_BINARY)     # global threshold: 신분증 배경을 제거하기 위해
     cv2.imshow('Threshold', image)
     cv2.waitKey(0)
     cv2.destroyWindow('Threshold')
@@ -143,47 +139,31 @@ def text_detection(file_name):
 
         cv2.rectangle(image, (x, y), (x+w, y+h), (255, 0, 0), 2)
         boxes.append((x, y, w, h))
-        cv2.imshow('Box', gray[y:y+h, x:x+w])
-        cv2.waitKey(0)
-        cv2.destroyWindow('Box')
+        # cv2.imshow('Box', gray[y:y+h, x:x+w])
+        # cv2.waitKey(0)
+        # cv2.destroyWindow('Box')
 
     cv2.imshow('Contour', image)
     cv2.waitKey(0)
     cv2.destroyWindow('Contour')
 
-    for x, y, w, h in boxes:
-        print(pytesseract.image_to_string(gray[y:y+h, x:x+w], lang='kor'))
-    
-    # results = pytesseract.image_to_data(image, output_type=pytesseract.Output.DICT, lang='kor')
-
-    # font = ImageFont.truetype('fonts/gulim.ttc', 35)
-
-    # for i in range(len(results['text'])):
-    #     x = results['left'][i]
-    #     y = results['top'][i]
-    #     w = results['width'][i]
-    #     h = results['height'][i]
-
-    #     text = results['text'][i]
-    #     conf = float(results['conf'][i])
-
-    #     if conf > min_conf:
-    #         print(f'Confidence: {conf}')
-    #         print(f'Text: {text}')
-    #         print('')
-
-    #         text = ''.join(text).strip()
-    #         cv2.rectangle(orig, (x, y), (x + w, y + h), (0, 255, 0), 2)
-    #         orig = Image.fromarray(orig)
-    #         draw = ImageDraw.Draw(orig)
-    #         draw.text((x, y - 30), text, font=font, fill=(0, 0, 255))
-    #         orig = np.array(orig)
-    
-    # cv2.imshow('Image', orig)
-    # cv2.waitKey(0)
     return boxes
 
+
+def text_recognition(image):
+    config = '-l kor --oem 3 --psm 4'
+    result = pytesseract.image_to_string(image, config=config)
+    return result
+
+
 if __name__ == '__main__':
-    # print(text_detection('./warped_sample.jpg'))
-    # print(text_recognition('./warped_sample.jpg'))
-    text_detection('./warped_sample.jpg')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('image_path', help='이미지 경로')
+    args = parser.parse_args()
+
+    # pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
+
+    id_card = image_detection(args.image_path)
+    boxes = text_detection(id_card)
+    # for x, y, w, h in boxes:
+    #     text_recognition(id_card[y:y+h, x:x+w])

@@ -13,11 +13,12 @@
 #### 2. OCR (기웅)
 
 - `ocr.py`
-  - `east_text_detection`
-    - EAST text detextor를 활용한 text detection
-    - 영어로 학습된 모델을 사용해서 한글 detection은 부정확한 것 같습니다.
+  - `image_detection`
+    - 저장된 이미지를 불러와 신분증(카드) 부분 추출
+    - 세라님의 `imageDetect.py`의 코드와 동일
   - `text_detection`
     - tesseract를 활용했고 이미지 전처리를 통해 정확도를 높였습니다.
+    - 빛의 밝기, 반사에 따라 결과가 다르게 나옵니다.
   - `text_recognition`
     - tesseract를 활용하여 한글을 인식
     - 정확도를 올릴 필요가 있습니다.
