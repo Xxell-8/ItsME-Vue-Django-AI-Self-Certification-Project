@@ -1,0 +1,47 @@
+@import "@/assets/style/_color.scss";
+
+.links {
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.link-item {
+  width: 100%;
+  height: fit-content;
+  border-radius: 20px;
+  background-color: $white;
+  gap: 2rem;
+
+  .name {
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+  .status {
+    font-weight: 500;
+    span {
+      color: $primary;
+      font-weight: 900;
+    }
+  }
+  .date {
+    font-size: 0.875rem;
+    color: $grey-dark;
+
+    .info {
+      font-weight: 700;
+      margin-left: 0.7rem;
+    }
+  }
+}
+
+.btn-detail {
+  width: 100px;
+  height: 40px;
+  margin-top: 2rem;
+  border-radius: 20px !important;
+  margin-bottom: 3rem;
+  &:hover {
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+}

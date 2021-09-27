@@ -1,0 +1,87 @@
+@import "@/assets/style/_color.scss";
+@import '@/assets/style/_mixin.scss';
+
+.partners {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  height: 100%;
+  background-color: $grey-dark;
+
+  .body-with-nav {
+    position: relative;
+    padding-left: 8rem;
+    padding-right: 3rem;
+    padding-top: 6rem;
+    z-index: 5;
+  }
+
+  .circle-primary {
+    position: fixed;
+    bottom: -20vh;
+    right: -25vh;
+    height: 100vh;
+    width: 100vh;
+    border-radius: 100%;
+    background-color: $primary;
+    z-index: 0;
+  }
+}
+
+.left-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 5rem;
+  background-color: $dark;
+  z-index: 10;
+  img {
+    width: 3rem;
+    height: auto;
+    cursor: pointer;
+  }
+
+  i {
+    color: white;
+    font-size: 2.5rem;
+    z-index: 15;
+  }
+}
+
+.user-menu {
+  position: fixed;
+  width: 100vw;
+  padding: 0 2rem;
+  height: 4rem;
+  z-index: 10;
+
+  i {
+    color: $white;
+    font-size: 2rem;
+  }
+
+  .dropdown-menu {
+    font-size: 1rem;
+  }
+
+  img {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 15%;
+    margin-left: 20px;
+  }
+}
+
+.chapter {
+  color: $white;
+  .subtitle {
+    color: $primary;
+    font-weight: 500;
+    padding-left: 2px;
+  }
+  .title {
+    font-weight: 700;
+    font-size: 2rem;
+  }
+}

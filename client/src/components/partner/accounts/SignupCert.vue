@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import accountApi from '@/api/accounts.js'
+
 export default {
   name: 'SignupCert',
   data: () => {
@@ -114,6 +116,12 @@ export default {
       }
     },
   },
+  async created () {
+    await accountApi.getPartnerList()
+      .then ((res) => {
+        console.log(res)
+      })
+  }
 }
 </script>
 
