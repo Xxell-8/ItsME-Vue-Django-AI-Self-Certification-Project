@@ -4,6 +4,7 @@ from . import views
 app_name = 'accounts'
 
 urlpatterns = [
+    path('partner/', views.PartnerListAPIView.as_view(), name='partner'),
     path('partner/<int:pk>/', views.PartnerRegisterView.as_view(), name='partner'),
     path('partner/auth/', views.partner_auth, name='partner_auth'),
     path('profile/approval/<int:pk>/', views.UserApprovalView.as_view(), name='approval'),
