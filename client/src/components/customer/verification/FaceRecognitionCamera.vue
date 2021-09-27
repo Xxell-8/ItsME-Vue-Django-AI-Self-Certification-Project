@@ -5,11 +5,24 @@
       <span class="t-white fw-700 header-text">Face 인식</span>
     </div>
     <!-- camera -->
-    <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video>
+    <!-- <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video> -->
+    <div class="f-column">
+      <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video>
+      <div class="face-direction" v-if="isCameraOn">
+        <div class="face-box"></div>
+        <div class="face-dialog">
+          <p>표시된 위치에</p>
+          <p>얼굴 정면을 비추고</p>
+          <p>촬영 버튼을 눌러주세요!</p>
+        </div>
+      </div>
+    </div>
     <!-- canvas -->
-    <canvas class="canvas-face" ref="canvas"></canvas>
+    <canvas class="canvas-jpeg" ref="canvas"></canvas>
     <!-- buttons -->
-    <button class="t-white">사진찍기</button>
+    <button v-if="isCameraOn" class="btn-shot" @click="takePhoto">촬영</button>
+    <button v-if="isPhotoTaken" class="btn-shot">재촬영</button>
+    <button v-if="isPhotoTaken" class="btn-shot">다음</button>
   </div>
 </template>
 
@@ -27,6 +40,9 @@ export default {
     return {
       model: null,
       photoTaken: false,
+      isCameraOn: false,
+      isPhotoTaken: false,
+      isShotPhoto: false,
     }
   },
   mounted() {
@@ -42,6 +58,7 @@ export default {
 				.getUserMedia(constraints)
 				.then(stream => {
 					this.$refs.camera.srcObject = stream;
+          this.isCameraOn = true;
 				})
 				.catch(error => {
           console.log(error)
@@ -52,19 +69,32 @@ export default {
       const tracks = this.$refs.camera.srcObject.getTracks()
       tracks.forEach(track => {
         track.stop()
+        this.isCameraOn = false;
       })
     },
-    async detectFaces() 
-    {
-      const camera = this.$refs.camera
-      const canvas = this.$refs.canvas
-      const ctx = canvas.getContext("2d")
-      const prediction = await this.model.estimateFaces(camera, false)
+    async takePhoto() {
+      if(!this.isPhotoTaken) {
+        this.isShotPhoto = true;
+
+        const TIMEOUT = 50;
+
+        setTimeout(() => {
+          this.isShotPhoto = false;
+        }, TIMEOUT);
+      }
       
+      this.isPhotoTaken = !this.isPhotoTaken;
+      
+      const ctx = this.$refs.canvas.getContext('2d');
       ctx.canvas.width = 320
       ctx.canvas.height = 240
-      ctx.drawImage(camera, 0, 0, 320, 240)
-      /* 얼굴 주변 사각형 그리기 */
+      ctx.drawImage(this.$refs.camera, 0, 0, 320, 240);
+      // 고객이 촬영한 이미지를 jpegImg로 저장
+      const jpegImg = this.$refs.canvas.toDataURL("image/jpeg")
+      console.log(jpegImg)
+
+      // 고객의 얼굴에 테두리 그리기
+      const prediction = await this.model.estimateFaces(this.$refs.canvas, false)
       prediction.forEach((pred) => {
         ctx.beginPath();
         ctx.lineWidth = "4";
@@ -77,14 +107,14 @@ export default {
         );
         ctx.stroke();        
       });
+
+      // 카메라 종료하기
+      this.stopCameraStream();
     },
     async initDetector() {
       // Vue3 문제 해결: Object.freeze
       this.model = Object.freeze(await blazeface.load());
-      if (!this.photoTaken) {
-        setInterval(this.detectFaces, 100)
-      }
-    }
+    },
   }  
 }
 </script>
