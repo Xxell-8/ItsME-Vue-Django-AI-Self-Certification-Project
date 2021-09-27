@@ -47,6 +47,7 @@ class User(AbstractUser):
     username = None
     # name 은 기업명
     name = models.CharField(max_length=45, null=True)
+    fullname = models.CharField(max_length=45, null=True)
     code = models.CharField(max_length=45, null=True)
     email = models.EmailField(_('email address'), unique=True)
     phone = models.CharField(max_length=45, null=True)

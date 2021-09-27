@@ -11,6 +11,6 @@ urlpatterns = [
     path('profile/<int:pk>/', views.profile, name='profile'),
     path('profile/update/<int:pk>/', views.UpdateProfileView.as_view(), name='updateprofile'),
     path('changepwd/<int:pk>/', views.ChangePasswordView.as_view(), name='changepwd'),
-    path('findpwd/', views.findpwd, name='findpwd'),
-    path('delete/<int:pk>/', views.delete, name='delete')
+    path('delete/<int:pk>/', views.delete, name='delete'),
+    path('partner/getuser/', views.get_user, name='get_user')
 ]

@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from rest_framework.views import APIView
 from .models import Partner, User
-from .serializers import ChangePasswordSerializer, PartnerRegisterSerializer, UserSerializer, ProfileSerializer, UserApprovalSerializer, UpdateProfileSerializer, PartnerSerializer
+from .serializers import ChangePasswordSerializer, PartnerRegisterSerializer, UserSerializer, ProfileSerializer, UserApprovalSerializer, UpdateProfileSerializer, PartnerSerializer, GetUserSerializer
 
 # 테스트용으로 AllowAny 로 된 부분들 나중에 IsAuthenticated로 변경해야 합니다.
 
@@ -30,6 +30,13 @@ def partner_auth(request):
         return Response({"code": ["일치하는 코드가 없습니다."]}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+def get_user(request):
+    user = User.objects.filter(code=request.data.get('code'))
+    serializer = GetUserSerializer(user, many=True)
+    return JsonResponse(serializer.data, json_dumps_params={'ensure_ascii': False}, status=status.HTTP_200_OK, safe=False)
+
+
 class PartnerListAPIView(generics.ListAPIView):
     queryset = Partner.objects.all()
     serializer_class = PartnerSerializer
@@ -39,7 +46,6 @@ class UserApprovalView(generics.UpdateAPIView):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = UserApprovalSerializer
-
 
 # @renderer_classes((TemplateHTMLRenderer, JSONRenderer))
 def profile(request, pk):
@@ -83,10 +89,6 @@ def delete(request, pk):
     user = User.objects.get(pk=pk)
     user.delete()
     return Response(status=status.HTTP_200_OK)
-
-
-def findpwd(request):
-    pass
 
 
 class UserViewSet(viewsets.ModelViewSet):
