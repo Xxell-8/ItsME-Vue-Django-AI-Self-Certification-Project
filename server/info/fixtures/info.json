@@ -13,16 +13,42 @@
     }
   },
   {
+    "model": "info.Template",
+    "pk": 2,
+    "fields": {
+      "name": "template2",
+      "motion": true,
+      "id_name": true,
+      "id_code": false,
+      "id_date": false,
+      "id_img": true,
+      "partner": 2
+    }
+  },
+  {
     "model": "info.Link",
     "pk": 1,
     "fields": {
       "name": "link1",
       "repeatable": false,
       "created_date": "2021-09-17T16:00:30+09:00",
-      "expriation_date": "2021-09-17T16:16:30+09:00",
+      "expiration_date": "2021-09-17T16:16:30+09:00",
       "partner": 1,
       "template": 1,
-      "manage_users": [1]
+      "manage_users": [1, 2]
+    }
+  },
+  {
+    "model": "info.Link",
+    "pk": 2,
+    "fields": {
+      "name": "link2",
+      "repeatable": false,
+      "created_date": "2021-09-17T16:00:30+09:00",
+      "expiration_date": "2021-09-17T16:16:30+09:00",
+      "partner": 2,
+      "template": 2,
+      "manage_users": [3]
     }
   },
   {
@@ -30,7 +56,8 @@
     "pk": 1,
     "fields": {
       "link": 1,
-      "name": "customer1"
+      "name": "customer1",
+      "completed_time": "2021-09-17T16:16:30+09:00"
     }
   }
 ]
