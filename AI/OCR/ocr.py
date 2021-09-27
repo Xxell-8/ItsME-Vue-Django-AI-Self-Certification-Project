@@ -115,22 +115,22 @@ def text_detection(image):
     image = cv2.subtract(dilate, erosion)    # Morph Gradient = dilate - erosion
     cv2.imshow('Morph Gradient', image)
     cv2.waitKey(0)
-    cv2.destroyWindow('Morph Gradient')
+    cv2.destroyAllWindows()
 
     mean = cv2.mean(image)
 
     _, image = cv2.threshold(image, mean[0]*5, 255, cv2.THRESH_BINARY)     # global threshold: 신분증 배경을 제거하기 위해
     cv2.imshow('Threshold', image)
     cv2.waitKey(0)
-    cv2.destroyWindow('Threshold')
+    cv2.destroyAllWindows()
     image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 5, 5)
     cv2.imshow('Adaptive Threshold', image)
     cv2.waitKey(0)
-    cv2.destroyWindow('Adaptive Threshold')
+    cv2.destroyAllWindows()
     image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel=np.ones((3, 30)), iterations=1)
     cv2.imshow('Morph Close', image)
     cv2.waitKey(0)
-    cv2.destroyWindow('Morph Close')
+    cv2.destroyAllWindows()
 
     contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     boxes = []
@@ -144,7 +144,7 @@ def text_detection(image):
 
     cv2.imshow('Bounding Boxes', orig)
     cv2.waitKey(0)
-    cv2.destroyWindow('Bounding Boxes')
+    cv2.destroyAllWindows()
 
     return boxes
 
@@ -157,9 +157,6 @@ def text_recognition(image):
     data = pytesseract.image_to_data(image, config=config, output_type='data.frame', pandas_config={'dtype': {'text': str}})
     data = data[data.conf > min_conf]
     data = data.groupby('block_num')['text'].apply(list)
-    cv2.imshow('Text Image', image)
-    cv2.waitKey(0)
-    cv2.destroyWindow('Text Image')
     if not data.empty:
         result = ''
         for char in data[1]:
@@ -171,6 +168,15 @@ def text_recognition(image):
     return result.rstrip()
 
 
+# def image_masking(image, texts, boxes):
+#     image = image.copy()
+
+#     for text, (x, y, w, h) in zip(texts, boxes):
+#         pass
+
+#     return
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('image_path', help='이미지 경로')
@@ -179,7 +185,23 @@ if __name__ == '__main__':
     pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
 
     id_card = image_detection(args.image_path)
+    id_card_orig = id_card.copy()
     # id_card = cv2.imread(args.image_path)
-    boxes = text_detection(id_card)
-    for x, y, w, h in boxes:
-        print(text_recognition(id_card[y:y+h, x:x+w]))
+    area = text_detection(id_card)
+    texts = []
+    boxes = []
+    for x, y, w, h in area:
+        text = text_recognition(id_card[y:y+h, x:x+w])
+        if text:
+            print(text)
+            cv2.imshow('Text Image', id_card_orig[y:y+h, x:x+w])
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+            texts.append(text)
+            boxes.append((x, y, w, h))
+
+    # masked_image = image_masking(id_card_orig, texts, boxes)
+    # cv2.imshow('Masked Image', masked_image)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
