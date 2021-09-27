@@ -13,6 +13,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     username = None
     first_name = None
     last_name = None
+    fullname = serializers.CharField()
     name = serializers.CharField()
     code = serializers.CharField()
     phone = serializers.CharField()
@@ -21,6 +22,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         return {
             'password1': self.validated_data.get('password1', ''),
             'password2': self.validated_data.get('password2', ''),
+            'fullname': self.validated_data.get('fullname', ''),
             'email': self.validated_data.get('email', ''),
             'code': self.validated_data.get('code', ''),
             'name': self.validated_data.get('name', ''),
@@ -32,6 +34,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         self.cleaned_data = self.get_cleaned_data()
         adapter.save_user(request, user, self)
         setup_user_email(request, user, [])
+        user.fullname = self.cleaned_data.get('fullname')
         user.code = self.cleaned_data.get('code')
         user.name = self.cleaned_data.get('name')
         user.phone = self.cleaned_data.get('phone')
@@ -54,7 +57,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['auth', 'name', 'email', 'phone']
+        fields = ['id', 'auth', 'fullname', 'name', 'email', 'phone']
 
 
 class ChangePasswordSerializer(serializers.Serializer):
@@ -128,3 +131,8 @@ class UserApprovalSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+class GetUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'auth', 'fullname', 'name', 'email', 'phone']
