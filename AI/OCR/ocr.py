@@ -2,7 +2,6 @@ import pytesseract
 import cv2
 import numpy as np
 import argparse
-import pandas
 
 
 
@@ -108,6 +107,9 @@ def text_detection(image):
     orig = image.copy()             # 원본 이미지 복사
 
     # 이미지 전처리
+    print(image.shape)
+    image[:,:,0] = 0
+    image[:,:,1] = 0
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)     # 바이너리 이미지로 변환
     erosion = cv2.erode(gray, np.ones((2, 2), np.uint8), iterations=1)   # Erosion(침식): 바이너리 이미지에서 흰색(1) 오브젝트의 외곽픽셀을 검은색(0)으로 만든다.
     dilate = cv2.dilate(gray, np.ones((2, 2), np.uint8), iterations=1)   # Dilate(팽창): 바이너리 이미지에서 검은색(0) 오브젝트의 외곽픽셀을 횐색(1)으로 만든다.
@@ -150,8 +152,8 @@ def text_detection(image):
 
 def text_recognition(image):
     min_conf = 50
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    image = cv2.erode(gray, np.ones((2, 2), np.uint8), iterations=1)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    image = cv2.erode(image, np.ones((2, 2), np.uint8), iterations=1)
     config = '-l kor --oem 3 --psm 6'
     data = pytesseract.image_to_data(image, config=config, output_type='data.frame', pandas_config={'dtype': {'text': str}})
     data = data[data.conf > min_conf]
