@@ -107,7 +107,6 @@ def text_detection(image):
     orig = image.copy()             # 원본 이미지 복사
 
     # 이미지 전처리
-    print(image.shape)
     image[:,:,0] = 0
     image[:,:,1] = 0
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)     # 바이너리 이미지로 변환
@@ -169,7 +168,6 @@ def text_recognition(image):
                 result += ' '
     else:
         result = ''
-    # result = pytesseract.image_to_string(image, config=config)
     return result.rstrip()
 
 
