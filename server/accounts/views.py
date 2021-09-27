@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from rest_framework.views import APIView
 from .models import Partner, User
-from .serializers import ChangePasswordSerializer, PartnerRegisterSerializer, UserSerializer, ProfileSerializer, UserApprovalSerializer, UpdateProfileSerializer
+from .serializers import ChangePasswordSerializer, PartnerRegisterSerializer, UserSerializer, ProfileSerializer, UserApprovalSerializer, UpdateProfileSerializer, PartnerSerializer
 
 # 테스트용으로 AllowAny 로 된 부분들 나중에 IsAuthenticated로 변경해야 합니다.
 
@@ -29,6 +29,10 @@ def partner_auth(request):
         # 400 리턴
         return Response({"code": ["일치하는 코드가 없습니다."]}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class PartnerListAPIView(generics.ListAPIView):
+    queryset = Partner.objects.all()
+    serializer_class = PartnerSerializer
 
 # 가입신청 승인: PUT method를 통해 user의 approval을 0에서 1로, 1이면 0으로 바꿔줍니다.
 class UserApprovalView(generics.UpdateAPIView):
