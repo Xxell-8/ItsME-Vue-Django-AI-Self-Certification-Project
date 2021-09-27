@@ -13,6 +13,13 @@
   }
   .camera-stream {
     width: 320px;
+    height: 240px;
+  }
+  .canvas-face {
+    position: absolute;
+    top: 50px;
+    width: 320px;
+    height: 240px;
   }
 }
 
