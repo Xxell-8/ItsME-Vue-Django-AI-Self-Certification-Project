@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/intro/Home.vue'
 import Introduction from '@/views/customer/info/Introduction'
 import FaceRecognition from '@/views/customer/verification/FaceRecognition'
+import CardRecognition from '@/views/customer/verification/CardRecognition'
 import Accounts from '@/views/partner/Accounts'
 import PageNotFound from '@/views/error/PageNotFound'
 import ServerError from '@/views/error/ServerError'
@@ -29,6 +30,11 @@ const routes = [
     path: '/customer/face-recognition/',
     name: 'FaceRecognition',
     component: FaceRecognition
+  },
+  {
+    path: '/customer/card-recognition/',
+    name: 'CardRecognition',
+    component: CardRecognition
   },
   // Error
   { 
