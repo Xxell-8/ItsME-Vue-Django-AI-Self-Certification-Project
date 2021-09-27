@@ -39,11 +39,10 @@ class CustomRegisterSerializer(RegisterSerializer):
         return user
 
 class PartnerSerializer(serializers.ModelSerializer):
-    users = serializers.StringRelatedField(many=True)
     
     class Meta:
         model = Partner
-        fields = ['code', 'name', 'users']
+        fields = ['id', 'code', 'name']
 
 
 class UserSerializer(serializers.ModelSerializer):
