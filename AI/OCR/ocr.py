@@ -137,13 +137,13 @@ def text_detection(image):
 
         if w < 23 or h < 23: continue
 
-        cv2.rectangle(image, (x, y), (x+w, y+h), (255, 0, 0), 2)
+        cv2.rectangle(orig, (x, y), (x+w, y+h), (0, 255, 0), 2)
         boxes.append((x, y, w, h))
         # cv2.imshow('Box', gray[y:y+h, x:x+w])
         # cv2.waitKey(0)
         # cv2.destroyWindow('Box')
 
-    cv2.imshow('Contour', image)
+    cv2.imshow('Contour', orig)
     cv2.waitKey(0)
     cv2.destroyWindow('Contour')
 
@@ -151,8 +151,13 @@ def text_detection(image):
 
 
 def text_recognition(image):
-    config = '-l kor --oem 3 --psm 4'
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    image = cv2.erode(gray, np.ones((2, 2), np.uint8), iterations=1)
+    config = '-l kor --oem 3 --psm 6'
     result = pytesseract.image_to_string(image, config=config)
+    cv2.imshow('Text Image', image)
+    cv2.waitKey(0)
+    cv2.destroyWindow('Text Image')
     return result
 
 
@@ -161,9 +166,9 @@ if __name__ == '__main__':
     parser.add_argument('image_path', help='이미지 경로')
     args = parser.parse_args()
 
-    # pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
+    pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
 
     id_card = image_detection(args.image_path)
     boxes = text_detection(id_card)
-    # for x, y, w, h in boxes:
-    #     text_recognition(id_card[y:y+h, x:x+w])
+    for x, y, w, h in boxes:
+        print(text_recognition(id_card[y:y+h, x:x+w]))
