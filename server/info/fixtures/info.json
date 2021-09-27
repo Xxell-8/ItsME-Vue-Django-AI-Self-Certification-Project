@@ -32,7 +32,7 @@
       "name": "link1",
       "repeatable": false,
       "created_date": "2021-09-17T16:00:30+09:00",
-      "expriation_date": "2021-09-17T16:16:30+09:00",
+      "expiration_date": "2021-09-17T16:16:30+09:00",
       "partner": 1,
       "template": 1,
       "manage_users": [1, 2]
@@ -45,7 +45,7 @@
       "name": "link2",
       "repeatable": false,
       "created_date": "2021-09-17T16:00:30+09:00",
-      "expriation_date": "2021-09-17T16:16:30+09:00",
+      "expiration_date": "2021-09-17T16:16:30+09:00",
       "partner": 2,
       "template": 2,
       "manage_users": [3]
@@ -56,7 +56,8 @@
     "pk": 1,
     "fields": {
       "link": 1,
-      "name": "customer1"
+      "name": "customer1",
+      "completed_time": "2021-09-17T16:16:30+09:00"
     }
   }
 ]
