@@ -1,6 +1,7 @@
 @import "@/assets/style/_color.scss";
 @import '@/assets/style/_mixin.scss';
 
+/* face recognition */
 .face-recognition {
   background: $grey-dark;
   min-height: 100vh;
@@ -52,7 +53,62 @@
     font-weight: 700;
     border-radius: 25px;
     z-index: 1;
+  }
 }
+
+/* card recognition */
+.card-recognition {
+  background: $grey-dark;
+  min-height: 100vh;
+  height: 100%;  
+  .camera-header {
+    width: 320px;
+    height: 50px;
+    text-align: center;
+    font-size: 30px;
+  }
+  .camera-stream {
+    width: 320px;
+    height: 240px;
+  }
+  .canvas-jpeg {
+    position: absolute;
+    top: 50px;
+    width: 320px;
+    height: 240px;
+  }
+  .face-direction {
+    position: absolute;
+    top: 50px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .face-box {
+      height: 125px;
+      width: 200px;
+      border: medium dashed $secondary;
+      border-radius: 15px;
+    }
+    .face-dialog {
+      margin-top: 5px;
+      background: rgba(14, 15, 22, 0.9);
+      border-radius: 0 15px 15px 15px;
+      color: white;
+      padding: 5px;
+    }
+  }
+  .btn-shot {
+    background: $secondary;
+    margin-top: 10px;
+    height: 40px;
+    width: 100px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    border-radius: 25px;
+    z-index: 1;
+  }
 }
 
 
