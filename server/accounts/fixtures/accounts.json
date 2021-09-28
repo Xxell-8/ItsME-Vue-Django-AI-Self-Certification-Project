@@ -1,0 +1,62 @@
+[
+  {
+    "model": "accounts.Partner",
+    "pk": 1,
+    "fields": {
+      "code": "54921356",
+      "name": "기업1"
+    }
+  },
+  {
+    "model": "accounts.Partner",
+    "pk": 2,
+    "fields": {
+      "code": "12349872",
+      "name": "기업2"
+    }
+  },
+  {
+    "model": "accounts.User",
+    "pk": 1,
+    "fields": {
+      "partner": 1,
+      "auth": 1,
+      "email": "user1@email.com",
+      "approval": 1,
+      "password": "pbkdf2_sha256$260000$P9dbbwL85AEqmB77ji62u2$ExrxoEubZm8vjrg6DjwnyJ7JCs2k+Th1oLozYbOiSFk="
+    }
+  },
+  {
+    "model": "accounts.User",
+    "pk": 2,
+    "fields": {
+      "partner": 1,
+      "auth": 0,
+      "email": "user2@email.com",
+      "approval": 1,
+      "password": "pbkdf2_sha256$260000$tyq56QZ9Ah2nx4W48AqUsD$3j2C+i+bR0Kd728Xf9/55QSYT+OKyQd/KRCBEBIeF8I="
+    }
+  },
+  {
+    "model": "accounts.User",
+    "pk": 3,
+    "fields": {
+      "partner": 2,
+      "auth": 1,
+      "email": "user3@email.com",
+      "approval": 1,
+      "password": "pbkdf2_sha256$260000$ojQbnrHLZSEktVyF6Quiu2$ik++ePhV3TApjIYJr6xyf/LvgZEMj1fY/3lR8QpOZB8="
+    }
+  },
+  {
+    "model": "accounts.User",
+    "pk": 4,
+    "fields": {
+      "partner": 2,
+      "auth": 0,
+      "email": "user4@email.com",
+      "approval": 1,
+      "password": "pbkdf2_sha256$260000$2A80xNiocsBSXAKRqcqLf1$SvP8rYBJfF3oCOTSIRg8nuCUoaRkzkwDSpCBr9ruZAM=s"
+    }
+  }
+]
