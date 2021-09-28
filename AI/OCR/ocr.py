@@ -2,19 +2,18 @@ import pytesseract
 import cv2
 import numpy as np
 import argparse
+import re
 
 
 
-def image_detection(image_path):
+def image_detection(image):
     # 1-1. 이미지 읽어오기
-    image = cv2.imread(image_path)
     orig = image.copy()
 
     # 2-1. 이미지 리사이즈
     r = 800.0 / image.shape[0]
     dim = (int(image.shape[1] * r), 800)
     image = cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
-
     # 2-2. 가장자리 검출
     # 2-2-1. 흑백 변환
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -105,29 +104,28 @@ def image_detection(image_path):
 
 def text_detection(image):
     orig = image.copy()             # 원본 이미지 복사
-
     # 이미지 전처리
     image[:,:,0] = 0
     image[:,:,1] = 0
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)     # 바이너리 이미지로 변환
-    erosion = cv2.erode(gray, np.ones((2, 2), np.uint8), iterations=1)   # Erosion(침식): 바이너리 이미지에서 흰색(1) 오브젝트의 외곽픽셀을 검은색(0)으로 만든다.
-    dilate = cv2.dilate(gray, np.ones((2, 2), np.uint8), iterations=1)   # Dilate(팽창): 바이너리 이미지에서 검은색(0) 오브젝트의 외곽픽셀을 횐색(1)으로 만든다.
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)     # 바이너리 이미지로 변환
+    erosion = cv2.erode(image, np.ones((2, 2), np.uint8), iterations=1)   # Erosion(침식): 바이너리 이미지에서 흰색(1) 오브젝트의 외곽픽셀을 검은색(0)으로 만든다.
+    dilate = cv2.dilate(image, np.ones((2, 2), np.uint8), iterations=1)   # Dilate(팽창): 바이너리 이미지에서 검은색(0) 오브젝트의 외곽픽셀을 횐색(1)으로 만든다.
     image = cv2.subtract(dilate, erosion)    # Morph Gradient = dilate - erosion
     cv2.imshow('Morph Gradient', image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-    mean = cv2.mean(image)
-
-    _, image = cv2.threshold(image, mean[0]*5, 255, cv2.THRESH_BINARY)     # global threshold: 신분증 배경을 제거하기 위해
+    _, image = cv2.threshold(image, 13, 255, cv2.THRESH_BINARY)     # global threshold: 신분증 배경을 제거하기 위해
     cv2.imshow('Threshold', image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 5, 5)
+
+    image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 9, 3)
     cv2.imshow('Adaptive Threshold', image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel=np.ones((3, 30)), iterations=1)
+
+    image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel=np.ones((image.shape[0]//200, image.shape[1]//20), np.uint8), iterations=1)
     cv2.imshow('Morph Close', image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
@@ -168,13 +166,20 @@ def text_recognition(image):
     return result.rstrip()
 
 
-# def image_masking(image, texts, boxes):
-#     image = image.copy()
-
-#     for text, (x, y, w, h) in zip(texts, boxes):
-#         pass
-
-#     return
+def image_masking(image, texts, boxes):
+    image = image.copy()
+    customer_info = {}
+    registration_number_pattern = re.compile('\d{6}[-]\d{7}')
+    issue_date_pattern = re.compile('[가-힣0-9?~!@#$%&*]+[.][가-힣0-9?~!@#$%&*]+[.][가-힣0-9?~!@#$%&*]+[.]')
+    for text, (x, y, w, h) in zip(texts, boxes):
+        if registration_number_pattern.match(text):
+            customer_info['registration_number'] = text
+            cv2.rectangle(image, (x+w//2, y), (x+w, y+h), (100, 100, 100), -1)
+            cv2.rectangle(image, (x-h, y+h+h//2), (x+h+w, y+h*4+h//3*2), (100, 100, 100), -1)
+        elif issue_date_pattern.match(text):
+            cv2.rectangle(image, (x, y), (x+w, y+h), (100, 100, 100), -1)
+    
+    return image, customer_info
 
 
 if __name__ == '__main__':
@@ -184,24 +189,21 @@ if __name__ == '__main__':
 
     pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
 
-    id_card = image_detection(args.image_path)
-    id_card_orig = id_card.copy()
-    # id_card = cv2.imread(args.image_path)
-    area = text_detection(id_card)
+    image = cv2.imread(args.image_path)
+    image = image_detection(image)
+    image_orig = image.copy()
+    area = text_detection(image)
     texts = []
     boxes = []
     for x, y, w, h in area:
-        text = text_recognition(id_card[y:y+h, x:x+w])
+        text = text_recognition(image[y:y+h, x:x+w])
         if text:
             print(text)
-            cv2.imshow('Text Image', id_card_orig[y:y+h, x:x+w])
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
 
             texts.append(text)
             boxes.append((x, y, w, h))
 
-    # masked_image = image_masking(id_card_orig, texts, boxes)
-    # cv2.imshow('Masked Image', masked_image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    masked_image, customer_info = image_masking(image_orig, texts, boxes)
+    cv2.imshow('Masked Image', masked_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
