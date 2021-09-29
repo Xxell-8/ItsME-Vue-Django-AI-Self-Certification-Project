@@ -1,13 +1,25 @@
 <template>
   <div class="user-menu f-row-end">
-    <i class="fi fi-rr-bell"></i>
-    <img src="@/assets/image/temp/profile.jpg" alt="">
-    <i class="dropdown-menu fi fi-rr-angle-small-down"></i>
+    <div class="user-info" v-if="userInfo">
+      <span>{{ userInfo.name }} {{ userInfo.fullname }}</span>님
+    </div>
+    <button
+      class="btn btn-logout btn-outline fw-500"
+      @click="onLogout"
+    >로그아웃</button>
   </div>
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+
 export default {
-  name: 'UserNav'
+  name: 'UserNav',
+  methods: {
+    ...mapActions('accounts', ['onLogout'])
+  },
+  computed: {
+    ...mapState('accounts', ['userInfo'])
+  }
 }
 </script>
