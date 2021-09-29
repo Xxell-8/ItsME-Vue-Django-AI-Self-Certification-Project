@@ -1,118 +1,50 @@
-from django.shortcuts import get_list_or_404, get_object_or_404
-from rest_framework.decorators import api_view, permission_classes
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Link, Template, Customer
-from .serializers import TemplateSerializer, LinkSerializer, CustomerSerializer
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from .models import Link, Customer
+from .serializers import LinkSerializer, CustomerSerializer
+from accounts.models import Partner
+import cv2
+import numpy as np
 
 
 
 # Create your views here.
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
-def template(request):
-    partner = request.user.partner
-
-    if request.method == 'GET':
-        # 템플릿 목록 조회
-        templates = Template.objects.filter(partner=partner)
-        serializer = TemplateSerializer(templates, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    elif request.method == 'POST':
-        # 템플릿 생성
-        serializer = TemplateSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(partner=request.user.partner)
-            data = {
-                'success': True
-            }
-            return Response(data, status=status.HTTP_201_CREATED)
-    
-
-@api_view(['GET', 'PATCH', 'DELETE'])
-@permission_classes([IsAuthenticated])
-def template_detail(request, template_id):
-    template = get_object_or_404(Template, pk=template_id)
-
-    if template.partner != request.user.partner:
-        data = {
-            'message': '권한이 없습니다.'
-        }
-        return Response(data, status=status.HTTP_403_FORBIDDEN)
-
-    if request.method == 'GET':
-        # 템플릿 상세 조회
-        serializer = TemplateSerializer(template)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    elif request.method == 'PATCH':
-        # 템플릿 수정
-        serializer = TemplateSerializer(template, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-    elif request.method == 'DELETE':
-        # 템플릿 삭제
-        template.delete()
-        data = {
-            'success': True
-        }
-        return Response(data, status=status.HTTP_204_NO_CONTENT)
-
-
-@api_view(['GET', 'POST'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def link(request):
-    partner = request.user.partner
+    user = request.user
 
     if request.method == 'GET':
         # 링크 목록 조회
-        links = Link.objects.filter(partner=partner)
+        links = Link.objects.filter(managers__in=[user])
         serializer = LinkSerializer(links, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif request.method == 'POST':
         # 링크 생성
-        if request.data.get('customers'):
-            customers = [{'name': name} for name in request.data.get('customers')]
-        else:
-            data = {
-                "customers": [
-                    "이 필드는 필수 항목입니다."
-                ]
-            }
-            return Response(data, status=status.HTTP_400_BAD_REQUEST)
-
+        company = request.data.get('company')
+        partner = get_object_or_404(Partner, name=company)
         serializer = LinkSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            link = serializer.save(partner=partner)
-            for customer in customers:
-                serializer = CustomerSerializer(data=customer)
-                if serializer.is_valid():
-                    serializer.save(link=link)
-                    data = {
-                        'success': True,
-                    }
-                    return Response(data, status=status.HTTP_201_CREATED)
-                else:
-                    link.delete()
-                    data = {
-                        "customers": [
-                            "유효하지 않은 데이터입니다."
-                        ]
-                    }
-                    return Response(data, status=status.HTTP_400_BAD_REQUEST)
+            serializer.save(partner=partner)
+            data = {
+                'success': True
+            }
+            return Response(data, status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET', 'PATCH', 'DELETE'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def link_detail(request, link_id):
     link = get_object_or_404(Link, pk=link_id)
 
-    if not link.manage_users.filter(pk=request.user.pk).exists():
+    if not link.managers.filter(pk=request.user.pk).exists():
         data = {
             'message': '권한이 없습니다.'
         }
@@ -140,11 +72,12 @@ def link_detail(request, link_id):
     
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def customer(request, link_id):
     link = get_object_or_404(Link, pk=link_id)
 
-    if not link.manage_users.filter(pk=request.user.pk).exists():
+    if not link.managers.filter(pk=request.user.pk).exists():
         data = {
             'message': '권한이 없습니다.'
         }
@@ -157,7 +90,27 @@ def customer(request, link_id):
         return Response(serializers.data, status=status.HTTP_200_OK)
 
 
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+def id_card_ocr(request):
+    # 신분증 OCR 및 비식별화
+    image_file = request.FILES['image']
+    encoded_img = np.fromstring(image_file.read(), dtype=np.uint8)
+    image = cv2.imdecode(encoded_img, cv2.IMREAD_COLOR)
+    print(image.shape)
+    return Response({})
+
+
+def compare_info(id_card_info, customer_info):
+    # 정보 비교
+    for key in customer_info:
+        if id_card_info[key] != customer_info[key]:
+            return False
+    return True
+
+
 @api_view(['PATCH'])
+@authentication_classes([JWTAuthentication])
 @permission_classes([AllowAny])
 def customer_detail(request, customer_id):
     customer = get_object_or_404(Customer, pk=customer_id)

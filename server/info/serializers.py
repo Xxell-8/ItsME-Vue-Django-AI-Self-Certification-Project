@@ -1,22 +1,39 @@
-from .models import Template, Link, Customer
-from accounts.serializers import UserSerializer
+from django.contrib.auth import get_user_model
+from .models import Link, Customer
 from rest_framework import serializers
 
 
-class TemplateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Template
-        fields = '__all__'
-        read_only_fields = ['partner']
-
-class LinkSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Link
-        fields = '__all__'
-        read_only_fields = ['partner', 'created_date']
 
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = '__all__'
         read_only_fields = ['link']
+
+
+class LinkSerializer(serializers.ModelSerializer):
+    customers = CustomerSerializer(many=True, write_only=True)
+    total = serializers.SerializerMethodField()
+    complete_cnt = serializers.SerializerMethodField()
+    class Meta:
+        model = Link
+        fields = '__all__'
+        read_only_fields = ['partner', 'created_at']
+
+    def create(self, validated_data):
+        customers_data = validated_data.pop('customers')
+        managers = validated_data.pop('managers')
+        link = Link.objects.create(**validated_data)
+        link.managers.set(managers)
+        for customer_data in customers_data:
+            Customer.objects.create(link=link, **customer_data)
+        return link
+
+    def get_total(self, obj):
+        return obj.customers.count()
+
+    def get_complete_cnt(self, obj):
+        return obj.customers.filter(is_completed=True).count()
+
+class IdCardSerializer(serializers.Serializer):
+    image = serializers.ImageField()
