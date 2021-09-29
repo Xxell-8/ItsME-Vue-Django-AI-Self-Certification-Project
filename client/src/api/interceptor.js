@@ -29,7 +29,7 @@ _axios.interceptors.response.use(
       store.commit('accounts/SET_ACCESS_TOKEN', response.data.access_token)
     }
     if (response.data.refresh_token) {
-      store.commit('user/SET_REFRESH_TOKEN', response.data.refresh_token)
+      store.commit('accounts/SET_REFRESH_TOKEN', response.data.refresh_token)
     }
     return Promise.resolve(response)
   },
