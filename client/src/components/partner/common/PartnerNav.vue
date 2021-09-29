@@ -7,21 +7,21 @@
     >
     <img
       class="icon" 
-      src="@/assets/image/icon/user.svg"
+      src="@/assets/image/iconSvg/user.svg"
       alt="고객 정보 관리"
       title="고객 정보 관리"
       @click="$router.push({ name: 'LinkList' })"
     >
     <img
       class="icon" 
-      src="@/assets/image/icon/newlink.svg"
+      src="@/assets/image/iconSvg/newlink.svg"
       alt="신규 링크 생성"
       title="신규 링크 생성"
       @click="$router.push({ name: 'NewLink' })"
     >
     <img
       class="icon" 
-      src="@/assets/image/icon/company.svg"
+      src="@/assets/image/iconSvg/company.svg"
       alt="회사 설정"
     >
   </div>

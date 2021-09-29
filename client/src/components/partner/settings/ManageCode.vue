@@ -10,7 +10,7 @@
     <div class="code">
       <span id="code">{{ hiddenCode }}</span>
       <img 
-        src="@/assets/image/icon/copy.svg" 
+        src="@/assets/image/iconSvg/copy.svg" 
         alt=""
         @click="copyCode"
       >

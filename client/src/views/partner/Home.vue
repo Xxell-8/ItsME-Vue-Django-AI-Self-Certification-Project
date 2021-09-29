@@ -6,7 +6,7 @@
     <div class="body-with-nav">
       <div class="header f-column-start t-white">
         <div class="subtitle">안녕하세요,</div>
-        <div class="title"><span>{{ userInfo.name }} {{ userInfo.fullname }}</span>님</div>
+        <div v-if="userInfo" class="title"><span>{{ userInfo.name }} {{ userInfo.fullname }}</span>님</div>
       </div>
       <HomeMenu/>
     </div>
