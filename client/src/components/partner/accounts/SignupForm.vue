@@ -72,7 +72,7 @@
         <!-- 회원가입 버튼 -->
         <button
           :class="[ isSubmit ? 'btn-secondary' : 'btn-disabled', 'btn-submit font-mont fw-500']"
-          @click="onSignup(userInfo)"
+          @click="onSignup"
         >Signup</button>
       </div>
     </div>
@@ -80,7 +80,8 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState } from 'vuex'
+import accountApi from '@/api/accounts.js'
 import PV from "password-validator"
 import * as EmailValidator from "email-validator"
 
@@ -106,7 +107,17 @@ export default {
     }
   },
   methods: {
-    ...mapActions('accounts', ['onSignup']),
+    async onSignup () {
+      await accountApi.signup(this.userInfo)
+        .then((res) => {
+          console.log(res)
+          this.$store.commit('accounts/SET_TEMP_NAME', this.name)
+          this.$emit('next')
+        })
+        .catch((err) => {
+          console.log(err.response)
+        })
+    },
     checkForm() {
       // 이메일 형식 검증
       if (this.email.length >= 0 && !EmailValidator.validate(this.email)) {
@@ -196,13 +207,15 @@ export default {
     }
   },
   computed: {
+    ...mapState('accounts', ['companyInfo']),
     userInfo: function () {
       return {
         'email': this.email,
         'password1': this.password,
         'password2': this.passwordConfirm,
-        'name': this.name,
-        'code': 'A2041234',
+        'fullname': this.name,
+        'name': this.companyInfo.name,
+        'code': this.companyInfo.code,
         'phone': this.phoneNum,
       }
     },

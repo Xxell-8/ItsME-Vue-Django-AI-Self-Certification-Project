@@ -20,9 +20,9 @@
           />
           <datalist id ="list">
             <option
-              v-for="(partner, idx) in partners"
-              :key="idx"
-            >{{partner}}</option>
+              v-for="partner in partnersInfo"
+              :key="partner.id"
+            >{{ partner.name }}</option>
           </datalist>
           <label>소속 회사명</label>
           <div class="error-text" v-if="error.company">{{error.company}}</div>
@@ -43,8 +43,8 @@
         </div>
         <!-- 로그인 버튼 -->
         <button
-          :class="[ isSubmit ? 'btn-secondary' : 'btn-disabled', 'btn-submit font-mont fw-500']"
-          @click="login"
+          :class="[ isSubmit && isCorrect ? 'btn-secondary' : 'btn-disabled', 'btn-submit font-mont fw-500']"
+          @click="goNext"
         >Next</button>
       </div>
     </div>
@@ -53,19 +53,13 @@
 
 <script>
 import accountApi from '@/api/accounts.js'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'SignupCert',
   data: () => {
     return {
-      partners: [
-        'sample1',
-        'sample2',
-        'sample3',
-        'sample4',
-        'sample5',
-        'sample6',
-      ],
+      partnersInfo: null,
       company: '',
       code: '',
       error: {
@@ -73,10 +67,16 @@ export default {
         code: false
       },
       isSubmit: false,
+      isCorrect: false,
       wrongInput: false
     }
   },
   methods: {
+    ...mapMutations('accounts', ['SET_COMPANY_INFO']),
+    goNext() {
+      this.SET_COMPANY_INFO(this.companyInfo)
+      this.$emit('next')
+    },
     checkForm() {
       // 이메일 형식 검증
       if (!this.company.trim().length) {
@@ -99,27 +99,47 @@ export default {
       })
       this.isSubmit = isSubmit;
     },
+    checkKey() {
+      this.partnersInfo.forEach((partner) => {
+        if (partner.name === this.company) {
+          // console.log(partner)
+          if (this.code === partner.code) {
+            this.isCorrect = true
+          } else {
+            this.isCorrect = false
+          }
+        }
+      })
+    }
   },
   watch: {
     company: function() {
-      this.checkForm();
+      this.checkForm()
+      this.checkKey()
     },
     code: function() {
-      this.checkForm();
+      this.checkForm()
+      this.checkKey()
     }
   },
   computed: {
-    userData: function () {
+    companyInfo: function () {
       return {
-        'company': this.company,
+        'name': this.company,
         'code': this.code
       }
     },
+    partners: function () {
+      return this.partnersInfo.map((partner => {
+        return partner.name
+      }))
+    }
   },
   async created () {
     await accountApi.getPartnerList()
       .then ((res) => {
-        console.log(res)
+        // console.log(res)
+        this.partnersInfo = res.data.results
       })
   }
 }

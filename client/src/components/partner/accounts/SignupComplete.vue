@@ -9,7 +9,7 @@
       </div>
       <div class="f-column t-center">
         <div class="main-text t-white">
-          <span class="fw-900">username</span>님,<br/>
+          <span class="fw-900">{{ tempName }}</span>님,<br/>
           환영합니다.
         </div>
         <div class="sub-text t-white fw-200">
@@ -26,7 +26,11 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'SignupComplete',
+  computed: {
+    ...mapState('accounts', ['tempName'])
+  }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <SignupCert v-if="!step"/>
-    <SignupForm v-else-if="step === 1"/>
+    <SignupCert v-if="!step" @next="step += 1"/>
+    <SignupForm v-else-if="step === 1" @next="step += 1"/>
     <SignupComplete v-else-if="step === 2"/>
   </div>
 </template>
@@ -22,6 +22,6 @@ export default {
     return {
       step: 0
     }
-  }
+  },
 }
 </script>
