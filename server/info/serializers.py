@@ -42,4 +42,6 @@ class LinkDetailSerializer(serializers.ModelSerializer):
         return link
 
 class IdCardSerializer(serializers.Serializer):
-    image = serializers.ImageField()
+    img = serializers.ImageField()
+    name = serializers.CharField(max_length=10)
+    birth = serializers.CharField(max_length=6)
