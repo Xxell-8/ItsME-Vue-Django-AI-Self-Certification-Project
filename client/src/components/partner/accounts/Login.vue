@@ -42,11 +42,11 @@
           class="btn t-white"
           @click="$router.push({ name: 'Accounts', params: { page: 'signup'}})"
         >회원가입</span>
-        <span class="t-white mx-1"> • </span>
+        <!-- <span class="t-white mx-1"> • </span>
         <span
           class="btn t-white"
           @click="moveToFindPassword"
-        >비밀번호 찾기</span>
+        >비밀번호 찾기</span> -->
       </div>
     </div>
   </div>
