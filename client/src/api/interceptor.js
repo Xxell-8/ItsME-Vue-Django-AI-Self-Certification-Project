@@ -1,15 +1,20 @@
 import axios from 'axios'
+import Cookies from "js-cookie"
 import router from '@/router'
 import store from '@/store/index.js'
 
 const _axios = axios.create({
   baseURL: process.env.VUE_APP_SERVER_URL,
   timeout: 10000,
+  xsrfCookieName: 'csrftoken',
+  xsrfHeaderName: 'X-CSRFToken',
+  // withCredentials: true,
 })
 
 _axios.interceptors.request.use(
   function (config) {
-    config.headers['Authorization'] = `JWT ${store.state.accounts.acToken}`
+    config.headers['Authorization'] = `Bearer ${store.state.accounts.acToken}`
+    config.headers['X-CSRFToken'] = Cookies.get("csrftoken")
     return config;
   }, 
   function (error) {
@@ -20,12 +25,12 @@ _axios.interceptors.request.use(
 _axios.interceptors.response.use(
   function (response) {
     // 토큰 자동 저장
-    if (response.data.token) {
-      store.commit('accounts/SET_ACCESS_TOKEN', response.data.token)
+    if (response.data.access_token) {
+      store.commit('accounts/SET_ACCESS_TOKEN', response.data.access_token)
     }
-    // if (response.data.refreshtoken) {
-    //   store.commit('user/SET_REFRESH_TOKEN', response.data.refreshtoken)
-    // }
+    if (response.data.refresh_token) {
+      store.commit('accounts/SET_REFRESH_TOKEN', response.data.refresh_token)
+    }
     return Promise.resolve(response)
   },
 

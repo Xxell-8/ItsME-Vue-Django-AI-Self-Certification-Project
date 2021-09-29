@@ -20,6 +20,7 @@
     "axios": "^0.21.4",
     "core-js": "^3.6.5",
     "email-validator": "^2.0.4",
+    "js-cookie": "^3.0.1",
     "moment": "^2.29.1",
     "password-validator": "^5.1.1",
     "vue": "^3.0.0",

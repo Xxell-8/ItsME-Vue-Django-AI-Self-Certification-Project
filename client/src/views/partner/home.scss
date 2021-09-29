@@ -1,0 +1,60 @@
+@import "@/assets/style/_color.scss";
+@import '@/assets/style/_mixin.scss';
+
+.header {
+  color: $white;
+  margin-bottom: 3rem;
+  .subtitle {
+    font-weight: 300;
+    font-size: 1.7rem;
+  }
+  .title {
+    font-size: 2rem;
+    font-weight: 300;
+    span {
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-right: 0.4rem;
+    }
+  }
+}
+
+.menu-item {
+  width: 30%;
+  min-width: 200px;
+  max-width: 250px;
+  height: 360px;
+  padding-top: 2rem;
+  background-color: $white;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.25);
+  border-radius: 15px;
+  text-align: center;
+  .subtitle {
+    color: $primary;
+    font-weight: 500;
+  }
+  .title {
+    color: $dark;
+    font-size: 2rem;
+    font-weight: 900;
+    margin-top: 0.4rem;
+  }
+  .content {
+    color: $dark;
+    font-size: 0.9rem;
+    font-weight: 300;
+    margin-top: 1rem;
+  }
+}
+
+.btn-menu {
+  width: 80%;
+  height: 40px;
+  margin-top: 2rem;
+  border-radius: 20px !important;
+  margin-bottom: 3rem;
+  &:hover {
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+}
