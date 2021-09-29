@@ -13,7 +13,6 @@
             class="account-input"
             v-model="email"
             type="text"
-            @keyup.enter="login"
             autocapitalize="off"
             required
           />
@@ -27,7 +26,6 @@
             class="account-input"
             v-model="password"
             type="password"
-            @keyup.enter="login"
             required
           />
             <label>비밀번호</label>
@@ -40,7 +38,6 @@
             class="account-input"
             v-model="passwordConfirm"
             type="password"
-            @keyup.enter="login"
             required
           />
             <label>비밀번호 확인</label>
@@ -53,7 +50,6 @@
             class="account-input"
             v-model="name"
             type="text"
-            @keyup.enter="login"
             autocapitalize="off"
             required
           />
@@ -67,17 +63,16 @@
             class="account-input"
             v-model="phoneNum"
             type="text"
-            @keyup.enter="login"
             maxlength="13"
             required
           />
             <label>휴대폰 번호</label>
           <div class="error-text" v-if="error.phoneNum">{{error.phoneNum}}</div>
         </div>
-        <!-- 로그인 버튼 -->
+        <!-- 회원가입 버튼 -->
         <button
           :class="[ isSubmit ? 'btn-secondary' : 'btn-disabled', 'btn-submit font-mont fw-500']"
-          @click="login"
+          @click="onSignup"
         >Signup</button>
       </div>
     </div>
@@ -85,6 +80,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import accountApi from '@/api/accounts.js'
 import PV from "password-validator"
 import * as EmailValidator from "email-validator"
 
@@ -110,6 +107,17 @@ export default {
     }
   },
   methods: {
+    async onSignup () {
+      await accountApi.signup(this.userInfo)
+        .then((res) => {
+          console.log(res)
+          this.$store.commit('accounts/SET_TEMP_NAME', this.name)
+          this.$emit('next')
+        })
+        .catch((err) => {
+          console.log(err.response)
+        })
+    },
     checkForm() {
       // 이메일 형식 검증
       if (this.email.length >= 0 && !EmailValidator.validate(this.email)) {
@@ -199,10 +207,16 @@ export default {
     }
   },
   computed: {
-    userData: function () {
+    ...mapState('accounts', ['companyInfo']),
+    userInfo: function () {
       return {
         'email': this.email,
-        'password': this.password,
+        'password1': this.password,
+        'password2': this.passwordConfirm,
+        'fullname': this.name,
+        'name': this.companyInfo.name,
+        'code': this.companyInfo.code,
+        'phone': this.phoneNum,
       }
     },
   },

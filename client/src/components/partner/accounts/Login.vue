@@ -33,7 +33,7 @@
         <!-- 로그인 버튼 -->
         <button
           :class="[ isSubmit ? 'btn-secondary' : 'btn-disabled', 'btn-submit font-mont fw-500']"
-          @click="login"
+          @click="onLogin(userData)"
         >Login</button>
       </div>
       <!-- 페이지 이동 버튼 -->
@@ -42,17 +42,18 @@
           class="btn t-white"
           @click="$router.push({ name: 'Accounts', params: { page: 'signup'}})"
         >회원가입</span>
-        <span class="t-white mx-1"> • </span>
+        <!-- <span class="t-white mx-1"> • </span>
         <span
           class="btn t-white"
           @click="moveToFindPassword"
-        >비밀번호 찾기</span>
+        >비밀번호 찾기</span> -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import PV from "password-validator"
 import * as EmailValidator from "email-validator"
 
@@ -72,6 +73,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('accounts', ['onLogin']),
     checkForm() {
       // 이메일 형식 검증
       if (this.email.length >= 0 && !EmailValidator.validate(this.email)) {

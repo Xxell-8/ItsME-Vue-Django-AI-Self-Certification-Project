@@ -15,7 +15,6 @@ import './accounts.scss'
 import Login from '@/components/partner/accounts/Login'
 import Signup from '@/components/partner/accounts/Signup'
 
-
 export default {
   name: 'Accounts',
   data () {
