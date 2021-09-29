@@ -9,12 +9,25 @@
   flex-direction: column;
   align-items: flex-start;
 }
+.f-column-top {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
 
 .f-row {
   display: flex;
   flex-direction: row;
   gap: 20px;
   justify-content: center;
+  align-items: center;
+}
+.f-row-between {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: space-around;
   align-items: center;
 }
 .f-row-left {
