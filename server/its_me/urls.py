@@ -41,13 +41,15 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include(router.urls)),
-    path('accounts/', include('accounts.urls')),
-    path('accounts/', include('dj_rest_auth.urls')),
-    path('accounts/registration', include('dj_rest_auth.registration.urls')),
-    path('accounts/', include('allauth.urls')),
-    path('info/', include('info.urls')),
+    path('api/', include([
+        path('admin/', admin.site.urls),
+        path('', include(router.urls)),
+        path('accounts/', include('accounts.urls')),
+        path('accounts/', include('dj_rest_auth.urls')),
+        path('accounts/registration', include('dj_rest_auth.registration.urls')),
+        path('accounts/', include('allauth.urls')),
+        path('info/', include('info.urls')),
+    ]))
 ]
 
 if settings.DEBUG:
