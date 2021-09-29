@@ -8,7 +8,7 @@
         <div class="subtitle">본인 인증 데이터</div>
         <div class="title">고객 정보 관리</div>
       </div>
-      <div class="f-column links">
+      <div class="f-column-start links">
         <LinkListItem
           v-for="(link, idx) in temp"
           :key="idx"

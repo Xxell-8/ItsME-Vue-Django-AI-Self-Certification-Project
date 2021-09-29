@@ -1,5 +1,5 @@
 <template>
-  <div class="link-item f-row">
+  <div class="link-item f-row-between">
     <div class="content f-column-start">
       <span class="name">{{ info.title }}</span>
       <span class="status">
