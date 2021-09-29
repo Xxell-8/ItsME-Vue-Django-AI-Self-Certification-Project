@@ -1,6 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import store from '@/store/'
 import Home from '@/views/intro/Home.vue'
+import Introduction from '@/views/customer/info/Introduction'
+import FaceRecognition from '@/views/customer/verification/FaceRecognition'
+import MotionRecognition from '@/views/customer/verification/MotionRecognition'
+import CardRecognition from '@/views/customer/verification/CardRecognition'
 import PartnerHome from '@/views/partner/Home'
 import Accounts from '@/views/partner/Accounts'
 import NewLink from '@/views/partner/NewLink'
@@ -50,6 +54,26 @@ const routes = [
     component: Settings
   },
   // Customer
+  {
+    path: '/customer/introduction/',
+    name: 'Index',
+    component: Introduction
+  },
+  {
+    path: '/customer/face-recognition/',
+    name: 'FaceRecognition',
+    component: FaceRecognition
+  },
+  {
+    path: '/customer/motion-recognition',
+    name: 'MotionRecognition',
+    component: MotionRecognition
+  },
+  {
+    path: '/customer/card-recognition/',
+    name: 'CardRecognition',
+    component: CardRecognition
+  },
   // Error
   { 
     path: '/:pathMatch(.*)*', 
