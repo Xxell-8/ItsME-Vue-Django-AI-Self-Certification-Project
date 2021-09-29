@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import Link, Customer
-from .serializers import LinkSerializer, CustomerSerializer
+from .serializers import LinkListSerializer, CustomerSerializer, LinkDetailSerializer
 from accounts.models import Partner
 import cv2
 import numpy as np
@@ -22,14 +22,14 @@ def link(request):
     if request.method == 'GET':
         # 링크 목록 조회
         links = Link.objects.filter(managers__in=[user])
-        serializer = LinkSerializer(links, many=True)
+        serializer = LinkListSerializer(links, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif request.method == 'POST':
         # 링크 생성
         company = request.data.get('company')
         partner = get_object_or_404(Partner, name=company)
-        serializer = LinkSerializer(data=request.data)
+        serializer = LinkDetailSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save(partner=partner)
             data = {
@@ -52,12 +52,12 @@ def link_detail(request, link_id):
 
     if request.method == 'GET':
         # 링크 상세 조회
-        serializer = LinkSerializer(link)
+        serializer = LinkDetailSerializer(link)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'PATCH':
         # 링크 수정
-        serializer = LinkSerializer(link, data=request.data, partial=True)
+        serializer = LinkDetailSerializer(link, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -70,25 +70,6 @@ def link_detail(request, link_id):
         }
         return Response(data, status=status.HTTP_204_NO_CONTENT)
     
-
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
-def customer(request, link_id):
-    link = get_object_or_404(Link, pk=link_id)
-
-    if not link.managers.filter(pk=request.user.pk).exists():
-        data = {
-            'message': '권한이 없습니다.'
-        }
-        return Response(data, status=status.HTTP_403_FORBIDDEN)
-
-    if request.method == 'GET':
-        # 해당 링크의 고객정보 확인
-        customers = link.customer_set.all()
-        serializers = CustomerSerializer(customers, many=True)
-        return Response(serializers.data, status=status.HTTP_200_OK)
-
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
@@ -112,7 +93,7 @@ def compare_info(id_card_info, customer_info):
 @api_view(['PATCH'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([AllowAny])
-def customer_detail(request, customer_id):
+def customer(request, customer_id):
     customer = get_object_or_404(Customer, pk=customer_id)
     link = customer.link
     template = link.template
