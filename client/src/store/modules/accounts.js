@@ -15,10 +15,10 @@ const actions = {
     router.push({ name: 'PartnerHome' })
   },
   async onLogin({ dispatch, commit }, userData) {
-    console.log(userData)
+    // console.log(userData)
     await accountApi.login(userData)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_IS_LOGIN', true)
         dispatch('getUserInfo', res.data.user.pk)
         dispatch('moveToPartnerHome')
