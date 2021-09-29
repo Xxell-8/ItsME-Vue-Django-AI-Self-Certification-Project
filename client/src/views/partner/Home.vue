@@ -6,7 +6,7 @@
     <div class="body-with-nav">
       <div class="header f-column-start t-white">
         <div class="subtitle">안녕하세요,</div>
-        <div class="title"><span>{{ company }} {{ user }}</span>님</div>
+        <div class="title"><span>{{ userInfo.name }} {{ userInfo.fullname }}</span>님</div>
       </div>
       <HomeMenu/>
     </div>
@@ -16,6 +16,7 @@
 <script>
 import './common.scss'
 import './home.scss'
+import { mapState } from 'vuex'
 import PartnerNav from '@/components/partner/common/PartnerNav'
 import UserNav from '@/components/partner/common/UserNav'
 import HomeMenu from '@/components/partner/home/HomeMenu'
@@ -26,11 +27,8 @@ export default {
     UserNav,
     HomeMenu
   },
-  data () {
-    return {
-      user: '우만승',
-      company: 'SSAFY'
-    }
+  computed: {
+    ...mapState('accounts', ['userInfo'])
   }
 }
 </script>
