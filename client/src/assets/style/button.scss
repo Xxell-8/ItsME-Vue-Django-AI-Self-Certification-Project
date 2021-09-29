@@ -1,0 +1,30 @@
+@import "./_color.scss";
+
+.btn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: $primary;
+  color: $white;
+}
+.btn-secondary {
+  background-color: $secondary;
+  color: $grey-dark;
+}
+.btn-dark {
+  background-color: $dark;
+  color: $secondary;
+}
+.btn-outline {
+  border: 2px solid $light;
+  background: none;
+  color: $light;
+}
+.btn-disabled {
+  background-color: $dark;
+  color: $light;
+  pointer-events: none;
+}
