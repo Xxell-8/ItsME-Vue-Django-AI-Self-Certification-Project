@@ -1,13 +1,29 @@
 <template>
-  <div class="left-nav f-column">
+  <div class="left-nav f-column-top">
     <img 
       @click="$router.push({ name: 'PartnerHome'})"
       src="@/assets/image/logo/white-sm.svg" 
       alt="go to Home"
     >
-    <i class="fi fi-sr-mode-portrait"></i>
-    <i class="fi fi-sr-interactive"></i>
-    <i class="fi fi-rr-alarm-clock"></i>
+    <img
+      class="icon" 
+      src="@/assets/image/icon/user.svg"
+      alt="고객 정보 관리"
+      title="고객 정보 관리"
+      @click="$router.push({ name: 'LinkList' })"
+    >
+    <img
+      class="icon" 
+      src="@/assets/image/icon/newlink.svg"
+      alt="신규 링크 생성"
+      title="신규 링크 생성"
+      @click="$router.push({ name: 'NewLink' })"
+    >
+    <img
+      class="icon" 
+      src="@/assets/image/icon/company.svg"
+      alt="회사 설정"
+    >
   </div>
 </template>
 
