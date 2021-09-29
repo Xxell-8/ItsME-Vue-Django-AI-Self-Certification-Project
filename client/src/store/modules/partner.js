@@ -15,11 +15,11 @@ const state = {
       link: 'LinkList'
     },
     {
-      title: '템플릿 관리',
-      subtitle: '본인 인증 화면 관리',
-      content: '고객에게 전송할<br/>본인 인증 서비스 화면을<br/>커스터마이징할 수 있습니다.',
-      link: 'PartnerHome'
-    },
+      title: "템플릿 관리", 
+      subtitle: "본인 인증 화면 관리", 
+      content: "고객에게 전송할<br/>본인 인증 서비스 화면을<br/>커스터마이징할 수 있습니다.",
+      link: null
+    }
   ]
 }
 
