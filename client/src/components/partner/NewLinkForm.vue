@@ -70,7 +70,7 @@
         <span v-if="fileName" class="file-info">
           {{ fileName }}
           <img 
-            src="@/assets/image/icon/del.svg"
+            src="@/assets/image/iconSvg/del.svg"
             alt="파일 등록 취소"
             @click="onDeleteFile"
           >
@@ -78,7 +78,7 @@
         <span v-else class="descript">
           <img 
             class="icon"
-            src="@/assets/image/icon/question.svg"
+            src="@/assets/image/iconSvg/question.svg"
             alt="파일 업로드 가이드"
           >
           <div class="descript-content">
