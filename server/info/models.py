@@ -3,33 +3,20 @@ from accounts.models import Partner
 from django.contrib.auth import get_user_model
 
 # Create your models here.
-class Template(models.Model):
-    name = models.CharField(max_length=45)
-    logo = models.ImageField(null=True)
-    content = models.TextField(blank=True)
-    motion = models.BooleanField()
-    id_name = models.BooleanField()
-    id_code = models.BooleanField()
-    id_date = models.BooleanField()
-    id_img = models.BooleanField()
-    partner = models.ForeignKey(Partner, on_delete=models.CASCADE)
-
-
 class Link(models.Model):
+    path = models.CharField(max_length=45, unique=True)
     name = models.CharField(max_length=45)
     repeatable = models.BooleanField()
-    created_date = models.DateTimeField(auto_now_add=True)
-    expiration_date = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    expired_at = models.DateTimeField()
     partner = models.ForeignKey(Partner, on_delete=models.CASCADE)
-    template = models.ForeignKey(Template, on_delete=models.CASCADE)
-    manage_users = models.ManyToManyField(get_user_model(), related_name='manage_links')
+    managers = models.ManyToManyField(get_user_model(), related_name='links')
 
 
 class Customer(models.Model):
-    link = models.ForeignKey(Link, on_delete=models.CASCADE)
+    link = models.ForeignKey(Link, on_delete=models.CASCADE, related_name='customers')
     is_completed = models.BooleanField(default=False)
-    completed_time = models.DateTimeField(auto_now=True)
+    completed_at = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=45)
+    birth = models.CharField(max_length=8)
     img = models.ImageField(null=True)
-    code = models.CharField(max_length=45, null=True)
-    date = models.DateField(null=True)

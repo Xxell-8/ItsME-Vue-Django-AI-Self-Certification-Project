@@ -56,7 +56,7 @@
       "auth": 0,
       "email": "user4@email.com",
       "approval": 1,
-      "password": "pbkdf2_sha256$260000$2A80xNiocsBSXAKRqcqLf1$SvP8rYBJfF3oCOTSIRg8nuCUoaRkzkwDSpCBr9ruZAM=s"
+      "password": "pbkdf2_sha256$260000$2A80xNiocsBSXAKRqcqLf1$SvP8rYBJfF3oCOTSIRg8nuCUoaRkzkwDSpCBr9ruZAM="
     }
   }
 ]
