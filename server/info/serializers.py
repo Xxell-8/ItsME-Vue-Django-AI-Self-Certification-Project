@@ -1,4 +1,4 @@
-from .models import Link, Customer
+from .models import Link, Customer, IdCard
 from rest_framework import serializers
 
 
@@ -24,6 +24,7 @@ class LinkListSerializer(serializers.ModelSerializer):
     def get_complete_cnt(self, obj):
         return obj.customers.filter(is_completed=True).count()
 
+
 class LinkDetailSerializer(serializers.ModelSerializer):
     customers = CustomerSerializer(many=True)
 
@@ -41,5 +42,8 @@ class LinkDetailSerializer(serializers.ModelSerializer):
             Customer.objects.create(link=link, **customer_data)
         return link
 
-class IdCardSerializer(serializers.Serializer):
-    image = serializers.ImageField()
+
+class IdCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IdCard
+        fields = '__all__'
