@@ -4,6 +4,7 @@ from .models import Partner, User
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.serializers import LoginSerializer
 
 
 
@@ -41,6 +42,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.save()
         return user
 
+
 class PartnerSerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -57,7 +59,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'auth', 'fullname', 'code', 'name', 'email', 'phone']
+        fields = ['id', 'auth', 'approval', 'fullname', 'code', 'name', 'email', 'phone']
 
 
 class ChangePasswordSerializer(serializers.Serializer):
@@ -135,4 +137,4 @@ class UserApprovalSerializer(serializers.ModelSerializer):
 class GetUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'auth', 'fullname', 'name', 'email', 'phone']
+        fields = ['id', 'auth', 'approval', 'fullname', 'name', 'email', 'phone']
