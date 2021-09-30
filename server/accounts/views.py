@@ -95,3 +95,43 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+# 가입 승인 필요한 유저 목록 1
+# auth: 1인지, 회사코드 뭔지 확인 + approval 0인 목록 response
+@api_view(['POST'])
+def pending(request):
+    if request.user.auth:
+        pending = User.objects.filter(code=request.user.code, approval=0)
+        serializer = GetUserSerializer(pending, many=True)
+        return JsonResponse(serializer.data, json_dumps_params={'ensure_ascii': False}, status=status.HTTP_200_OK, safe=False)
+    else:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+# code를 주소에 입력해 가져오기
+@api_view(['POST'])
+def pending_list(request, code):
+    pending_list = User.objects.filter(code=code, approval=0)
+    serializer = GetUserSerializer(pending_list, many=True)
+    if serializer.data:
+        return JsonResponse(serializer.data, json_dumps_params={'ensure_ascii': False}, status=status.HTTP_200_OK, safe=False)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+# 해당 회사에 등록된 유저 수
+@api_view(['POST'])
+def count(request):
+    count = User.objects.filter(code=request.user.code)
+    if count:
+        return JsonResponse({'count': count.count()}, status=status.HTTP_200_OK)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+# 해당 회사에 등록된 유저 수 2
+@api_view(['POST'])
+def count_by_code(request, code):
+    count = User.objects.filter(code=code)
+    if count:
+        return JsonResponse({'count': count.count()}, status=status.HTTP_200_OK)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
