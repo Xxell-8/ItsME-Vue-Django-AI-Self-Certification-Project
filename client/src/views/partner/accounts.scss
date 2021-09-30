@@ -109,10 +109,12 @@
 }
 
 .move-btns {
-  margin-top: 0.7rem;
+  // margin-top: 0.7rem;
   font-size: 0.875rem;
 
   .btn {
+    margin-left: 0.5rem;
+    font-weight: 400;
     &:hover {
       font-weight: 500;
     }

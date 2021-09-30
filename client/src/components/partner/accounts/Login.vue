@@ -38,15 +38,11 @@
       </div>
       <!-- 페이지 이동 버튼 -->
       <div class="move-btns fw-200">
+        <span class="t-white">아직 회원이 아니신가요?</span>
         <span
           class="btn t-white"
           @click="$router.push({ name: 'Accounts', params: { page: 'signup'}})"
         >회원가입</span>
-        <!-- <span class="t-white mx-1"> • </span>
-        <span
-          class="btn t-white"
-          @click="moveToFindPassword"
-        >비밀번호 찾기</span> -->
       </div>
     </div>
   </div>
