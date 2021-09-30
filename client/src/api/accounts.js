@@ -34,5 +34,23 @@ export default {
       data: {'code': companyCode}
     })
   },
+  getUnapprovedUsers (code) {
+    return _axios({
+      url: `/accounts/pending/${code}/`,
+      method: 'post'
+    })
+  },
+  approveUser (userId) {
+    return _axios({
+      url: `/accounts/profile/approval/${userId}/`,
+      method: 'put'
+    })
+  },
+  getParnerInfo (code) {
+    return _axios({
+      url: `accounts/getpartner/${code}/`,
+      method: 'post'
+    })
+  }
 
 }
