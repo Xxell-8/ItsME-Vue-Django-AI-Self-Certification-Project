@@ -23,6 +23,6 @@ class Customer(models.Model):
 
 
 class IdCard(models.Model):
-    name = models.CharField(max_length=45)
-    birth = models.CharField(max_length=8)
-    img = models.CharField(max_length=45)
+    name = models.CharField(max_length=45, blank=True)
+    birth = models.CharField(max_length=8, blank=True)
+    img = models.ImageField(null=True)

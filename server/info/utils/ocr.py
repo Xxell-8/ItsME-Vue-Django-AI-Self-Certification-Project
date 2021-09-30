@@ -28,6 +28,7 @@ def image_detection(image):
     cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:5]
 
     # contour를 순회하면서
+    screenCnt = -1
     for c in cnts:
         # contour가 그리는 길이 계산
         peri = cv2.arcLength(c, True)
@@ -41,6 +42,8 @@ def image_detection(image):
             break
 
     # contour 그리기
+    if type(screenCnt) == int and screenCnt == -1:
+        return None
     cv2.drawContours(image, [screenCnt], -1, (0, 255, 0), 2)
     def order_points(pts):
         rect = np.zeros((4, 2), dtype=np.float32)
@@ -128,21 +131,32 @@ def text_recognition(image):
     return result.rstrip()
 
 
+def get_name(texts):
+    name_pattern = re.compile('[가-힣]{2,5}')
+    for text in texts:
+        m = name_pattern.match(text)
+        if m:
+            return m.group()
+    return ''
+
+
 def image_masking(image, texts, boxes):
     image = image.copy()
     customer_info = {}
     registration_number_pattern = re.compile('\d{6}[-]\d{7}')
     issue_date_pattern = re.compile('[가-힣0-9?~!@#$%&*]+[.][가-힣0-9?~!@#$%&*]+[.][가-힣0-9?~!@#$%&*]+[.]')
+    idx = -1
     for i, (text, (x, y, w, h)) in enumerate(zip(texts, boxes)):
         if registration_number_pattern.match(text):
             customer_info['birth'] = text[:6]
             cv2.rectangle(image, (x+w//2, y), (x+w, y+h), (100, 100, 100), -1)
-            cv2.rectangle(image, (x-h, y+h+h//2), (x+h+w, y+h*4+h//3*2), (100, 100, 100), -1)
+            cv2.rectangle(image, (x-h, y+h+h//4), (x+h+w, y+h*4+h//3*2), (100, 100, 100), -1)
             idx = i
         elif issue_date_pattern.match(text):
             cv2.rectangle(image, (x, y), (x+w, y+h), (100, 100, 100), -1)
-    if len(text) > idx+1:
-        customer_info['name'] = text[idx+1]
+
+    if idx != -1 and len(texts) > idx+1:
+        customer_info['name'] = get_name(texts[idx+1:])
     else:
         customer_info['name'] = ''
     customer_info['img'] = image
@@ -151,6 +165,8 @@ def image_masking(image, texts, boxes):
 
 def ocr(image):
     image = image_detection(image)
+    if image is None:
+        return None
     image_orig = image.copy()
     area = text_detection(image)
     texts = []

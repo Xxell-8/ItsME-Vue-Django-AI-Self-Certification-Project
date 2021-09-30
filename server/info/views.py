@@ -11,6 +11,9 @@ import cv2
 import numpy as np
 from django.utils import timezone
 from .utils.ocr import ocr
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files.base import ContentFile
 
 
 
@@ -81,13 +84,15 @@ def id_card_ocr(request, link_path):
     encoded_img = np.fromstring(image_file.read(), dtype=np.uint8)
     image = cv2.imdecode(encoded_img, cv2.IMREAD_COLOR)
     result = ocr(image)
+    if not result:
+        data = {
+            'message': '신분증 OCR에 실패했습니다.'
+        }
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
     img = result.get('img')
-    cv2.imwrite(f'./media/{link_path}/{image_file.name}', img)
-    result = {
-        'birth': '940212',
-        'name': '홍길동',
-        'img': f'{link_path}/{image_file.name}'
-    }
+    image_io = cv2.imencode('.jpg', img)[1].tostring()
+    image_file = ContentFile(image_io, name=f'{link_path}/{image_file.name}')
+    result['img'] = image_file
     serializer = IdCardSerializer(data=result)
     if serializer.is_valid(raise_exception=True):
         serializer.save()
