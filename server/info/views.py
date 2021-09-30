@@ -2,15 +2,16 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .models import Link, Customer
-from .serializers import LinkListSerializer, CustomerSerializer, LinkDetailSerializer
+from .models import Link
+from .serializers import LinkListSerializer, CustomerSerializer, LinkDetailSerializer, IdCardSerializer
 from accounts.models import Partner
 import cv2
 import numpy as np
-from django.db.models import Q
 from django.utils import timezone
+from .utils.ocr import ocr
+
 
 
 
@@ -23,7 +24,7 @@ def link(request):
 
     if request.method == 'GET':
         # 링크 목록 조회
-        links = Link.objects.filter(Q(managers__in=[user]) & Q(expired_at__gt=timezone.now()))
+        links = Link.objects.filter(managers__in=[user], expired_at__gt=timezone.now())
         serializer = LinkListSerializer(links, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -70,55 +71,80 @@ def link_detail(request, link_path):
             'success': True
         }
         return Response(data, status=status.HTTP_204_NO_CONTENT)
-    
+
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
-def id_card_ocr(request):
+def id_card_ocr(request, link_path):
     # 신분증 OCR 및 비식별화
-    image_file = request.FILES['image']
+    image_file = request.FILES.get('img')
     encoded_img = np.fromstring(image_file.read(), dtype=np.uint8)
     image = cv2.imdecode(encoded_img, cv2.IMREAD_COLOR)
-    print(image.shape)
-    return Response({})
-
-
-def compare_info(id_card_info, customer_info):
-    # 정보 비교
-    for key in customer_info:
-        if id_card_info[key] != customer_info[key]:
-            return False
-    return True
+    result = ocr(image)
+    img = result.get('img')
+    cv2.imwrite(f'./media/{link_path}/{image_file.name}', img)
+    result = {
+        'birth': '940212',
+        'name': '홍길동',
+        'img': f'{link_path}/{image_file.name}'
+    }
+    serializer = IdCardSerializer(data=result)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
+        return Response(serializer.data)
 
 
 @api_view(['PATCH'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([AllowAny])
-def customer(request, customer_id):
-    customer = get_object_or_404(Customer, pk=customer_id)
-    link = customer.link
-    template = link.template
+def customer(request, link_path):
+    name = request.data.get('name')
+    if not name:
+        data = {'message': '이름은 필수값입니다.'}
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
-    if request.method == 'PATCH':
-        # 고객 신분증 정보 저장
-        if customer.is_completed:
-            data = {
-                'message': '본인인증이 이미 완료되었습니다.'
-            }
-            return Response(data, status=status.HTTP_200_OK)
-        else:
-            data = {}
-            for flag, key in zip([template.id_img, template.id_date, template.id_code], ['img', 'date', 'code']):
-                if flag:
-                    if request.data.get(key):
-                        data[key] = request.data.get(key)
-                    else:
-                        data = {
-                            'message': f'{key}는 필수입력값입니다.'
-                        }
-                        return Response(data, status=status.HTTP_400_BAD_REQUEST)
+    birth = request.data.get('birth')
+    if not birth:
+        data = {'message': '생일은 필수값입니다.'}
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
-            serializers = CustomerSerializer(customer, data=data, partial=True)
-            if serializers.is_valid(raise_exception=True):
-                serializers.save(is_completed=True)
-                return Response(serializers.data, status=status.HTTP_200_OK)
+    link = get_object_or_404(Link, path=link_path)
+    customers = link.customers.filter(name=name, birth__endswith=birth)
+    if not customers.exists():
+        # 정보가 일치하는 사람이 없을 때
+        data = {
+            'message': '정보가 일치하지 않습니다.'
+        }
+        return Response(data, status=status.HTTP_404_NOT_FOUND)
+
+    customers = customers.filter(is_completed=False)
+    if not customers.exists():
+        # 이미 인증이 완료되었을 때
+        data = {
+            'message': '이미 인증이 완료되었습니다.'
+        }
+        return Response(data, status=status.HTTP_404_NOT_FOUND)
+
+    # 정보가 일치하는 사람이 있으면 마스킹된 신분증 이미지를 저장
+    customer = customers[0]
+    data = {
+        'is_completed': True,
+        'img': request.data.get('img')
+    }
+    serializer = CustomerSerializer(customer, data=data, partial=True)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
+        data = {
+            'success': True
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+def link_count(request, partner_id):
+    partner = get_object_or_404(Partner, pk=partner_id)
+    link_count = partner.links.count()
+    data = {
+        'link_count': link_count
+    }
+    return Response(data, status=status.HTTP_200_OK)
