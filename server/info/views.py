@@ -11,9 +11,7 @@ import cv2
 import numpy as np
 from django.utils import timezone
 from .utils.ocr import ocr
-from django.core.files import File
-from django.core.files.images import ImageFile
-from django.core.files.uploadedfile import InMemoryUploadedFile
+
 
 
 
@@ -139,3 +137,14 @@ def customer(request, link_path):
             'success': True
         }
         return Response(data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+def link_count(request, partner_id):
+    partner = get_object_or_404(Partner, pk=partner_id)
+    link_count = partner.links.count()
+    data = {
+        'link_count': link_count
+    }
+    return Response(data, status=status.HTTP_200_OK)
