@@ -20,16 +20,23 @@
       @click="$router.push({ name: 'NewLink' })"
     >
     <img
+      v-if="userInfo && userInfo.auth"
       class="icon" 
       src="@/assets/image/iconSvg/company.svg"
       alt="회사 설정"
+      @click="$router.push({ name: 'Settings' })"
     >
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
-  name: 'PartnerNav'
+  name: 'PartnerNav',
+  computed: {
+    ...mapState('accounts', ['userInfo'])
+  }
 }
 </script>
 
