@@ -11,6 +11,9 @@ import cv2
 import numpy as np
 from django.utils import timezone
 from .utils.ocr import ocr
+from django.core.files import File
+from django.core.files.images import ImageFile
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 
@@ -72,6 +75,27 @@ def link_detail(request, link_path):
         return Response(data, status=status.HTTP_204_NO_CONTENT)
 
 
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+def id_card_ocr(request, link_path):
+    # 신분증 OCR 및 비식별화
+    image_file = request.FILES.get('img')
+    encoded_img = np.fromstring(image_file.read(), dtype=np.uint8)
+    image = cv2.imdecode(encoded_img, cv2.IMREAD_COLOR)
+    result = ocr(image)
+    img = result.get('img')
+    cv2.imwrite(f'./media/{link_path}/{image_file.name}', img)
+    result = {
+        'birth': '940212',
+        'name': '홍길동',
+        'img': f'{link_path}/{image_file.name}'
+    }
+    serializer = IdCardSerializer(data=result)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save()
+        return Response(serializer.data)
+
+
 @api_view(['PATCH'])
 @authentication_classes([JWTAuthentication])
 def customer(request, link_path):
@@ -115,16 +139,3 @@ def customer(request, link_path):
             'success': True
         }
         return Response(data, status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-@authentication_classes([JWTAuthentication])
-def id_card_ocr(request):
-    # 신분증 OCR 및 비식별화
-    image_file = request.data.get('img')
-    encoded_img = np.fromstring(image_file.read(), dtype=np.uint8)
-    image = cv2.imdecode(encoded_img, cv2.IMREAD_COLOR)
-    result = ocr(image)
-    serializer = IdCardSerializer(data=result)
-    if serializer.is_valid(raise_exception=True):
-        return Response(serializer.data)
