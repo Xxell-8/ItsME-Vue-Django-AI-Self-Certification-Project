@@ -114,7 +114,7 @@ def pending_list(request, code):
     if serializer.data:
         return JsonResponse(serializer.data, json_dumps_params={'ensure_ascii': False}, status=status.HTTP_200_OK, safe=False)
     else:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 # 해당 회사에 등록된 유저 수
 @api_view(['POST'])
