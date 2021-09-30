@@ -5,7 +5,7 @@
         class="exit-btn" 
         src="@/assets/image/iconSvg/del.svg" 
         alt="알림창 끄기"
-        @click="offSuccessModal"
+        @click="offSuccessModal(0)"
       >
       <div class="header f-row">
         <img src="@/assets/image/logo/dark-sm.svg" alt="">
@@ -22,7 +22,7 @@
       </div>
       <button
         class="btn btn-primary fw-900"
-        @click="$router.push({ name: 'LinkDetail', params: { id: currentLink.path }})"
+        @click="offSuccessModal(1)"
       >상세 정보 보기</button>
     </div>
   </div>
