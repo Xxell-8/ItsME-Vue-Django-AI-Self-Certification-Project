@@ -95,8 +95,8 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-# 가입 승인 필요한 유저 목록 1
-# auth: 1인지, 회사코드 뭔지 확인 + approval 0인 목록 response
+# 가입 승인 필요한 유저 목록
+# 1. auth: 1인지, 회사코드 뭔지 확인 + approval 0인 목록 response
 @api_view(['POST'])
 def pending(request):
     if request.user.auth:
@@ -106,7 +106,7 @@ def pending(request):
     else:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-# code를 주소에 입력해 가져오기
+# 2. code를 주소에 입력해 가져오기
 @api_view(['POST'])
 def pending_list(request, code):
     pending_list = User.objects.filter(code=code, approval=0)
