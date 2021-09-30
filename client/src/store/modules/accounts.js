@@ -8,6 +8,7 @@ const state = {
   companyInfo: null,
   isLogin: false,
   userInfo: null,
+  unapprovedUsers: [],
 }
 
 const actions = {
@@ -24,10 +25,21 @@ const actions = {
         dispatch('moveToPartnerHome')
       })
   },
-  async getUserInfo({ commit }, userId) {
+  async getUserInfo({ commit, dispatch }, userId) {
     await accountApi.getUserInfo(userId)
       .then((res) => {
         commit('SET_USER_INFO', res.data)
+        dispatch('getPartnerInfo')
+      })
+  },
+  async getPartnerInfo({ state, commit }) {
+    await accountApi.getParnerInfo(state.userInfo.code)
+      .then((res) => {
+        // console.log(res.data)
+        commit('ADD_PARTNER_INFO', res.data.id)
+      })
+      .catch((err) => {
+        console.log(err.response)
       })
   },
   onLogout({ commit }) {
@@ -36,7 +48,22 @@ const actions = {
     commit('SET_REFRESH_TOKEN', null)
     commit('SET_USER_INFO', null)
     router.push('/partners/accounts/login')
-  }
+  }, 
+  async getUnapprovedUsers ({ state, commit }) {
+    await accountApi.getUnapprovedUsers(state.userInfo.code)
+      .then((res) => {
+        console.log(res)
+        if (res.status === 200) {
+          commit('SET_UNAPPROVED_USR', res.data)
+        }
+      })
+  },
+  async onApproveUser({ dispatch }, userId) {
+    await accountApi.approveUser(userId)
+      .then(() => {
+        dispatch('getUnapprovedUsers')
+      })
+  },
   
 }
 
@@ -58,11 +85,19 @@ const mutations = {
   },
   SET_USER_INFO (state, payload) {
     state.userInfo = payload
+  },
+  ADD_PARTNER_INFO (state, payload) {
+    state.userInfo.partnerId = payload
+  },
+  SET_UNAPPROVED_USR (state, payload) {
+    state.unapprovedUsers = payload
   }
 }
 
 const getters = {
-
+  unapprovedCnt: (state) => {
+    return state.unapprovedUsers.length
+  }
 }
 
 export default {
