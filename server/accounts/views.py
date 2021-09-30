@@ -1,8 +1,10 @@
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.serializers import Serializer
 
 from rest_framework.views import APIView
 from .models import Partner, User
@@ -135,3 +137,8 @@ def count_by_code(request, code):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
+@api_view(['POST'])
+def get_partner(request, code):
+    partner = get_object_or_404(Partner, code=code)
+    serializer = PartnerSerializer(partner)
+    return Response(serializer.data, status=status.HTTP_200_OK)
