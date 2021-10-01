@@ -146,7 +146,10 @@ def get_partner(request, code):
 # 이메일 중복체크
 @api_view(['POST'])
 def email(request):
-    if User.objects.filter(email=request.data.get('email')).count():
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response(status=status.HTTP_200_OK)
+    data = {
+        'available': True
+    }
+    if User.objects.filter(email=request.data.get('email')).exists():
+        data['available'] = False
+
+    return Response(data, status=status.HTTP_200_OK)
