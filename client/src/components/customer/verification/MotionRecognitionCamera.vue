@@ -29,7 +29,8 @@
 <script>
 import '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
-import * as poseDetection from '@tensorflow-models/pose-detection';
+import * as posenet from "@tensorflow-models/posenet";
+import { drawKeypoints, drawSkeleton } from "./utilities";
 
 export default {
   name: 'MotionRecognitionCamera',
@@ -93,18 +94,23 @@ export default {
       // 고객이 촬영한 이미지를 jpegImg로 저장
       /* const jpegImg = this.$refs.canvas.toDataURL("image/jpeg")
       console.log(jpegImg) */
-      const poses = await this.detector.estimatePoses(this.$refs.canvas)
-      console.log(poses)
+
+      // 자세인식 data 쓰지 않고 함수 내의 const로 처리
+      const detectorConfig = {
+        inputResolution: { width: 320, height: 240 },
+        scale: 0.8
+      };
+      const detector = await posenet.load(detectorConfig)
+      const pose = await detector.estimateSinglePose(this.$refs.canvas)
+      console.log(pose)
+
+      // skeleton 그리기
+      drawKeypoints(pose["keypoints"], 0.55, ctx);
+      drawSkeleton(pose["keypoints"], 0.65, ctx);
+
 
       // 카메라 종료하기
       this.stopCameraStream();
-    },
-    async initDetector() {
-      // Vue3 문제 해결: Object.freeze
-      const detectorConfig = {modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING};
-      this.detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
-      /* const model = poseDetection.SupportedModels.MoveNet;
-      this.detector = Object(await poseDetection.createDetector(model)); */
     },
   }  
 }

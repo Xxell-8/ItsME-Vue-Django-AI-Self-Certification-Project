@@ -1,5 +1,5 @@
 <template>
-  <div class="f-column">
+  <div class="f-column" :key="componentKey">
     <!-- header -->
     <div class="camera-header">
       <span class="t-white fw-700 header-text">Face 인식</span>
@@ -21,8 +21,8 @@
     <canvas class="canvas-jpeg" ref="canvas"></canvas>
     <!-- buttons -->
     <button v-if="isCameraOn" class="btn-shot" @click="takePhoto">촬영</button>
-    <button v-if="isPhotoTaken" class="btn-shot">재촬영</button>
-    <button v-if="isPhotoTaken" class="btn-shot">다음</button>
+    <button v-if="isPhotoTaken" class="btn-shot" @click="restart">재촬영</button>
+    <button v-if="isPhotoTaken" class="btn-shot" @click="nextStep">다음</button>
   </div>
 </template>
 
@@ -39,10 +39,10 @@ export default {
   data() {
     return {
       model: null,
-      photoTaken: false,
       isCameraOn: false,
       isPhotoTaken: false,
       isShotPhoto: false,
+      componentKey: 0,
     }
   },
   mounted() {
@@ -115,6 +115,16 @@ export default {
       // Vue3 문제 해결: Object.freeze
       this.model = Object.freeze(await blazeface.load());
     },
+    restart() {
+      this.componentKey += 1
+      this.isCameraOn = false;
+      this.isPhotoTaken = false;
+      this.isShotPhoto = false;
+      this.createCameraElement();
+    },
+    nextStep() {
+      this.$router.push('/customer/motion-recognition')
+    }
   }  
 }
 </script>
