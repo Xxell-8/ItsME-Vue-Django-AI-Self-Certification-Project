@@ -1,4 +1,5 @@
 import _axios from "./interceptor"
+import store from '@/store/index.js'
 
 export default {
   signup(userData) {
@@ -57,6 +58,13 @@ export default {
     return _axios({
       url: `accounts/getpartner/${code}/`,
       method: 'post'
+    })
+  },
+  refreshToken () {
+    return _axios({
+      url: '/accounts/token/refresh/',
+      method: 'post',
+      data: { 'refresh': store.state.accounts.rfToken }
     })
   }
 
