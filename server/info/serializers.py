@@ -13,6 +13,7 @@ class CustomerSerializer(serializers.ModelSerializer):
 class LinkListSerializer(serializers.ModelSerializer):
     total = serializers.SerializerMethodField()
     complete_cnt = serializers.SerializerMethodField()
+
     class Meta:
         model = Link
         fields = '__all__'
@@ -44,6 +45,18 @@ class LinkDetailSerializer(serializers.ModelSerializer):
 
 
 class IdCardSerializer(serializers.ModelSerializer):
+    link_path = serializers.SerializerMethodField()
+    image_name = serializers.SerializerMethodField()
+
     class Meta:
         model = IdCard
         fields = '__all__'
+        extra_kwargs = {
+            'img': {'write_only': True}
+        }
+
+    def get_link_path(self, obj):
+        return obj.img.name.split('/')[-2]
+
+    def get_image_name(self, obj):
+        return obj.img.name.split('/')[-1]

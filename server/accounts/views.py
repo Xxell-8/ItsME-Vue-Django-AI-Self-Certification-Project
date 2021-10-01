@@ -142,3 +142,11 @@ def get_partner(request, code):
     partner = get_object_or_404(Partner, code=code)
     serializer = PartnerSerializer(partner)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+# 이메일 중복체크
+@api_view(['POST'])
+def email(request):
+    if User.objects.filter(email=request.data.get('email')).count():
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(status=status.HTTP_200_OK)

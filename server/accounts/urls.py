@@ -18,4 +18,5 @@ urlpatterns = [
     path('count/', views.count, name='count'),
     path('count/<str:code>/', views.count_by_code, name='count_by_code'),
     path('getpartner/<str:code>/', views.get_partner, name='get_partner'),
+    path('email/', views.email, name='email'),
 ]

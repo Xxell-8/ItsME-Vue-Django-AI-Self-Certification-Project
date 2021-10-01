@@ -1,16 +1,20 @@
+from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
+from rest_framework import response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .models import Link
+from .models import IdCard, Link
 from .serializers import LinkListSerializer, CustomerSerializer, LinkDetailSerializer, IdCardSerializer
 from accounts.models import Partner
 import cv2
 import numpy as np
 from django.utils import timezone
 from .utils.ocr import ocr
+from django.core.files.base import ContentFile
+from PIL import Image
 
 
 
@@ -81,13 +85,15 @@ def id_card_ocr(request, link_path):
     encoded_img = np.fromstring(image_file.read(), dtype=np.uint8)
     image = cv2.imdecode(encoded_img, cv2.IMREAD_COLOR)
     result = ocr(image)
+    if not result:
+        data = {
+            'message': '신분증 OCR에 실패했습니다.'
+        }
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
     img = result.get('img')
-    cv2.imwrite(f'./media/{link_path}/{image_file.name}', img)
-    result = {
-        'birth': '940212',
-        'name': '홍길동',
-        'img': f'{link_path}/{image_file.name}'
-    }
+    image_io = cv2.imencode('.jpg', img)[1].tostring()
+    image_file = ContentFile(image_io, name=f'{link_path}/{image_file.name}')
+    result['img'] = image_file
     serializer = IdCardSerializer(data=result)
     if serializer.is_valid(raise_exception=True):
         serializer.save()
@@ -126,9 +132,10 @@ def customer(request, link_path):
 
     # 정보가 일치하는 사람이 있으면 마스킹된 신분증 이미지를 저장
     customer = customers[0]
+    id_card = get_object_or_404(IdCard, pk=request.data.get('id_card'))
     data = {
         'is_completed': True,
-        'img': request.data.get('img')
+        'img': id_card.img
     }
     serializer = CustomerSerializer(customer, data=data, partial=True)
     if serializer.is_valid(raise_exception=True):
@@ -136,6 +143,7 @@ def customer(request, link_path):
         data = {
             'success': True
         }
+        id_card.delete()
         return Response(data, status=status.HTTP_200_OK)
 
 
@@ -148,3 +156,12 @@ def link_count(request, partner_id):
         'link_count': link_count
     }
     return Response(data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+def id_card_image(request, link_path, image_name):
+    response = HttpResponse(content_type='image/jpeg')
+    img = Image.open(f'media/{link_path}/{image_name}')
+    img.save(response, 'jpeg')
+    return response
