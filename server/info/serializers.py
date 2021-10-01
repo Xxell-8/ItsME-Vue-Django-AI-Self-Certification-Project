@@ -1,13 +1,24 @@
 from .models import Link, Customer, IdCard
 from rest_framework import serializers
+from .utils.image import image_to_base64
 
 
 
 class CustomerSerializer(serializers.ModelSerializer):
+    id_card_image = serializers.SerializerMethodField()
+
     class Meta:
         model = Customer
         fields = '__all__'
         read_only_fields = ['link']
+        extra_kwargs = {
+            'img': {'write_only': True}
+        }
+
+    def get_id_card_image(self, obj):
+        if obj.img:
+            return image_to_base64(f'media/{obj.img.name}')
+        return ''
 
 
 class LinkListSerializer(serializers.ModelSerializer):
@@ -45,18 +56,15 @@ class LinkDetailSerializer(serializers.ModelSerializer):
 
 
 class IdCardSerializer(serializers.ModelSerializer):
-    link_path = serializers.SerializerMethodField()
-    image_name = serializers.SerializerMethodField()
+    id_card_image = serializers.SerializerMethodField()
 
     class Meta:
         model = IdCard
         fields = '__all__'
+        read_only_fields = ['link']
         extra_kwargs = {
             'img': {'write_only': True}
         }
 
-    def get_link_path(self, obj):
-        return obj.img.name.split('/')[-2]
-
-    def get_image_name(self, obj):
-        return obj.img.name.split('/')[-1]
+    def get_id_card_image(self, obj):
+        return image_to_base64(f'media/{obj.img.name}')
