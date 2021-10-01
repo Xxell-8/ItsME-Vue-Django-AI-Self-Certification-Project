@@ -150,11 +150,13 @@ def image_masking(image, texts, boxes):
         if registration_number_pattern.match(text):
             customer_info['birth'] = text[:6]
             cv2.rectangle(image, (x+w//2, y), (x+w, y+h), (100, 100, 100), -1)
-            cv2.rectangle(image, (x-h, y+h+h//4), (x+h+w, y+h*4+h//3*2), (100, 100, 100), -1)
+            cv2.rectangle(image, (x-h, y+h+h//4), (x+h*2+w, y+h*4+h//3*2), (100, 100, 100), -1)
             idx = i
         elif issue_date_pattern.match(text):
             cv2.rectangle(image, (x, y), (x+w, y+h), (100, 100, 100), -1)
 
+    if not customer_info.get('birth'):
+        return None
     if idx != -1 and len(texts) > idx+1:
         customer_info['name'] = get_name(texts[idx+1:])
     else:

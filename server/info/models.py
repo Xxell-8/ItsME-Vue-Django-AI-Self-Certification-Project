@@ -1,6 +1,8 @@
 from django.db import models
 from accounts.models import Partner
 from django.contrib.auth import get_user_model
+import os
+
 
 # Create your models here.
 class Link(models.Model):
