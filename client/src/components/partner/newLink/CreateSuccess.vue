@@ -35,7 +35,7 @@ export default {
   computed: {
     ...mapState('partner', ['currentLink']),
     path () {
-      return 'localhost:8080/identify/' + this.currentLink.path
+      return 'j5a204.p.ssafy.io/identify/' + this.currentLink.path
     }
   },
   methods: {
