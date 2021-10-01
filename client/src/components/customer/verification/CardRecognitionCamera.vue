@@ -2,17 +2,17 @@
   <div class="f-column">
     <!-- header -->
     <div class="camera-header">
-      <span class="t-white fw-700 header-text">Face 인식</span>
+      <span class="t-white fw-700 header-text">신분증 촬영</span>
     </div>
     <!-- camera -->
     <!-- <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video> -->
     <div class="f-column">
       <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video>
-      <div class="face-direction" v-if="isCameraOn">
-        <div class="face-box"></div>
-        <div class="face-dialog">
+      <div class="card-direction" v-if="isCameraOn">
+        <div class="card-box"></div>
+        <div class="card-dialog">
           <p>표시된 위치에</p>
-          <p>얼굴 정면을 비추고</p>
+          <p>신분증을 알맞게 조정하여</p>
           <p>촬영 버튼을 눌러주세요!</p>
         </div>
       </div>
@@ -39,10 +39,10 @@ export default {
   data() {
     return {
       model: null,
-      photoTaken: false,
       isCameraOn: false,
       isPhotoTaken: false,
       isShotPhoto: false,
+      componentKey: 0,
     }
   },
   mounted() {
@@ -83,21 +83,10 @@ export default {
         }, TIMEOUT);
       }
       
-      this.isPhotoTaken = !this.isPhotoTaken;
-      
       const ctx = this.$refs.canvas.getContext('2d');
       ctx.canvas.width = 320
       ctx.canvas.height = 240
       ctx.drawImage(this.$refs.camera, 0, 0, 320, 240);
-      
-      // 고객이 촬영한 이미지를 jpegImg로 저장
-      /* const jpegImg = this.$refs.canvas.toDataURL("image/jpeg")
-      console.log(jpegImg) */
-
-      // 객체 인식
-      const prediction = await this.model.detect(this.$refs.canvas)
-      console.log('Prediction: ')
-      console.log(prediction)
 
       // 카메라 종료하기
       this.stopCameraStream();
