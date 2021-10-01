@@ -39,11 +39,11 @@ export default {
   props: {},
   data() {
     return {
-      detector: null,
       photoTaken: false,
       isCameraOn: false,
       isPhotoTaken: false,
       isShotPhoto: false,
+      mission: 'leftHandUp'
     }
   },
   mounted() {
@@ -73,44 +73,32 @@ export default {
         this.isCameraOn = false;
       })
     },
-    async takePhoto() {
-      if(!this.isPhotoTaken) {
-        this.isShotPhoto = true;
-
-        const TIMEOUT = 50;
-
-        setTimeout(() => {
-          this.isShotPhoto = false;
-        }, TIMEOUT);
-      }
+    async detectPose(detector, ctx) {
       
-      this.isPhotoTaken = !this.isPhotoTaken;
-      
-      // 카메라의 현재 프레임을 canvas에 그리기
-      const ctx = this.$refs.canvas.getContext('2d');
-      ctx.canvas.width = 320
-      ctx.canvas.height = 240
       ctx.drawImage(this.$refs.camera, 0, 0, 320, 240);
-      // 고객이 촬영한 이미지를 jpegImg로 저장
-      /* const jpegImg = this.$refs.canvas.toDataURL("image/jpeg")
-      console.log(jpegImg) */
 
-      // 자세인식 data 쓰지 않고 함수 내의 const로 처리
+      const pose = await detector.estimateSinglePose(this.$refs.canvas)
+      
+      drawKeypoints(pose["keypoints"], 0.55, ctx);
+      drawSkeleton(pose["keypoints"], 0.65, ctx);
+
+      // 왼손 들 때 끝내도록
+      /* if (pose["keypoints"][9]["position"]["y"] < pose["keypoints"][0]["position"]["y"]) {
+        this.stopCameraStream()
+      } */
+      
+    },
+    async initDetector() {
       const detectorConfig = {
         inputResolution: { width: 320, height: 240 },
         scale: 0.8
       };
+      const ctx = this.$refs.canvas.getContext('2d');
+      ctx.canvas.width = 320
+      ctx.canvas.height = 240
       const detector = await posenet.load(detectorConfig)
-      const pose = await detector.estimateSinglePose(this.$refs.canvas)
-      console.log(pose)
-
-      // skeleton 그리기
-      drawKeypoints(pose["keypoints"], 0.55, ctx);
-      drawSkeleton(pose["keypoints"], 0.65, ctx);
-
-
-      // 카메라 종료하기
-      this.stopCameraStream();
+      setInterval(this.detectPose, 100, detector, ctx)
+      /* this.detectPose(detector) */
     },
   }  
 }
