@@ -1,6 +1,7 @@
 <template>
   <div class="left-nav f-column-top">
     <img 
+      class="logo-img"
       @click="$router.push({ name: 'PartnerHome'})"
       src="@/assets/image/logo/white-sm.svg" 
       alt="go to Home"

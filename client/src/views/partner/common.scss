@@ -57,6 +57,19 @@
     height: auto;
     cursor: pointer;
     margin-bottom: 1rem;
+
+    &.logo-img {
+      margin-bottom: 1.5rem;
+      &:hover {
+        animation: rotate-360 0.8s linear 1;
+      }
+    }
+  }
+}
+
+@keyframes rotate-360{
+	100% {
+    	transform: rotate(360deg);
   }
 }
 
