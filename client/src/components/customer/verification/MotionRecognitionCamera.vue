@@ -39,7 +39,8 @@ export default {
       isCameraOn: false,
       isPhotoTaken: false,
       isShotPhoto: false,
-      mission: 'leftHandUp'
+      isCompleted: false,
+      interval: null,
     }
   },
   mounted() {
@@ -80,6 +81,8 @@ export default {
 
       // 왼손 들 때 끝내도록
       if (pose["keypoints"][2]["position"]["y"] - pose["keypoints"][9]["position"]["y"] > 30) {
+        this.isCompleted = true;
+        clearInterval(this.interval)
         this.stopCameraStream();
         this.nextStep();
       }
@@ -94,8 +97,7 @@ export default {
       ctx.canvas.width = 320
       ctx.canvas.height = 240
       const detector = await posenet.load(detectorConfig)
-      setInterval(this.detectPose, 100, detector, ctx)
-      /* this.detectPose(detector) */
+      this.interval = setInterval(this.detectPose, 100, detector, ctx)
     },
     nextStep() {
       this.$router.push('/customer/card-recognition')
