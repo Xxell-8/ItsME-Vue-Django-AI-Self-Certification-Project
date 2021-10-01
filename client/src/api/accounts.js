@@ -15,6 +15,13 @@ export default {
       data: userData
     })
   },
+  checkMail (email) {
+    return _axios({
+      url: `accounts/email/`,
+      method: 'post',
+      data: { 'email': email }
+    })
+  },
   getUserInfo (userId) {
     return _axios({
       url: `/accounts/profile/${userId}`,
