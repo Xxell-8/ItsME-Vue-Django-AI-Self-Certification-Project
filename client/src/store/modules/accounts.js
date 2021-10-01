@@ -9,6 +9,7 @@ const state = {
   isLogin: false,
   userInfo: null,
   unapprovedUsers: [],
+  wrongInput: false
 }
 
 const actions = {
@@ -22,7 +23,13 @@ const actions = {
         // console.log(res)
         commit('SET_IS_LOGIN', true)
         dispatch('getUserInfo', res.data.user.pk)
-        dispatch('moveToPartnerHome')
+      })
+      .catch((err) => {
+        console.log(err.response)
+        commit('SET_WRONG_INPUT', true)
+        setTimeout(() => {
+          commit('SET_WRONG_INPUT', false)
+        }, 1000)
       })
   },
   async getUserInfo({ commit, dispatch }, userId) {
@@ -30,6 +37,7 @@ const actions = {
       .then((res) => {
         commit('SET_USER_INFO', res.data)
         dispatch('getPartnerInfo')
+        router.push('/partners')
       })
   },
   async getPartnerInfo({ state, commit }) {
@@ -82,6 +90,9 @@ const mutations = {
   },
   SET_IS_LOGIN (state, payload) {
     state.isLogin = payload
+  },
+  SET_WRONG_INPUT (state, payload) {
+    state.wrongInput = payload
   },
   SET_USER_INFO (state, payload) {
     state.userInfo = payload
