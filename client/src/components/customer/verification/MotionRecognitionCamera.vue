@@ -9,20 +9,16 @@
     <div class="f-column">
       <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video>
       <div class="motion-direction" v-if="isCameraOn">
-        <div class="motion-box"></div>
-        <div class="motion-dialog">
-          <p>표시된 위치에</p>
-          <p>얼굴 정면을 비추고</p>
-          <p>촬영 버튼을 눌러주세요!</p>
-        </div>
+        
       </div>
     </div>
     <!-- canvas -->
     <canvas class="canvas-jpeg" ref="canvas"></canvas>
-    <!-- buttons -->
-    <button v-if="isCameraOn" class="btn-shot" @click="takePhoto">촬영</button>
-    <button v-if="isPhotoTaken" class="btn-shot">재촬영</button>
-    <button v-if="isPhotoTaken" class="btn-shot">다음</button>
+    <div class="motion-dialog">
+      <p>왼손을</p>
+      <p>위로 높이</p>
+      <p>뻗어주세요!</p>
+    </div>
   </div>
 </template>
 
@@ -83,9 +79,10 @@ export default {
       drawSkeleton(pose["keypoints"], 0.65, ctx);
 
       // 왼손 들 때 끝내도록
-      /* if (pose["keypoints"][9]["position"]["y"] < pose["keypoints"][0]["position"]["y"]) {
-        this.stopCameraStream()
-      } */
+      if (pose["keypoints"][2]["position"]["y"] - pose["keypoints"][9]["position"]["y"] > 30) {
+        this.stopCameraStream();
+        this.nextStep();
+      }
       
     },
     async initDetector() {
@@ -100,6 +97,9 @@ export default {
       setInterval(this.detectPose, 100, detector, ctx)
       /* this.detectPose(detector) */
     },
+    nextStep() {
+      this.$router.push('/customer/card-recognition')
+    }
   }  
 }
 </script>

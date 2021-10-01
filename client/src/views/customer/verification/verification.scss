@@ -89,19 +89,14 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    .motion-box {
-      height: 125px;
-      width: 200px;
-      border: medium dashed $secondary;
-      border-radius: 15px;
-    }
-    .motion-dialog {
-      margin-top: 5px;
-      background: rgba(14, 15, 22, 0.9);
-      border-radius: 0 15px 15px 15px;
-      color: white;
-      padding: 5px;
-    }
+  }
+  .motion-dialog {
+    position: absolute;
+    margin-top: 5px;
+    background: rgba(14, 15, 22, 0.9);
+    border-radius: 0 15px 15px 15px;
+    color: white;
+    padding: 5px;
   }
   .btn-shot {
     background: $secondary;
