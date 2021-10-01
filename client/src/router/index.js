@@ -51,7 +51,8 @@ const routes = [
   {
     path: '/partners/settings',
     name: 'Settings',
-    component: Settings
+    component: Settings,
+    meta: { requireAuth: true }
   },
   // Customer
   {
@@ -100,10 +101,18 @@ router.beforeEach(function (to, from, next) {
   if (to.matched.some(function(routeInfo) {
     return routeInfo.meta.requireAuth
   })) {
-    if (!store.state.accounts.isLogin) {
-      next('/partners/accounts/login')
+    if (to.name === 'Settings') {
+      if (!store.state.accounts.isLogin || !store.state.accounts.userInfo.auth) {
+        next('/partners')
+      } else {
+        next()
+      }
     } else {
-      next()
+      if (!store.state.accounts.isLogin) {
+        next('/partners/accounts/login')
+      } else {
+        next()
+      }
     }
   } else {
     if (to.name === 'Accounts') {
@@ -116,7 +125,6 @@ router.beforeEach(function (to, from, next) {
       next()
     }
   }
-  
 })
 
 export default router

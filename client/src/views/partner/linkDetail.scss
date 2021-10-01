@@ -44,6 +44,14 @@
       padding: 0.5rem;
     }
   }
+  .empty {
+    width: 800px;
+    padding: 2rem;
+    text-align: center;
+    font-weight: 300;
+    background-color: rgba($dark, 0.9);
+    color: $white;
+  }
 }
 
 .pagination {

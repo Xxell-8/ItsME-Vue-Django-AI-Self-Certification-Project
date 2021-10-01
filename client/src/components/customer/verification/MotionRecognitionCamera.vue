@@ -9,27 +9,24 @@
     <div class="f-column">
       <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video>
       <div class="motion-direction" v-if="isCameraOn">
-        <div class="motion-box"></div>
-        <div class="motion-dialog">
-          <p>표시된 위치에</p>
-          <p>얼굴 정면을 비추고</p>
-          <p>촬영 버튼을 눌러주세요!</p>
-        </div>
+        
       </div>
     </div>
     <!-- canvas -->
     <canvas class="canvas-jpeg" ref="canvas"></canvas>
-    <!-- buttons -->
-    <button v-if="isCameraOn" class="btn-shot" @click="takePhoto">촬영</button>
-    <button v-if="isPhotoTaken" class="btn-shot">재촬영</button>
-    <button v-if="isPhotoTaken" class="btn-shot">다음</button>
+    <div class="motion-dialog">
+      <p>왼손을</p>
+      <p>위로 높이</p>
+      <p>뻗어주세요!</p>
+    </div>
   </div>
 </template>
 
 <script>
 import '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
-import * as poseDetection from '@tensorflow-models/pose-detection';
+import * as posenet from "@tensorflow-models/posenet";
+import { drawKeypoints, drawSkeleton } from "./utilities";
 
 export default {
   name: 'MotionRecognitionCamera',
@@ -38,11 +35,11 @@ export default {
   props: {},
   data() {
     return {
-      detector: null,
       photoTaken: false,
       isCameraOn: false,
       isPhotoTaken: false,
       isShotPhoto: false,
+      mission: 'leftHandUp'
     }
   },
   mounted() {
@@ -72,40 +69,37 @@ export default {
         this.isCameraOn = false;
       })
     },
-    async takePhoto() {
-      if(!this.isPhotoTaken) {
-        this.isShotPhoto = true;
+    async detectPose(detector, ctx) {
+      
+      ctx.drawImage(this.$refs.camera, 0, 0, 320, 240);
 
-        const TIMEOUT = 50;
+      const pose = await detector.estimateSinglePose(this.$refs.canvas)
+      
+      drawKeypoints(pose["keypoints"], 0.55, ctx);
+      drawSkeleton(pose["keypoints"], 0.65, ctx);
 
-        setTimeout(() => {
-          this.isShotPhoto = false;
-        }, TIMEOUT);
+      // 왼손 들 때 끝내도록
+      if (pose["keypoints"][2]["position"]["y"] - pose["keypoints"][9]["position"]["y"] > 30) {
+        this.stopCameraStream();
+        this.nextStep();
       }
       
-      this.isPhotoTaken = !this.isPhotoTaken;
-      
-      // 카메라의 현재 프레임을 canvas에 그리기
+    },
+    async initDetector() {
+      const detectorConfig = {
+        inputResolution: { width: 320, height: 240 },
+        scale: 0.8
+      };
       const ctx = this.$refs.canvas.getContext('2d');
       ctx.canvas.width = 320
       ctx.canvas.height = 240
-      ctx.drawImage(this.$refs.camera, 0, 0, 320, 240);
-      // 고객이 촬영한 이미지를 jpegImg로 저장
-      /* const jpegImg = this.$refs.canvas.toDataURL("image/jpeg")
-      console.log(jpegImg) */
-      const poses = await this.detector.estimatePoses(this.$refs.canvas)
-      console.log(poses)
-
-      // 카메라 종료하기
-      this.stopCameraStream();
+      const detector = await posenet.load(detectorConfig)
+      setInterval(this.detectPose, 100, detector, ctx)
+      /* this.detectPose(detector) */
     },
-    async initDetector() {
-      // Vue3 문제 해결: Object.freeze
-      const detectorConfig = {modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING};
-      this.detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
-      /* const model = poseDetection.SupportedModels.MoveNet;
-      this.detector = Object(await poseDetection.createDetector(model)); */
-    },
+    nextStep() {
+      this.$router.push('/customer/card-recognition')
+    }
   }  
 }
 </script>

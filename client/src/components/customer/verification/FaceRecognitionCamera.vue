@@ -1,5 +1,5 @@
 <template>
-  <div class="f-column">
+  <div class="f-column" :key="componentKey">
     <!-- header -->
     <div class="camera-header">
       <span class="t-white fw-700 header-text">Face 인식</span>
@@ -19,10 +19,11 @@
     </div>
     <!-- canvas -->
     <canvas class="canvas-jpeg" ref="canvas"></canvas>
+    <canvas class="canvas-hidden" ref="hiddenCanvas"></canvas>
     <!-- buttons -->
     <button v-if="isCameraOn" class="btn-shot" @click="takePhoto">촬영</button>
-    <button v-if="isPhotoTaken" class="btn-shot">재촬영</button>
-    <button v-if="isPhotoTaken" class="btn-shot">다음</button>
+    <button v-if="isPhotoTaken" class="btn-shot" @click="restart">재촬영</button>
+    <button v-if="isPhotoTaken" class="btn-shot" @click="nextStep">다음</button>
   </div>
 </template>
 
@@ -39,10 +40,10 @@ export default {
   data() {
     return {
       model: null,
-      photoTaken: false,
       isCameraOn: false,
       isPhotoTaken: false,
       isShotPhoto: false,
+      componentKey: 0,
     }
   },
   mounted() {
@@ -84,17 +85,36 @@ export default {
       }
       
       this.isPhotoTaken = !this.isPhotoTaken;
-      
+
+      // 현재 카메라 화면을 캔버스에 옮겨 그리기
       const ctx = this.$refs.canvas.getContext('2d');
       ctx.canvas.width = 320
       ctx.canvas.height = 240
       ctx.drawImage(this.$refs.camera, 0, 0, 320, 240);
-      // 고객이 촬영한 이미지를 jpegImg로 저장
-      const jpegImg = this.$refs.canvas.toDataURL("image/jpeg")
+
+      // 얼굴 인식
+      const prediction = await this.model.estimateFaces(this.$refs.canvas, false)
+
+      // 인식된 고객의 얼굴 부분만 이미지로 저장하기
+      const hiddenCtx = this.$refs.hiddenCanvas.getContext('2d');
+      prediction.forEach((pred) => {
+        const width = pred.bottomRight[0] - pred.topLeft[0]
+        const height = pred.bottomRight[1] - pred.topLeft[1]
+
+        this.$refs.hiddenCanvas.width = width
+        this.$refs.hiddenCanvas.height = height
+        hiddenCtx.width = width
+        hiddenCtx.height = height
+
+        hiddenCtx.drawImage(
+          this.$refs.canvas, 
+          pred.topLeft[0], pred.topLeft[1], width, height, 0, 0, width, height
+          )
+      });
+      const jpegImg = this.$refs.hiddenCanvas.toDataURL("image/jpeg")
       console.log(jpegImg)
 
       // 고객의 얼굴에 테두리 그리기
-      const prediction = await this.model.estimateFaces(this.$refs.canvas, false)
       prediction.forEach((pred) => {
         ctx.beginPath();
         ctx.lineWidth = "4";
@@ -115,6 +135,16 @@ export default {
       // Vue3 문제 해결: Object.freeze
       this.model = Object.freeze(await blazeface.load());
     },
+    restart() {
+      this.componentKey += 1
+      this.isCameraOn = false;
+      this.isPhotoTaken = false;
+      this.isShotPhoto = false;
+      this.createCameraElement();
+    },
+    nextStep() {
+      this.$router.push('/customer/motion-recognition')
+    }
   }  
 }
 </script>

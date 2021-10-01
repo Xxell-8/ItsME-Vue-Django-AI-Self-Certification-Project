@@ -1,6 +1,7 @@
 <template>
   <div class="left-nav f-column-top">
     <img 
+      class="logo-img"
       @click="$router.push({ name: 'PartnerHome'})"
       src="@/assets/image/logo/white-sm.svg" 
       alt="go to Home"
@@ -20,16 +21,23 @@
       @click="$router.push({ name: 'NewLink' })"
     >
     <img
+      v-if="userInfo && userInfo.auth"
       class="icon" 
       src="@/assets/image/iconSvg/company.svg"
       alt="회사 설정"
+      @click="$router.push({ name: 'Settings' })"
     >
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
-  name: 'PartnerNav'
+  name: 'PartnerNav',
+  computed: {
+    ...mapState('accounts', ['userInfo'])
+  }
 }
 </script>
 

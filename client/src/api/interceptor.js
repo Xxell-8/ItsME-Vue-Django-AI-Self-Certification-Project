@@ -1,6 +1,7 @@
 import axios from 'axios'
 import Cookies from "js-cookie"
 import router from '@/router'
+import accountsApi from './accounts.js'
 import store from '@/store/index.js'
 
 const _axios = axios.create({
@@ -28,6 +29,9 @@ _axios.interceptors.response.use(
     if (response.data.access_token) {
       store.commit('accounts/SET_ACCESS_TOKEN', response.data.access_token)
     }
+    if (response.data.access) {
+      store.commit('accounts/SET_ACCESS_TOKEN', response.data.access)
+    }
     if (response.data.refresh_token) {
       store.commit('accounts/SET_REFRESH_TOKEN', response.data.refresh_token)
     }
@@ -35,16 +39,13 @@ _axios.interceptors.response.use(
   },
 
   async function (error) {
-    // JWT 관련 부분 백엔드에서 확정되면 다시 작성
-    // 1. 토큰 만료 시, 토큰 refresh + 기존 요청
-    // if (error.response.status === 401 && error.response.data.msg === 'AccessToken has been expired') {
-    //   const originalRequest = error.config
-    //   originalRequest.headers.refreshtoken = store.state.accounts.rfToken
-    //   return _axios(originalRequest)
-    // } else if (error.response.status === 401 && error.response.data.msg === 'RefreshToken has been expired') {
-    // // 2. 액세스, 리프레쉬 모두 만료 시 로그아웃
-    //   store.dispatch('user/onLogout')
-    // }
+    // 토큰 만료 시, 토큰 refresh + 기존 요청
+    if (error.response.status === 401 
+      && error.response.data.code === 'token_not_valid') {
+      const originalRequest = error.config
+      await accountsApi.refreshToken()
+      return _axios(originalRequest)
+    } 
     
     // 500 error 처리
     if (error.response.status >= 500) {
