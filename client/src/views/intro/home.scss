@@ -128,12 +128,13 @@
   .footer {
     width: 100vw;
     height: fit-content;
-    background-color: $primary;
+    background-color: $grey-dark;
     padding: 0.5rem 1rem;
 
     span {
       color: $light;
       font-size: 0.8rem;
+      font-weight: 200;
     }
   } 
 }
