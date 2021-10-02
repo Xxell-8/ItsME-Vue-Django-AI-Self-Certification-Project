@@ -31,6 +31,7 @@
 import '@tensorflow/tfjs-backend-cpu'
 import '@tensorflow/tfjs-backend-webgl'
 import * as blazeface from '@tensorflow-models/blazeface';
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'CardRecognitionCamera',
@@ -50,6 +51,7 @@ export default {
     this.createCameraElement();
   },
   methods: {
+    ...mapMutations('customer', ['SAVE_CARD_FACE', 'SAVE_ID_CARD']),
     createCameraElement() {
       const constraints = (window.constraints = {
 				audio: false,
@@ -90,7 +92,7 @@ export default {
       ctx.canvas.height = 125
       ctx.drawImage(this.$refs.camera, 60, 10, 200, 125, 0, 0, 200, 125);
       const jpegImg = this.$refs.canvas.toDataURL("image/jpeg")
-      console.log(jpegImg)
+      this.SAVE_ID_CARD(jpegImg)
 
       // 얼굴 인식
       const prediction = await this.model.estimateFaces(this.$refs.canvas, false)
@@ -112,7 +114,7 @@ export default {
           )
       });
       const faceImg = this.$refs.hiddenCanvas.toDataURL("image/jpeg")
-      console.log(faceImg)
+      this.SAVE_CARD_FACE(faceImg)
 
       // 카메라 종료하기
       this.stopCameraStream();

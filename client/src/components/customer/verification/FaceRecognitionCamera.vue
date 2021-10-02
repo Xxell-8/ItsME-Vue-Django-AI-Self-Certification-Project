@@ -31,6 +31,7 @@
 import '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
 import * as blazeface from '@tensorflow-models/blazeface';
+import { mapMutations } from 'vuex';
 
 export default {
   name: 'FaceRecognitionCamera',
@@ -50,6 +51,7 @@ export default {
     this.createCameraElement();
   },
   methods: {
+    ...mapMutations('customer', ['SAVE_PRESENT_FACE']),
     createCameraElement() {
       const constraints = (window.constraints = {
 				audio: false,
@@ -112,7 +114,7 @@ export default {
           )
       });
       const jpegImg = this.$refs.hiddenCanvas.toDataURL("image/jpeg")
-      console.log(jpegImg)
+      this.SAVE_PRESENT_FACE(jpegImg)
 
       // 고객의 얼굴에 테두리 그리기
       prediction.forEach((pred) => {
