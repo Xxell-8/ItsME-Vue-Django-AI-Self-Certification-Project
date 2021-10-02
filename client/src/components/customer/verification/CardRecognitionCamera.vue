@@ -19,6 +19,7 @@
     </div>
     <!-- canvas -->
     <canvas class="canvas-jpeg" ref="canvas"></canvas>
+    <canvas class="canvas-hidden" ref="hiddenCanvas"></canvas>
     <!-- buttons -->
     <button v-if="isCameraOn" class="btn-shot" @click="takePhoto">촬영</button>
     <button v-if="isPhotoTaken" class="btn-shot">재촬영</button>
@@ -29,7 +30,7 @@
 <script>
 import '@tensorflow/tfjs-backend-cpu'
 import '@tensorflow/tfjs-backend-webgl'
-import * as cocoSsd from '@tensorflow-models/coco-ssd'
+import * as blazeface from '@tensorflow-models/blazeface';
 
 export default {
   name: 'CardRecognitionCamera',
@@ -83,17 +84,42 @@ export default {
         }, TIMEOUT);
       }
       
+      // 신분증 범위만 그려서 저장하기 - 캔버스 사이즈 추후 조정
       const ctx = this.$refs.canvas.getContext('2d');
       ctx.canvas.width = 320
       ctx.canvas.height = 240
       ctx.drawImage(this.$refs.camera, 0, 0, 320, 240);
+      const jpegImg = this.$refs.canvas.toDataURL("image/jpeg")
+      console.log(jpegImg)
+
+      // 얼굴 인식
+      const prediction = await this.model.estimateFaces(this.$refs.canvas, false)
+
+      // 인식된 고객의 얼굴 부분만 이미지로 저장하기
+      const hiddenCtx = this.$refs.hiddenCanvas.getContext('2d');
+      prediction.forEach((pred) => {
+        const width = pred.bottomRight[0] - pred.topLeft[0]
+        const height = pred.bottomRight[1] - pred.topLeft[1]
+
+        this.$refs.hiddenCanvas.width = width
+        this.$refs.hiddenCanvas.height = height
+        hiddenCtx.width = width
+        hiddenCtx.height = height
+
+        hiddenCtx.drawImage(
+          this.$refs.canvas, 
+          pred.topLeft[0], pred.topLeft[1], width, height, 0, 0, width, height
+          )
+      });
+      const faceImg = this.$refs.hiddenCanvas.toDataURL("image/jpeg")
+      console.log(faceImg)
 
       // 카메라 종료하기
       this.stopCameraStream();
     },
     async initDetector() {
       // Vue3 문제 해결: Object.freeze
-      this.model = Object.freeze(await cocoSsd.load());
+      this.model = Object.freeze(await blazeface.load());
     },
   }  
 }
