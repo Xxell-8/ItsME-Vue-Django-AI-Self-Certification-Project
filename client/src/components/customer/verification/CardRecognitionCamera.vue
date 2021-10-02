@@ -86,9 +86,9 @@ export default {
       
       // 신분증 범위만 그려서 저장하기 - 캔버스 사이즈 추후 조정
       const ctx = this.$refs.canvas.getContext('2d');
-      ctx.canvas.width = 320
-      ctx.canvas.height = 240
-      ctx.drawImage(this.$refs.camera, 0, 0, 320, 240);
+      ctx.canvas.width = 200
+      ctx.canvas.height = 125
+      ctx.drawImage(this.$refs.camera, 60, 10, 200, 125, 0, 0, 200, 125);
       const jpegImg = this.$refs.canvas.toDataURL("image/jpeg")
       console.log(jpegImg)
 
