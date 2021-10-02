@@ -1,7 +1,9 @@
 // import router from '@/router'
 
 const state = {
-
+  faceImgFromCamera: null,
+  faceImgFromIdCard: null,
+  IdCardImg: null,
 }
 
 const actions = {
