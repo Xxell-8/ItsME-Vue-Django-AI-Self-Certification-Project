@@ -13,6 +13,7 @@ import LinkDetail from '@/views/partner/LinkDetail'
 import Settings from '@/views/partner/Settings'
 import PageNotFound from '@/views/error/PageNotFound'
 import ServerError from '@/views/error/ServerError'
+import Loading from '@/components/customer/verification/Loading'
 
 const routes = [
   // B2B Home
@@ -20,6 +21,12 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home
+  },
+  // 임시 작업
+  {
+    path: '/loading',
+    name: 'Loading',
+    component: Loading
   },
   // Partner
   {
