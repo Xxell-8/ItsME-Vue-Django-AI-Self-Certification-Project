@@ -3,59 +3,100 @@
 
 /* face recognition */
 .face-recognition {
-  background: $grey-dark;
   min-height: 100vh;
   height: 100%;  
   .camera-header {
-    width: 320px;
-    height: 50px;
+    position: absolute;
+    top: 30px;
     text-align: center;
-    font-size: 30px;
+    font-size: 1rem;
+    z-index: 1;
+    .text-secondary {
+      color: $secondary
+    }
+  }
+  .camera-container {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
   }
   .camera-stream {
-    width: 320px;
-    height: 240px;
+    height: 100vh;
+    transform: scale(-1, 1);
   }
   .canvas-jpeg {
     position: absolute;
-    top: 50px;
-    width: 320px;
-    height: 240px;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    transform: scale(-1, 1);
   }
   .canvas-hidden {
     display: none;
   }
-  .face-direction {
+  .overlay {
     position: absolute;
-    top: 50px;
-    margin-top: 10px;
+    top: 100px;
+    width: 256px;
+    height: 256px;
+    box-shadow: 0 0 0 9999px rgba(14, 15, 22, 0.9);
+    border-radius: 10px;
+  }
+  .btn-container {
+    position: absolute;
+    bottom: 30px;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    .face-box {
-      height: 140px;
-      width: 140px;
-      border: medium dashed $secondary;
-      border-radius: 15px;
-    }
-    .face-dialog {
-      margin-top: 5px;
-      background: rgba(14, 15, 22, 0.9);
-      border-radius: 0 15px 15px 15px;
-      color: white;
-      padding: 5px;
+    .btn-shot {
+      background: $secondary;
+      margin: 0 1rem;
+      height: 40px;
+      width: 100px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      border-radius: 25px;
+      z-index: 1;
     }
   }
-  .btn-shot {
-    background: $secondary;
-    margin-top: 10px;
-    height: 40px;
-    width: 100px;
-    font-size: 1.4rem;
-    font-weight: 700;
-    border-radius: 25px;
-    z-index: 1;
+  /* 코너 테두리 사각형 */
+  .corner {
+    width: 256px;
+    height: 256px;
+    top: 100px;
+    position: absolute;
+    
+    div {
+      width: 2rem;
+      height: 2rem;
+      position: absolute;
+      border-color: rgba($secondary, 0.7);
+      border-style: solid;
+
+      &.top-left {
+        top: 0;
+        left: 0;
+        border-width: 4px 0 0 4px;
+        border-radius: 10px 0 0 0;
+      }
+      &.top-right {
+        top: 0;
+        right: 0;
+        border-width: 4px 4px 0 0;
+        border-radius: 0 10px 0 0;
+      }
+      &.bottom-left {
+        bottom: 0;
+        left: 0;
+        border-width: 0 0 4px 4px;
+        border-radius: 0 0 0 10px;
+      }
+      &.bottom-right {
+        bottom: 0;
+        right: 0;
+        border-width: 0 4px 4px 0;
+        border-radius: 0 0 10px 0;
+      }
+    }
   }
 }
 
@@ -159,5 +200,44 @@
   }
 }
 
+/* 코너 테두리 사각형 */
+.corner {
+  width: 256px;
+  height: 256px;
+  top: 100px;
+  position: absolute;
+  
+  div {
+    width: 2rem;
+    height: 2rem;
+    position: absolute;
+    border-color: rgba($secondary, 0.7);
+    border-style: solid;
 
+    &.top-left {
+      top: 0;
+      left: 0;
+      border-width: 4px 0 0 4px;
+      border-radius: 10px 0 0 0;
+    }
+    &.top-right {
+      top: 0;
+      right: 0;
+      border-width: 4px 4px 0 0;
+      border-radius: 0 10px 0 0;
+    }
+    &.bottom-left {
+      bottom: 0;
+      left: 0;
+      border-width: 0 0 4px 4px;
+      border-radius: 0 0 0 10px;
+    }
+    &.bottom-right {
+      bottom: 0;
+      right: 0;
+      border-width: 0 4px 4px 0;
+      border-radius: 0 0 10px 0;
+    }
+  }
+}
 

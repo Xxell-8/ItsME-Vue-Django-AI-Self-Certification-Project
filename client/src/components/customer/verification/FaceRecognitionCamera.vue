@@ -2,28 +2,31 @@
   <div class="f-column" :key="componentKey">
     <!-- header -->
     <div class="camera-header">
-      <span class="t-white fw-700 header-text">Face 인식</span>
+      <p class="t-white fw-700">얼굴을 테두리 안에 맞추고</p>
+      <p class="t-white fw-700"><strong class="text-secondary">촬영</strong> 버튼을 눌러주세요.</p>
     </div>
     <!-- camera -->
-    <!-- <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video> -->
-    <div class="f-column">
+    <div class="camera-container">
       <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video>
-      <div class="face-direction" v-if="isCameraOn">
-        <div class="face-box"></div>
-        <div class="face-dialog">
-          <p>표시된 위치에</p>
-          <p>얼굴 정면을 비추고</p>
-          <p>촬영 버튼을 눌러주세요!</p>
-        </div>
-      </div>
     </div>
     <!-- canvas -->
     <canvas class="canvas-jpeg" ref="canvas"></canvas>
     <canvas class="canvas-hidden" ref="hiddenCanvas"></canvas>
+    <!-- overlay -->
+    <div class="overlay"></div>
     <!-- buttons -->
-    <button v-if="isCameraOn" class="btn-shot" @click="takePhoto">촬영</button>
-    <button v-if="isPhotoTaken" class="btn-shot" @click="restart">재촬영</button>
-    <button v-if="isPhotoTaken" class="btn-shot" @click="nextStep">다음</button>
+    <div class="btn-container">
+      <button v-if="isCameraOn" class="btn-shot" @click="takePhoto">촬영</button>
+      <button v-if="isPhotoTaken" class="btn-shot" @click="restart">재촬영</button>
+      <button v-if="isPhotoTaken" class="btn-shot" @click="nextStep">다음</button>
+    </div>
+    <!-- 코너 테두리 사각형 -->
+    <div class="corner">
+      <div class="top-left"></div>
+      <div class="top-right"></div>
+      <div class="bottom-left"></div>
+      <div class="bottom-right"></div>
+    </div>
   </div>
 </template>
 
@@ -55,7 +58,7 @@ export default {
     createCameraElement() {
       const constraints = (window.constraints = {
 				audio: false,
-				video: { width: 320, height: 240}
+				video: true,
 			})
       navigator.mediaDevices
 				.getUserMedia(constraints)
@@ -88,11 +91,23 @@ export default {
       
       this.isPhotoTaken = !this.isPhotoTaken;
 
+      // 뷰포트 사이즈와 카메라의 시작 위치 구하기
+      const vw = window.innerWidth
+      const vh = window.innerHeight
+      const startX = this.$refs.camera.offsetWidth - vw
+      console.log(this.$refs.camera.offsetWidth, vw, vh, startX)
+      
       // 현재 카메라 화면을 캔버스에 옮겨 그리기
+      this.$refs.canvas.width = this.$refs.camera.offsetWidth
+      this.$refs.canvas.height = this.$refs.camera.offsetHeight
+
       const ctx = this.$refs.canvas.getContext('2d');
-      ctx.canvas.width = 320
-      ctx.canvas.height = 240
-      ctx.drawImage(this.$refs.camera, 0, 0, 320, 240);
+      ctx.canvas.width = this.$refs.camera.offsetWidth
+      ctx.canvas.height = this.$refs.camera.offsetHeight
+      /* ctx.drawImage(this.$refs.camera, startX, startY, vw, vh, 0, 0, vw, vh); */
+      ctx.drawImage(this.$refs.camera, 0, 0);
+      const instant = this.$refs.canvas.toDataURL("image/jpeg")
+      console.log(instant)
 
       // 얼굴 인식
       const prediction = await this.model.estimateFaces(this.$refs.canvas, false)
@@ -114,6 +129,7 @@ export default {
           )
       });
       const jpegImg = this.$refs.hiddenCanvas.toDataURL("image/jpeg")
+      console.log(jpegImg)
       this.SAVE_PRESENT_FACE(jpegImg)
 
       // 고객의 얼굴에 테두리 그리기
