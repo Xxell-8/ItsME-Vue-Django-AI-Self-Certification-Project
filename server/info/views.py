@@ -12,6 +12,7 @@ import cv2
 from django.utils import timezone
 from .utils.ocr import ocr
 from .utils.image import base64_to_image, get_random_string
+from .utils.face_recognition import get_face_similarity
 from django.core.files.base import ContentFile
 from PIL import Image
 
@@ -97,8 +98,9 @@ def id_card_ocr(request, link_path):
     # 얼굴 유사도 검사
     face = request.data.get('face')
     id_card_face = request.data.get('id_card_face')
-    result['face_similarity'] = True
-    
+    face_similarity = get_face_similarity(face, id_card_face)
+
+    result['face_similarity'] = face_similarity
     serializer = IdCardSerializer(data=result)
     if serializer.is_valid(raise_exception=True):
         serializer.save(link=link)
