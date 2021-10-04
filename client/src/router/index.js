@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import store from '@/store/'
 import Home from '@/views/intro/Home.vue'
 import Introduction from '@/views/customer/info/Introduction'
+import Result from '@/views/customer/info/Result'
 import FaceRecognition from '@/views/customer/verification/FaceRecognition'
 import MotionRecognition from '@/views/customer/verification/MotionRecognition'
 import CardRecognition from '@/views/customer/verification/CardRecognition'
@@ -13,7 +14,6 @@ import LinkDetail from '@/views/partner/LinkDetail'
 import Settings from '@/views/partner/Settings'
 import PageNotFound from '@/views/error/PageNotFound'
 import ServerError from '@/views/error/ServerError'
-import Loading from '@/components/customer/verification/Loading'
 
 const routes = [
   // B2B Home
@@ -21,12 +21,6 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home
-  },
-  // 임시 작업
-  {
-    path: '/loading',
-    name: 'Loading',
-    component: Loading
   },
   // Partner
   {
@@ -63,12 +57,12 @@ const routes = [
   },
   // Customer
   {
-    path: '/customer/introduction/',
+    path: '/customer/introduction',
     name: 'Index',
     component: Introduction
   },
   {
-    path: '/customer/face-recognition/',
+    path: '/customer/face-recognition',
     name: 'FaceRecognition',
     component: FaceRecognition
   },
@@ -78,9 +72,14 @@ const routes = [
     component: MotionRecognition
   },
   {
-    path: '/customer/card-recognition/',
+    path: '/customer/card-recognition',
     name: 'CardRecognition',
     component: CardRecognition
+  },
+  {
+    path: '/customer/result',
+    name: 'Result',
+    component: Result,
   },
   // Error
   { 
