@@ -1,4 +1,3 @@
-from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
@@ -13,8 +12,8 @@ from django.utils import timezone
 from .utils.ocr import ocr
 from .utils.image import base64_to_image, get_random_string
 from .utils.face_recognition import get_face_similarity
+from .utils.permissions import isApproval
 from django.core.files.base import ContentFile
-from PIL import Image
 
 
 
@@ -22,7 +21,7 @@ from PIL import Image
 # Create your views here.
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated&isApproval])
 def link(request):
     user = request.user
 
@@ -47,7 +46,7 @@ def link(request):
 
 @api_view(['GET', 'DELETE'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated&isApproval])
 def link_detail(request, link_path):
     link = get_object_or_404(Link, path=link_path)
 
@@ -163,12 +162,3 @@ def link_count(request, partner_id):
         'link_count': link_count
     }
     return Response(data, status=status.HTTP_200_OK)
-
-
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])
-def id_card_image(request, link_path, image_name):
-    response = HttpResponse(content_type='image/jpeg')
-    img = Image.open(f'media/{link_path}/{image_name}')
-    img.save(response, 'jpeg')
-    return response
