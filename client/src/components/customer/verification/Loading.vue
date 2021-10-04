@@ -6,14 +6,6 @@
       <div class="l-triangle"></div>
       <div class="l-square"></div>
     </div>
-
-    <!-- 코너 테두리 사각형 -->
-    <div class="corner">
-      <div class="top-left"></div>
-      <div class="top-right"></div>
-      <div class="bottom-left"></div>
-      <div class="bottom-right"></div>
-    </div>
   </div>
 </template>
 
@@ -72,40 +64,16 @@ export default {
     }
   }
 
-  .corner {
-    width: 90vw;
-    height: 50vw;
-    margin: 1rem auto;
-    position: relative;
-    
-    div {
-      width: 2rem;
-      height: 2rem;
-      position: absolute;
-      border-color: rgba($secondary, 0.7);
-      border-style: solid;
-
-      &.top-left {
-        top: 0;
-        left: 0;
-        border-width: 4px 0 0 4px;
-      }
-      &.top-right {
-        top: 0;
-        right: 0;
-        border-width: 4px 4px 0 0;
-      }
-      &.bottom-left {
-        bottom: 0;
-        left: 0;
-        border-width: 0 0 4px 4px;
-      }
-      &.bottom-right {
-        bottom: 0;
-        right: 0;
-        border-width: 0 4px 4px 0;
-      }
-    }
+  .message {
+    display: flex;
+    width: 100vw;
+    margin-top: 1.5rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
   }
-
+    .text-secondary {
+      color: $secondary
+    }
 </style>

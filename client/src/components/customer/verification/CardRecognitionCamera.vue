@@ -1,14 +1,13 @@
 <template>
-  <div class="f-column">
+  <div class="f-column" :key="componentKey">
     <!-- header -->
     <div class="camera-before-header" v-if="isCameraOn">
       <p class="t-white fw-700">주민등록증을 테두리 안에 맞추고</p>
       <p class="t-white fw-700"><strong class="text-secondary">촬영</strong> 버튼을 눌러주세요.</p>
     </div>
     <div class="camera-after-header" v-if="isPhotoTaken">
-      <p class="t-white fw-700">본인의 얼굴에 테두리가 그려졌다면</p>
-      <p class="t-white fw-700"><strong class="text-secondary">다음</strong> 버튼을, 재촬영을 원하시면</p>
-      <p class="t-white fw-700"><strong class="text-secondary">재촬영</strong> 버튼을 눌러주세요.</p>
+      <p class="t-white fw-700">테두리 내부의 주민등록증 사진을 확인하고</p>
+      <p class="t-white fw-700"><strong class="text-secondary">제출</strong> 버튼을 눌러주세요.</p>
     </div>
     <!-- camera -->
     <div class="f-column camera-container">
@@ -30,8 +29,8 @@
     <!-- buttons -->
     <div class="btn-container">
       <button v-if="isCameraOn" class="btn-shot" @click="takePhoto">촬영</button>
-      <button v-if="isPhotoTaken" class="btn-shot">재촬영</button>
-      <button v-if="isPhotoTaken" class="btn-shot">다음</button>
+      <button v-if="isPhotoTaken" class="btn-shot" @click="restart">재촬영</button>
+      <button v-if="isPhotoTaken" class="btn-shot" @click="nextStep">제출</button>
     </div>
   </div>
 </template>
@@ -94,6 +93,8 @@ export default {
           this.isShotPhoto = false;
         }, TIMEOUT);
       }
+
+      this.isPhotoTaken = !this.isPhotoTaken;
       
       // 뷰포트 사이즈와 카메라의 시작 위치 구하기
       const vw = window.innerWidth
@@ -152,6 +153,16 @@ export default {
       // Vue3 문제 해결: Object.freeze
       this.model = Object.freeze(await blazeface.load());
     },
+    restart() {
+      this.componentKey += 1
+      this.isCameraOn = false;
+      this.isPhotoTaken = false;
+      this.isShotPhoto = false;
+      this.createCameraElement();
+    },
+    nextStep() {
+      this.$router.push('/customer/result')
+    }
   }  
 }
 </script>
