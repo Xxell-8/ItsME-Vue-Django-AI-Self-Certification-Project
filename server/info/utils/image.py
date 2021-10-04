@@ -20,15 +20,6 @@ def image_to_base64(image_path):
     return f'data:image/jpeg;base64,{image_base64.decode("utf-8")}'
 
 
+# image name generator
 def get_random_string(size=8, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
-
-
-if __name__ == '__main__':
-    image_path = 'E:/sample1.jpg'
-    
-    image_base64 = image_to_base64(image_path)
-
-    with open('E:/sample1_to_base64.txt', 'w') as f:
-        f.write(image_base64)
-    
