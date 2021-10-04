@@ -1,29 +1,38 @@
 <template>
   <div class="f-column">
     <!-- header -->
-    <div class="camera-header">
-      <span class="t-white fw-700 header-text">신분증 촬영</span>
+    <div class="camera-before-header" v-if="isCameraOn">
+      <p class="t-white fw-700">주민등록증을 테두리 안에 맞추고</p>
+      <p class="t-white fw-700"><strong class="text-secondary">촬영</strong> 버튼을 눌러주세요.</p>
+    </div>
+    <div class="camera-after-header" v-if="isPhotoTaken">
+      <p class="t-white fw-700">본인의 얼굴에 테두리가 그려졌다면</p>
+      <p class="t-white fw-700"><strong class="text-secondary">다음</strong> 버튼을, 재촬영을 원하시면</p>
+      <p class="t-white fw-700"><strong class="text-secondary">재촬영</strong> 버튼을 눌러주세요.</p>
     </div>
     <!-- camera -->
-    <!-- <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video> -->
-    <div class="f-column">
+    <div class="f-column camera-container">
       <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video>
-      <div class="card-direction" v-if="isCameraOn">
-        <div class="card-box"></div>
-        <div class="card-dialog">
-          <p>표시된 위치에</p>
-          <p>신분증을 알맞게 조정하여</p>
-          <p>촬영 버튼을 눌러주세요!</p>
-        </div>
-      </div>
     </div>
     <!-- canvas -->
     <canvas class="canvas-jpeg" ref="canvas"></canvas>
+    <canvas class="canvas-hidden" ref="cardCanvas"></canvas>
     <canvas class="canvas-hidden" ref="hiddenCanvas"></canvas>
+    <!-- overlay -->
+    <div class="overlay"></div>
+    <!-- 코너 테두리 사각형 -->
+    <div class="corner">
+      <div class="top-left"></div>
+      <div class="top-right"></div>
+      <div class="bottom-left"></div>
+      <div class="bottom-right"></div>
+    </div>
     <!-- buttons -->
-    <button v-if="isCameraOn" class="btn-shot" @click="takePhoto">촬영</button>
-    <button v-if="isPhotoTaken" class="btn-shot">재촬영</button>
-    <button v-if="isPhotoTaken" class="btn-shot">다음</button>
+    <div class="btn-container">
+      <button v-if="isCameraOn" class="btn-shot" @click="takePhoto">촬영</button>
+      <button v-if="isPhotoTaken" class="btn-shot">재촬영</button>
+      <button v-if="isPhotoTaken" class="btn-shot">다음</button>
+    </div>
   </div>
 </template>
 
@@ -55,7 +64,7 @@ export default {
     createCameraElement() {
       const constraints = (window.constraints = {
 				audio: false,
-				video: { width: 320, height: 240}
+				video: { height: window.innerHeight }
 			})
       navigator.mediaDevices
 				.getUserMedia(constraints)
@@ -86,16 +95,35 @@ export default {
         }, TIMEOUT);
       }
       
-      // 신분증 범위만 그려서 저장하기 - 캔버스 사이즈 추후 조정
+      // 뷰포트 사이즈와 카메라의 시작 위치 구하기
+      const vw = window.innerWidth
+      const vh = window.innerHeight
+      const videoRatio = this.$refs.camera.videoWidth / this.$refs.camera.offsetWidth
+      const startX = (this.$refs.camera.videoWidth - vw*videoRatio) / 2
+      
+      // 현재 카메라 화면을 캔버스에 옮겨 그리기
       const ctx = this.$refs.canvas.getContext('2d');
-      ctx.canvas.width = 200
-      ctx.canvas.height = 125
-      ctx.drawImage(this.$refs.camera, 60, 10, 200, 125, 0, 0, 200, 125);
-      const jpegImg = this.$refs.canvas.toDataURL("image/jpeg")
+      ctx.canvas.width = vw
+      ctx.canvas.height = vh
+      ctx.drawImage(this.$refs.camera, startX, 0, vw*videoRatio, this.$refs.camera.videoHeight, 0, 0, vw, vh);
+
+      // 신분증 범위만 그려서 저장하기 - 캔버스 사이즈 추후 조정
+      const cardCtx = this.$refs.cardCanvas.getContext('2d');
+      const cardWidth = 0.8*vw
+      const cardHeight = 0.8*vw*1.6
+
+      this.$refs.cardCanvas.width = cardWidth
+      this.$refs.cardCanvas.height = cardHeight
+      cardCtx.width = cardWidth
+      cardCtx.height = cardHeight
+
+      cardCtx.drawImage(this.$refs.canvas, 0.1*vw, 80, cardWidth, cardHeight, 0, 0, cardWidth, cardHeight);
+      const jpegImg = this.$refs.cardCanvas.toDataURL("image/jpeg")
       this.SAVE_ID_CARD(jpegImg)
+      console.log(jpegImg)
 
       // 얼굴 인식
-      const prediction = await this.model.estimateFaces(this.$refs.canvas, false)
+      const prediction = await this.model.estimateFaces(this.$refs.cardCanvas, false)
 
       // 인식된 고객의 얼굴 부분만 이미지로 저장하기
       const hiddenCtx = this.$refs.hiddenCanvas.getContext('2d');
@@ -109,12 +137,13 @@ export default {
         hiddenCtx.height = height
 
         hiddenCtx.drawImage(
-          this.$refs.canvas, 
+          this.$refs.cardCanvas, 
           pred.topLeft[0], pred.topLeft[1], width, height, 0, 0, width, height
           )
       });
       const faceImg = this.$refs.hiddenCanvas.toDataURL("image/jpeg")
       this.SAVE_CARD_FACE(faceImg)
+      console.log(faceImg)
 
       // 카메라 종료하기
       this.stopCameraStream();

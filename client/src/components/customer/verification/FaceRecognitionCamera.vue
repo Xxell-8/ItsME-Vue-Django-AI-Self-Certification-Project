@@ -1,12 +1,17 @@
 <template>
   <div class="f-column" :key="componentKey">
     <!-- header -->
-    <div class="camera-header">
+    <div class="camera-before-header" v-if="isCameraOn">
       <p class="t-white fw-700">얼굴을 테두리 안에 맞추고</p>
       <p class="t-white fw-700"><strong class="text-secondary">촬영</strong> 버튼을 눌러주세요.</p>
     </div>
+    <div class="camera-after-header" v-if="isPhotoTaken">
+      <p class="t-white fw-700">본인의 얼굴에 테두리가 그려졌다면</p>
+      <p class="t-white fw-700"><strong class="text-secondary">다음</strong> 버튼을, 재촬영을 원하시면</p>
+      <p class="t-white fw-700"><strong class="text-secondary">재촬영</strong> 버튼을 눌러주세요.</p>
+    </div>
     <!-- camera -->
-    <div class="camera-container">
+    <div class="f-column camera-container">
       <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video>
     </div>
     <!-- canvas -->
@@ -58,7 +63,7 @@ export default {
     createCameraElement() {
       const constraints = (window.constraints = {
 				audio: false,
-				video: true,
+				video: { height: window.innerHeight },
 			})
       navigator.mediaDevices
 				.getUserMedia(constraints)
@@ -94,20 +99,14 @@ export default {
       // 뷰포트 사이즈와 카메라의 시작 위치 구하기
       const vw = window.innerWidth
       const vh = window.innerHeight
-      const startX = this.$refs.camera.offsetWidth - vw
-      console.log(this.$refs.camera.offsetWidth, vw, vh, startX)
+      const videoRatio = this.$refs.camera.videoWidth / this.$refs.camera.offsetWidth
+      const startX = (this.$refs.camera.videoWidth - vw*videoRatio) / 2
       
       // 현재 카메라 화면을 캔버스에 옮겨 그리기
-      this.$refs.canvas.width = this.$refs.camera.offsetWidth
-      this.$refs.canvas.height = this.$refs.camera.offsetHeight
-
       const ctx = this.$refs.canvas.getContext('2d');
-      ctx.canvas.width = this.$refs.camera.offsetWidth
-      ctx.canvas.height = this.$refs.camera.offsetHeight
-      /* ctx.drawImage(this.$refs.camera, startX, startY, vw, vh, 0, 0, vw, vh); */
-      ctx.drawImage(this.$refs.camera, 0, 0);
-      const instant = this.$refs.canvas.toDataURL("image/jpeg")
-      console.log(instant)
+      ctx.canvas.width = vw
+      ctx.canvas.height = vh
+      ctx.drawImage(this.$refs.camera, startX, 0, vw*videoRatio, this.$refs.camera.videoHeight, 0, 0, vw, vh);
 
       // 얼굴 인식
       const prediction = await this.model.estimateFaces(this.$refs.canvas, false)
@@ -129,14 +128,14 @@ export default {
           )
       });
       const jpegImg = this.$refs.hiddenCanvas.toDataURL("image/jpeg")
-      console.log(jpegImg)
       this.SAVE_PRESENT_FACE(jpegImg)
+      console.log(jpegImg)
 
       // 고객의 얼굴에 테두리 그리기
       prediction.forEach((pred) => {
         ctx.beginPath();
         ctx.lineWidth = "4";
-        ctx.strokeStyle = "blue";
+        ctx.strokeStyle = "#BDFF00";
         ctx.rect(
           pred.topLeft[0],
           pred.topLeft[1],

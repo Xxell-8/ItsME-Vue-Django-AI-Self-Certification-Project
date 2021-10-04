@@ -1,24 +1,11 @@
 <template>
   <div class="f-column">
-    <!-- header -->
-    <div class="camera-header">
-      <span class="t-white fw-700 header-text">실시간 모션 인식</span>
-    </div>
     <!-- camera -->
-    <!-- <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video> -->
-    <div class="f-column">
+    <div class="f-column camera-container">
       <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video>
-      <div class="motion-direction" v-if="isCameraOn">
-        
-      </div>
     </div>
     <!-- canvas -->
     <canvas class="canvas-jpeg" ref="canvas"></canvas>
-    <div class="motion-dialog">
-      <p>왼손을</p>
-      <p>위로 높이</p>
-      <p>뻗어주세요!</p>
-    </div>
   </div>
 </template>
 
@@ -50,7 +37,7 @@ export default {
     createCameraElement() {
       const constraints = (window.constraints = {
 				audio: false,
-				video: { width: 320, height: 240}
+				video: { height: window.innerHeight }
 			})
       navigator.mediaDevices
 				.getUserMedia(constraints)
@@ -72,7 +59,16 @@ export default {
     },
     async detectPose(detector, ctx) {
       
-      ctx.drawImage(this.$refs.camera, 0, 0, 320, 240);
+      // 뷰포트 사이즈와 카메라의 시작 위치 구하기
+      const vw = window.innerWidth
+      const vh = window.innerHeight
+      const videoRatio = this.$refs.camera.videoWidth / this.$refs.camera.offsetWidth
+      const startX = (this.$refs.camera.videoWidth - vw*videoRatio) / 2
+      
+      // 현재 카메라 화면을 캔버스에 옮겨 그리기
+      ctx.canvas.width = vw
+      ctx.canvas.height = vh
+      ctx.drawImage(this.$refs.camera, startX, 0, vw*videoRatio, this.$refs.camera.videoHeight, 0, 0, vw, vh);
 
       const pose = await detector.estimateSinglePose(this.$refs.canvas)
       
@@ -80,7 +76,7 @@ export default {
       drawSkeleton(pose["keypoints"], 0.65, ctx);
 
       // 왼손 들 때 끝내도록
-      if (pose["keypoints"][2]["position"]["y"] - pose["keypoints"][9]["position"]["y"] > 30) {
+      if (pose["keypoints"][2]["position"]["y"] - pose["keypoints"][9]["position"]["y"] > 70) {
         this.isCompleted = true;
         clearInterval(this.interval)
         this.stopCameraStream();
