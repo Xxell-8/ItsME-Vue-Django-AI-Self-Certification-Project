@@ -1,7 +1,8 @@
 from django.db import models
+from django.db.models.fields import BooleanField
 from accounts.models import Partner
 from django.contrib.auth import get_user_model
-import os
+
 
 
 # Create your models here.
@@ -25,6 +26,8 @@ class Customer(models.Model):
 
 
 class IdCard(models.Model):
+    link = models.ForeignKey(Link, on_delete=models.CASCADE)
+    face_similarity = BooleanField()
     name = models.CharField(max_length=45, blank=True)
     birth = models.CharField(max_length=8, blank=True)
     img = models.ImageField(null=True)
