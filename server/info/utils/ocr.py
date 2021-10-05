@@ -11,11 +11,11 @@ def text_detection(image):
     image[:,:,0] = 0
     image[:,:,1] = 0
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)     # 바이너리 이미지로 변환
-    erosion = cv2.erode(image, np.ones((2, 2), np.uint8), iterations=1)   # Erosion(침식): 바이너리 이미지에서 흰색(1) 오브젝트의 외곽픽셀을 검은색(0)으로 만든다.
+    erosion = cv2.erode(image, np.ones((2, 2), np.uint8), iterations=3)   # Erosion(침식): 바이너리 이미지에서 흰색(1) 오브젝트의 외곽픽셀을 검은색(0)으로 만든다.
     dilate = cv2.dilate(image, np.ones((2, 2), np.uint8), iterations=1)   # Dilate(팽창): 바이너리 이미지에서 검은색(0) 오브젝트의 외곽픽셀을 횐색(1)으로 만든다.
     image = cv2.subtract(dilate, erosion)    # Morph Gradient = dilate - erosion
 
-    _, image = cv2.threshold(image, 13, 255, cv2.THRESH_BINARY)     # global threshold: 신분증 배경을 제거하기 위해
+    _, image = cv2.threshold(image, 13, 255, cv2.THRESH_OTSU)     # global threshold: 신분증 배경을 제거하기 위해
 
     image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 9, 3)
 
@@ -77,13 +77,13 @@ def image_masking(image, texts, boxes):
         elif issue_date_pattern.match(text):
             cv2.rectangle(image, (x, y), (x+w, y+h), (100, 100, 100), -1)
 
-    if not customer_info.get('birth'):
-        return None
-    if idx != -1 and len(texts) > idx+1:
-        customer_info['name'] = get_name(texts[idx+1:])
-    else:
-        customer_info['name'] = ''
+    customer_info['name'] = ''
     customer_info['img'] = image
+    if customer_info.get('birth'):
+        if idx != -1 and len(texts) > idx+1:
+            customer_info['name'] = get_name(texts[idx+1:])
+    else:
+        customer_info['birth'] = ''
     return customer_info
 
 
