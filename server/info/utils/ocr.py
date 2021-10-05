@@ -166,9 +166,6 @@ def image_masking(image, texts, boxes):
 
 
 def ocr(image):
-    image = image_detection(image)
-    if image is None:
-        return None
     image_orig = image.copy()
     area = text_detection(image)
     texts = []
