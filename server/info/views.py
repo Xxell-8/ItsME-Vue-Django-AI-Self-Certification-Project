@@ -77,7 +77,6 @@ def link_detail(request, link_path):
 
 
 @api_view(['POST'])
-@authentication_classes([JWTAuthentication])
 def id_card_ocr(request, link_path):
     link = get_object_or_404(Link, path=link_path)
     # 신분증 OCR 및 비식별화
@@ -108,7 +107,7 @@ def id_card_ocr(request, link_path):
     face_similarity = get_face_similarity(face, id_card_face)
 
     result['face_similarity'] = face_similarity
-    
+
     serializer = IdCardSerializer(data=result)
     if serializer.is_valid(raise_exception=True):
         serializer.save(link=link)
@@ -116,7 +115,6 @@ def id_card_ocr(request, link_path):
 
 
 @api_view(['PATCH'])
-@authentication_classes([JWTAuthentication])
 def customer(request, link_path):
     name = request.data.get('name')
     if not name:
