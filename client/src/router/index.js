@@ -62,22 +62,22 @@ const routes = [
     component: Introduction
   },
   {
-    path: '/customer/face-recognition/:path',
+    path: '/customer/face-recognition/',
     name: 'FaceRecognition',
     component: FaceRecognition
   },
   {
-    path: '/customer/motion-recognition/:path',
+    path: '/customer/motion-recognition/',
     name: 'MotionRecognition',
     component: MotionRecognition
   },
   {
-    path: '/customer/card-recognition/:path',
+    path: '/customer/card-recognition/',
     name: 'CardRecognition',
     component: CardRecognition
   },
   {
-    path: '/customer/result/:path',
+    path: '/customer/result/',
     name: 'Result',
     component: Result,
   },

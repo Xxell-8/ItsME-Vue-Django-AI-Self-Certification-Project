@@ -2,6 +2,7 @@
 import customerApi from '@/api/customer'
 
 const state = {
+  path: null,
   presentFaceImg: null,
   cardFaceImg: null,
   idCardImg: null,
@@ -39,6 +40,9 @@ const actions = {
 }
 
 const mutations = {
+  SAVE_PATH(state, path) {
+    state.path = path
+  },
   SAVE_PRESENT_FACE(state, presentFaceImg) {
     state.presentFaceImg = presentFaceImg
   },

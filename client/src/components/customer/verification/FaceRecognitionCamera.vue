@@ -160,7 +160,7 @@ export default {
       this.createCameraElement();
     },
     nextStep() {
-      this.$router.push(`/customer/motion-recognition/${this.$route.params.path}`)
+      this.$router.push('/customer/motion-recognition')
     }
   }  
 }

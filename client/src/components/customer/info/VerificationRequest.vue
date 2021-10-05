@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'VerificationRequest',
@@ -34,8 +35,10 @@ export default {
     }  
   },
   methods: {
+    ...mapMutations('customer', ['SAVE_PATH']),
     nextStep() {
-      this.$router.push(`/customer/face-recognition/${this.$route.params.path}`)
+      this.SAVE_PATH(this.$route.params.path)
+      this.$router.push('/customer/face-recognition')
     }
   },
 }
