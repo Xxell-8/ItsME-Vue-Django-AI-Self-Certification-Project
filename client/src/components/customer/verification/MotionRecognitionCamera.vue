@@ -6,6 +6,10 @@
     </div>
     <!-- canvas -->
     <canvas class="canvas-jpeg" ref="canvas"></canvas>
+    <!-- direction message -->
+    <div class="direction fw-700 t-white">
+      <span><strong class="t-green">왼손</strong>을 <strong class="t-green">위로</strong> 높이 들어주세요!</span>
+    </div>
   </div>
 </template>
 
