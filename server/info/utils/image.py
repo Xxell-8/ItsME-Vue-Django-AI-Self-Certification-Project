@@ -23,3 +23,8 @@ def image_to_base64(image_path):
 # image name generator
 def get_random_string(size=8, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
+
+
+# rotate image
+def rotate_image(image):
+    return np.rot90(image, 1, (0, 1))

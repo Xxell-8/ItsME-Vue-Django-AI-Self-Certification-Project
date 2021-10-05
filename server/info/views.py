@@ -10,7 +10,7 @@ from accounts.models import Partner
 import cv2
 from django.utils import timezone
 from .utils.ocr import ocr
-from .utils.image import base64_to_image, get_random_string
+from .utils.image import base64_to_image, get_random_string, rotate_image
 from .utils.face_recognition import get_face_similarity
 from .utils.permissions import isApproval
 from django.core.files.base import ContentFile
@@ -83,12 +83,15 @@ def id_card_ocr(request, link_path):
     # 신분증 OCR 및 비식별화
     image_base64 = request.data.get('id_card_image')
     image = base64_to_image(image_base64)
+    image = rotate_image(image)
+
     result = ocr(image)
     if not result:
         data = {
             'message': '신분증 OCR에 실패했습니다.'
         }
         return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
     img = result.get('img')
     image_io = cv2.imencode('.jpg', img)[1].tostring()
     image_file = ContentFile(image_io, name=f'{link_path}/{get_random_string()}.jpg')
@@ -97,9 +100,15 @@ def id_card_ocr(request, link_path):
     # 얼굴 유사도 검사
     face = request.data.get('face')
     id_card_face = request.data.get('id_card_face')
+
+    face = base64_to_image(face)
+    id_card_face = base64_to_image(id_card_face)
+    id_card_face = rotate_image(id_card_face)
+
     face_similarity = get_face_similarity(face, id_card_face)
 
     result['face_similarity'] = face_similarity
+    
     serializer = IdCardSerializer(data=result)
     if serializer.is_valid(raise_exception=True):
         serializer.save(link=link)
