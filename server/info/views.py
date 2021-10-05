@@ -85,11 +85,6 @@ def id_card_ocr(request, link_path):
     image = rotate_image(image)
 
     result = ocr(image)
-    if not result:
-        data = {
-            'message': '신분증 OCR에 실패했습니다.'
-        }
-        return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
     img = result.get('img')
     image_io = cv2.imencode('.jpg', img)[1].tostring()
