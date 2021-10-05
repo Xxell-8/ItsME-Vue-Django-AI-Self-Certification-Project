@@ -1,6 +1,5 @@
 <template>
   <div class="result">
-    <img class="logo-back" src="@/assets/image/logo/white-lg.svg" alt="logo">
     <Loading v-if="faceSimilarity===null"/>
     <VerificationResult v-show="faceSimilarity!==null"/>
   </div>

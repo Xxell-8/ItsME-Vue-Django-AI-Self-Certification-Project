@@ -1,5 +1,6 @@
 <template>
   <div class="f-column">
+    <img class="logo-back" src="@/assets/image/logo/white-lg.svg" alt="logo">
     <!-- title -->
     <p class="title-small font-mont fw-700 t-white">Please Check</p>
     <p class="title-big font-mont fw-900 t-white">It's me!</p>
@@ -35,7 +36,7 @@ export default {
     }  
   },
   mounted() {
-    this.getVerificationResult(this.$route.params.path)
+    this.getVerificationResult(this.$store.state.customer.path)
   },
   methods: {
     ...mapActions('customer', ['getVerificationResult']),
