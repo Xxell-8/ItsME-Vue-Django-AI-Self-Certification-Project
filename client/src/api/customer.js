@@ -1,9 +1,9 @@
 import _axios from "./interceptor"
 
 export default {
-  getVerificationResult (payload) {
+  getVerificationResult (path, payload) {
     return _axios({
-      url: '',
+      url: `/info/link/${path}/id_card_ocr/`,
       method: 'post',
       data: payload
     })

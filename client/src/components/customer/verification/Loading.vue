@@ -6,12 +6,24 @@
       <div class="l-triangle"></div>
       <div class="l-square"></div>
     </div>
+    <!-- message -->
+    <div v-if="this.$route.name=='Result'" class="message t-white fw-700">
+      <span><strong class="text-secondary">본인 인증</strong> 결과를 확인중입니다.</span>
+      <span>잠시만 기다려주세요!</span>
+    </div>
+    <div v-if="this.$route.name=='FaceRecognition'" class="message t-white fw-700">
+      <span><strong class="text-secondary">얼굴 인식</strong>을 준비중입니다.</span>
+      <span>잠시만 기다려주세요!</span>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Loading'
+  name: 'Loading',
+  mounted() {
+    console.log(this.$route.name)
+  }
 }
 </script>
 
@@ -67,7 +79,7 @@ export default {
   .message {
     display: flex;
     width: 100vw;
-    margin-top: 1.5rem;
+    margin-top: 3rem;
     flex-direction: column;
     justify-content: center;
     align-items: center;

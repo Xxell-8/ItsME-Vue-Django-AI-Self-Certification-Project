@@ -57,27 +57,27 @@ const routes = [
   },
   // Customer
   {
-    path: '/customer/introduction',
+    path: '/customer/introduction/:path',
     name: 'Index',
     component: Introduction
   },
   {
-    path: '/customer/face-recognition',
+    path: '/customer/face-recognition/:path',
     name: 'FaceRecognition',
     component: FaceRecognition
   },
   {
-    path: '/customer/motion-recognition',
+    path: '/customer/motion-recognition/:path',
     name: 'MotionRecognition',
     component: MotionRecognition
   },
   {
-    path: '/customer/card-recognition',
+    path: '/customer/card-recognition/:path',
     name: 'CardRecognition',
     component: CardRecognition
   },
   {
-    path: '/customer/result',
+    path: '/customer/result/:path',
     name: 'Result',
     component: Result,
   },

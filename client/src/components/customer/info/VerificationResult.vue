@@ -1,8 +1,8 @@
 <template>
   <div class="f-column">
     <!-- title -->
-    <p class="title-small font-mont fw-700 t-white">Welcome to</p>
-    <p class="title-big font-mont fw-900 t-white">It's Me!</p>
+    <p class="title-small font-mont fw-700 t-white">Please Check</p>
+    <p class="title-big font-mont fw-900 t-white">It's me!</p>
     <!-- notification -->
     <div class="notification f-column">
       <img class="partner-logo" :src=partnerLogo alt="partner logo">
@@ -16,14 +16,15 @@
       </div>
     </div>
     <!-- progress button -->
-    <button @click="nextStep" class="btn-secondary btn-intro fw-700"><strong>본인 인증 하러 가기</strong></button>
+    <button @click="nextStep" class="btn-secondary btn-intro fw-700"><strong>고객 정보 제출하기</strong></button>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 
 export default {
-  name: 'VerificationRequest',
+  name: 'VerificationResult',
   props: {},
   data() {
     return {
@@ -33,10 +34,21 @@ export default {
       afterProcess: 'TEST 입장 코드'
     }  
   },
+  mounted() {
+    this.getVerificationResult(this.$route.params.path)
+  },
   methods: {
+    ...mapActions('customer', ['getVerificationResult']),
     nextStep() {
       this.$router.push(`/customer/face-recognition/${this.$route.params.path}`)
     }
   },
+  computed: {
+    verificationResult() {
+      return {
+        customerId: this.$store.state.customer.customerId,
+      }
+    }
+  }
 }
 </script>

@@ -96,7 +96,7 @@ export default {
       this.interval = setInterval(this.detectPose, 100, detector, ctx)
     },
     nextStep() {
-      this.$router.push('/customer/card-recognition')
+      this.$router.push(`/customer/card-recognition/${this.$route.params.path}`)
     }
   }  
 }

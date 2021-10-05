@@ -161,7 +161,7 @@ export default {
       this.createCameraElement();
     },
     nextStep() {
-      this.$router.push('/customer/result')
+      this.$router.push(`/customer/result/${this.$route.params.path}`)
     }
   }  
 }
