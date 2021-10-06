@@ -117,14 +117,14 @@ export default {
         const width = pred.bottomRight[0] - pred.topLeft[0]
         const height = pred.bottomRight[1] - pred.topLeft[1]
 
-        this.$refs.hiddenCanvas.width = width
+        this.$refs.hiddenCanvas.width = width*2
         this.$refs.hiddenCanvas.height = height
-        hiddenCtx.width = width
+        hiddenCtx.width = width*2
         hiddenCtx.height = height
 
         hiddenCtx.drawImage(
           this.$refs.canvas, 
-          pred.topLeft[0], pred.topLeft[1], width, height, 0, 0, width, height
+          pred.topLeft[0] - 0.5*width, pred.topLeft[1], width*2, height, 0, 0, width*2, height
           )
       });
       const jpegImg = this.$refs.hiddenCanvas.toDataURL("image/jpeg")

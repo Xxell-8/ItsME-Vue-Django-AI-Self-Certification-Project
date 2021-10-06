@@ -135,13 +135,13 @@ export default {
         const height = pred.bottomRight[1] - pred.topLeft[1]
 
         this.$refs.hiddenCanvas.width = width
-        this.$refs.hiddenCanvas.height = height
+        this.$refs.hiddenCanvas.height = height*2
         hiddenCtx.width = width
-        hiddenCtx.height = height
+        hiddenCtx.height = height*2
 
         hiddenCtx.drawImage(
           this.$refs.cardCanvas, 
-          pred.topLeft[0], pred.topLeft[1], width, height, 0, 0, width, height
+          pred.topLeft[0], pred.topLeft[1] - 0.5*height, width, height*2, 0, 0, width, height*2
           )
       });
       const faceImg = this.$refs.hiddenCanvas.toDataURL("image/jpeg")
