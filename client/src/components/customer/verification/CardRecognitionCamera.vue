@@ -11,7 +11,7 @@
     </div>
     <!-- camera -->
     <div class="f-column camera-container">
-      <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay></video>
+      <video @loadeddata="initDetector" class="camera-stream" ref="camera" autoplay playsinline></video>
     </div>
     <!-- canvas -->
     <canvas class="canvas-jpeg" ref="canvas"></canvas>
