@@ -89,6 +89,27 @@
   font-weight: 200;
 }
 
+.email-check {
+  position: absolute;
+  bottom: 7px;
+  right: 10px;
+  border-radius: 15px;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem
+}
+
+.login-400 {
+  position: fixed;
+  z-index: 1060;
+  top: 6.5rem;
+  background-color: rgba($danger, 0.7);
+  border: 1px solid $danger;
+  color: $white;
+  font-weight: 500;
+  padding: 0.3rem 0.8rem;
+  border-radius: .5rem;
+}
+
 .account-inputs {
   margin-top: 1rem;
 }
@@ -109,10 +130,12 @@
 }
 
 .move-btns {
-  margin-top: 0.7rem;
+  // margin-top: 0.7rem;
   font-size: 0.875rem;
 
   .btn {
+    margin-left: 0.5rem;
+    font-weight: 400;
     &:hover {
       font-weight: 500;
     }
@@ -171,6 +194,31 @@
 
 .sub-text {
   margin-top: 1.5rem;
+}
+
+.wrong {
+  animation: shake 0.82s 1;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
 }
 
 /* input 자동으로 색 변환되는 것 방지 */

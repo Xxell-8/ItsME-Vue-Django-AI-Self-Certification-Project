@@ -9,23 +9,32 @@
         <div class="title">신규 링크 생성</div>
       </div>
       <NewLinkForm/>
+      <CreateSuccess
+        v-if="successModal"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import './newLink.scss'
+import { mapState } from 'vuex'
 import PartnerNav from '@/components/partner/common/PartnerNav'
 import UserNav from '@/components/partner/common/UserNav'
-import NewLinkForm from '@/components/partner/NewLinkForm'
+import NewLinkForm from '@/components/partner/newLink/NewLinkForm'
+import CreateSuccess from '@/components/partner/newLink/CreateSuccess'
 
 export default {
   name: 'NewLink',
   components: {
     PartnerNav,
     UserNav,
-    NewLinkForm
+    NewLinkForm,
+    CreateSuccess
   },
+  computed: {
+    ...mapState('partner', ['successModal'])
+  }
 }
 </script>
 

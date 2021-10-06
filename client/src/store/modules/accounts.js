@@ -8,6 +8,8 @@ const state = {
   companyInfo: null,
   isLogin: false,
   userInfo: null,
+  unapprovedUsers: [],
+  wrongInput: false
 }
 
 const actions = {
@@ -15,19 +17,37 @@ const actions = {
     router.push({ name: 'PartnerHome' })
   },
   async onLogin({ dispatch, commit }, userData) {
-    console.log(userData)
+    // console.log(userData)
     await accountApi.login(userData)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_IS_LOGIN', true)
         dispatch('getUserInfo', res.data.user.pk)
-        dispatch('moveToPartnerHome')
+      })
+      .catch((err) => {
+        console.log(err.response)
+        commit('SET_WRONG_INPUT', true)
+        setTimeout(() => {
+          commit('SET_WRONG_INPUT', false)
+        }, 1000)
       })
   },
-  async getUserInfo({ commit }, userId) {
+  async getUserInfo({ commit, dispatch }, userId) {
     await accountApi.getUserInfo(userId)
       .then((res) => {
         commit('SET_USER_INFO', res.data)
+        dispatch('getPartnerInfo')
+        router.push('/partners')
+      })
+  },
+  async getPartnerInfo({ state, commit }) {
+    await accountApi.getParnerInfo(state.userInfo.code)
+      .then((res) => {
+        // console.log(res.data)
+        commit('ADD_PARTNER_INFO', res.data.id)
+      })
+      .catch((err) => {
+        console.log(err.response)
       })
   },
   onLogout({ commit }) {
@@ -36,7 +56,22 @@ const actions = {
     commit('SET_REFRESH_TOKEN', null)
     commit('SET_USER_INFO', null)
     router.push('/partners/accounts/login')
-  }
+  }, 
+  async getUnapprovedUsers ({ state, commit }) {
+    await accountApi.getUnapprovedUsers(state.userInfo.code)
+      .then((res) => {
+        console.log(res)
+        if (res.status === 200) {
+          commit('SET_UNAPPROVED_USR', res.data)
+        }
+      })
+  },
+  async onApproveUser({ dispatch }, userId) {
+    await accountApi.approveUser(userId)
+      .then(() => {
+        dispatch('getUnapprovedUsers')
+      })
+  },
   
 }
 
@@ -56,13 +91,24 @@ const mutations = {
   SET_IS_LOGIN (state, payload) {
     state.isLogin = payload
   },
+  SET_WRONG_INPUT (state, payload) {
+    state.wrongInput = payload
+  },
   SET_USER_INFO (state, payload) {
     state.userInfo = payload
+  },
+  ADD_PARTNER_INFO (state, payload) {
+    state.userInfo.partnerId = payload
+  },
+  SET_UNAPPROVED_USR (state, payload) {
+    state.unapprovedUsers = payload
   }
 }
 
 const getters = {
-
+  unapprovedCnt: (state) => {
+    return state.unapprovedUsers.length
+  }
 }
 
 export default {

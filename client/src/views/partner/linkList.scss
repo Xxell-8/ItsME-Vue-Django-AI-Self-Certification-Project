@@ -10,6 +10,7 @@
   height: fit-content;
   border-radius: 20px;
   background-color: $white;
+  padding: 1rem 0;
   gap: 2rem;
 
   .name {
@@ -34,14 +35,80 @@
   }
 }
 
-.btn-detail {
-  width: 100px;
-  height: 40px;
-  margin-top: 2rem;
-  border-radius: 20px !important;
-  margin-bottom: 3rem;
-  &:hover {
+.link-btns {
+  gap: 0.5rem;
+
+  button {
+    width: 100px;
+    height: 35px;
+    border-radius: 20px !important;
     font-weight: 700;
-    font-size: 1.05rem;
+    &:hover {
+      font-weight: 900;
+      font-size: 1.05rem;
+    }
+  }
+}
+
+.confirm {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1060;
+
+  .confirm-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20rem;
+    height: auto;
+    border-radius: 1rem;
+    background: $dark;
+    color: $light;
+    padding: 1.2rem;
+    box-shadow: 0.2rem 0.2rem 0.5rem 0 rgba(0,0,0,0.4);
+
+    .title {
+      font-weight: 500;
+      font-size: 1.2rem;
+      margin: 0.3rem 0;
+
+      span {
+        color: $secondary;
+        font-weight: 700;
+      }
+    }
+    .descript {
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+    }
+    .btn-row {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: flex-end;
+      button {
+        width: 6rem;
+        height: 2rem;
+        border-radius: 1rem !important;
+        font-weight: 700;
+        &:hover {
+          font-weight: 900;
+          font-size: 1.05rem;
+        }
+      }
+    }
+    .exit-btn {
+      position: fixed;
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 1.5rem;
+      height: auto;
+      cursor: pointer;
+      filter: invert(27%) sepia(7%) saturate(1403%) hue-rotate(186deg) brightness(89%) contrast(89%);
+    }
   }
 }

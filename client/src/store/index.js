@@ -9,7 +9,7 @@ const store = createStore({
   modules: {
     accounts,
     partner,
-    customer
+    customer,
   }
 })
 

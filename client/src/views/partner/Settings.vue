@@ -8,7 +8,11 @@
         <div class="subtitle">회사 정보 관리</div>
         <div class="title">파트너 설정</div>
       </div>
-      <ManageCode/>
+      <div class="top-content">
+        <ManageCode/>
+        <CompanyInfo/>
+      </div>
+      <UserApproval/>
     </div>
   </div>
 </template>
@@ -18,13 +22,17 @@ import './settings.scss'
 import PartnerNav from '@/components/partner/common/PartnerNav'
 import UserNav from '@/components/partner/common/UserNav'
 import ManageCode from '@/components/partner/settings/ManageCode'
+import CompanyInfo from '@/components/partner/settings/CompanyInfo'
+import UserApproval from '@/components/partner/settings/UserApproval'
 
 export default {
   name: 'Settings',
   components: {
     PartnerNav,
     UserNav,
-    ManageCode
+    ManageCode,
+    CompanyInfo,
+    UserApproval
   },
 }
 </script>

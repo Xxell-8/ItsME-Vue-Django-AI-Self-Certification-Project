@@ -1,4 +1,5 @@
 import _axios from "./interceptor"
+import store from '@/store/index.js'
 
 export default {
   signup(userData) {
@@ -13,6 +14,13 @@ export default {
       url: 'accounts/login/',
       method: 'post',
       data: userData
+    })
+  },
+  checkMail (email) {
+    return _axios({
+      url: `accounts/email/`,
+      method: 'post',
+      data: { 'email': email }
     })
   },
   getUserInfo (userId) {
@@ -34,5 +42,30 @@ export default {
       data: {'code': companyCode}
     })
   },
+  getUnapprovedUsers (code) {
+    return _axios({
+      url: `/accounts/pending/${code}/`,
+      method: 'post'
+    })
+  },
+  approveUser (userId) {
+    return _axios({
+      url: `/accounts/profile/approval/${userId}/`,
+      method: 'put'
+    })
+  },
+  getParnerInfo (code) {
+    return _axios({
+      url: `accounts/getpartner/${code}/`,
+      method: 'post'
+    })
+  },
+  refreshToken () {
+    return _axios({
+      url: '/accounts/token/refresh/',
+      method: 'post',
+      data: { 'refresh': store.state.accounts.rfToken }
+    })
+  }
 
 }

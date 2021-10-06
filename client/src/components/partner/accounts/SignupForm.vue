@@ -5,18 +5,32 @@
         <span class="subtitle font-mont fw-300 t-white">It's Me!</span>
         <span class="title font-mont fw-900 t-white">Signup</span>
       </div>
+      <span v-if="wrongInput" class="login-400 wrong">이미 사용 중인 메일 계정입니다.</span>
       <div class="account-inputs">
         <!-- 이메일 input -->
         <div class="account-input-box">
-          <input
-            id="email"
-            class="account-input"
-            v-model="email"
-            type="text"
-            autocapitalize="off"
-            required
-          />
+          <div style="position: relative;">
+            <input
+              id="email"
+              class="account-input"
+              v-model="email"
+              type="text"
+              autocapitalize="off"
+              @input="resetEmailCheck"
+              required
+            />
+            <button
+              v-if="isChecked"
+              class="btn-dark email-check"
+              disabled
+            >사용가능</button>
+            <button
+              v-else
+              :class="[ error.email || !email.length ? 'btn-disabled' : 'btn-primary', 'email-check']"
+              @click="checkMail"
+            >중복확인</button>
             <label>이메일 계정</label>
+          </div>
           <div class="error-text" v-if="error.email">{{error.email}}</div>
         </div>
         <!-- 비밀번호 input -->
@@ -71,7 +85,7 @@
         </div>
         <!-- 회원가입 버튼 -->
         <button
-          :class="[ isSubmit ? 'btn-secondary' : 'btn-disabled', 'btn-submit font-mont fw-500']"
+          :class="[ isChecked && isSubmit ? 'btn-secondary' : 'btn-disabled', 'btn-submit font-mont fw-500']"
           @click="onSignup"
         >Signup</button>
       </div>
@@ -103,6 +117,7 @@ export default {
         phoneNum: false
       },
       isSubmit: false,
+      isChecked: false,
       wrongInput: false
     }
   },
@@ -114,9 +129,26 @@ export default {
           this.$store.commit('accounts/SET_TEMP_NAME', this.name)
           this.$emit('next')
         })
-        .catch((err) => {
-          console.log(err.response)
+    },
+    async checkMail() {
+      await accountApi.checkMail(this.email)
+        .then((res) => {
+          console.log(res)
+          if (res.data.available) {
+            this.isChecked = true
+          } else {
+            this.email = ''
+            this.wrongInput = true
+            setTimeout(() => {
+              this.wrongInput = false
+            }, 1000)
+          }
         })
+    },
+    resetEmailCheck () {
+      if (this.isChecked === true) {
+        this.isChecked = false
+      }
     },
     checkForm() {
       // 이메일 형식 검증

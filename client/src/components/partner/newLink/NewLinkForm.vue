@@ -106,14 +106,14 @@
     </div>
     <button
       class="btn btn-primary fw-900"
-      @click="$router.push({ name: menu.link })"
+      @click="onCreateLink(linkData)"
     >링크 생성</button>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import Multiselect from '@vueform/multiselect'
 import accountApi from '@/api/accounts.js'
 
@@ -138,6 +138,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('partner', ['onCreateLink']),
     addViewer(event) {
       this.viewers.push(event.id)
     },
@@ -170,7 +171,7 @@ export default {
     },
     csvToJson () {
       if (this.fileInput) {
-        const lines = this.fileInput.split('\n')
+        const lines = this.fileInput.trim().split('\n')
         const header = lines[0].split(',').map(key => key.trim())
         const output = lines.slice(1).map((line) => {
           const fields = line.split(',').map(key => key.trim())
@@ -197,10 +198,11 @@ export default {
     linkData () {
       return {
         path: this.linkPath,
+        company: this.company,
         name: this.name,
         managers: this.value,
         repeatable: !this.repeatable,
-        expiration: this.expirationDate,
+        expired_at: this.expirationDate,
         customers: this.fileOutput
       }
     }
