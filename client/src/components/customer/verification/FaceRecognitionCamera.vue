@@ -137,9 +137,9 @@ export default {
         ctx.lineWidth = "4";
         ctx.strokeStyle = "#BDFF00";
         ctx.rect(
-          pred.topLeft[0],
+          pred.topLeft[0] - 0.5*(pred.bottomRight[0] - pred.topLeft[0]),
           pred.topLeft[1],
-          pred.bottomRight[0] - pred.topLeft[0],
+          (pred.bottomRight[0] - pred.topLeft[0])*2,
           pred.bottomRight[1] - pred.topLeft[1]
         );
         ctx.stroke();        
