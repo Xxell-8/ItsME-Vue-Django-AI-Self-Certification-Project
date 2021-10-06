@@ -9,7 +9,7 @@ const state = {
   customerId: null,
   customerName: null,
   customerBirth: null,
-  makedCard: null,
+  maskedCard: null,
   faceSimilarity: null,
 }
 
@@ -31,11 +31,14 @@ const actions = {
     }
     await customerApi.getVerificationResult(path, payload)
     .then((res) => {
-      commit('GET_VERIFICATION_RESULT', res)
+      commit('GET_VERIFICATION_RESULT', res.data)
     })
     .catch((err) => {
       console.log(err)
     })
+  },
+  patchCustomerInfo({ state }, payload) {
+    customerApi.patchCustomerInfo(state.path, payload)
   }
 }
 
@@ -52,13 +55,13 @@ const mutations = {
   SAVE_ID_CARD(state, idCardImg) {
     state.idCardImg = idCardImg
   },
-  GET_VERIFICATION_RESULT(state, res) {
-    state.customerId = res.id
-    state.customerName = res.names
-    state.customerBirth = res.birth
-    state.makedCard = res.id_card_image
-    state.faceSimilarity = res.face_similarity
-  }
+  GET_VERIFICATION_RESULT(state, data) {
+    state.customerId = data.id
+    state.customerName = data.name
+    state.customerBirth = data.birth
+    state.maskedCard = data.id_card_image
+    state.faceSimilarity = data.face_similarity
+  },
 }
 
 const getters = {

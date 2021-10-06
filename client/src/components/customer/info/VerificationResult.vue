@@ -8,16 +8,14 @@
     <div class="notification f-column">
       <img class="partner-logo" :src=partnerLogo alt="partner logo">
       <div class="content-box">
-        <span class="content fw-700 t-white">{{ task }}을 위해</span>
-        <span class="content fw-700 t-white"><strong>{{ partner }}</strong>에서</span>
-        <span class="content fw-700 t-white">본인인증을 요청합니다.</span>
-        <br>
-        <span class="content-small fw-700 t-white">본인 인증을 완료 시,</span>
-        <span class="content-small fw-700 t-white"><span class="t-green">{{ afterProcess }}</span>를 확인하실 수 있습니다.</span>
+        <p class="t-white">{{ verificationResult }}</p>
+        <input type="text" v-model="name">
+        <input type="text" v-model="birth">
       </div>
     </div>
     <!-- progress button -->
-    <button @click="nextStep" class="btn-secondary btn-intro fw-700"><strong>고객 정보 제출하기</strong></button>
+    <button @click="restart" class="btn-secondary btn-intro fw-700"><strong>본인 인증 다시 하기</strong></button>
+    <button @click="finish" class="btn-secondary btn-intro fw-700"><strong>인증 정보 확인 및 제출</strong></button>
   </div>
 </template>
 
@@ -30,24 +28,39 @@ export default {
   data() {
     return {
       partnerLogo: 'https://edu.ssafy.com/asset/images/logo.png',
-      task: 'SW 역량테스트 진행',
-      partner: 'SSAFY 사무국',
-      afterProcess: 'TEST 입장 코드'
+      name: null,
+      birth: null,
     }  
   },
-  mounted() {
-    this.getVerificationResult(this.$store.state.customer.path)
+  async mounted() {
+    await this.getVerificationResult(this.$store.state.customer.path)
+    this.name = this.verificationResult.customerName;
+    this.birth = this.verificationResult.customerBirth;
   },
   methods: {
-    ...mapActions('customer', ['getVerificationResult']),
-    nextStep() {
-      this.$router.push(`/customer/face-recognition/${this.$route.params.path}`)
+    ...mapActions('customer', ['getVerificationResult', 'patchCustomerInfo']),
+    restart() {
+      // mutation 지워주기, path만 살리기
+      this.$router.push('/customer/face-recognition/')
+    },
+    finish() {
+      // 개인정보 인증 내역 patch
+      const payload = {
+        name: this.name,
+        birth: this.birth,
+        id_card: this.verificationResult.customerId
+      }
+      this.patchCustomerInfo(payload)
+      // mutation 지워주기, name만 안내 페이지로
     }
   },
   computed: {
     verificationResult() {
       return {
         customerId: this.$store.state.customer.customerId,
+        customerName: this.$store.state.customer.customerName,
+        customerBirth: this.$store.state.customer.customerBirth,
+        faceSimilarity: this.$store.state.customer.faceSimilarity,
       }
     }
   }

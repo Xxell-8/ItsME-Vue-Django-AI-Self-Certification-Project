@@ -7,5 +7,12 @@ export default {
       method: 'post',
       data: payload
     })
+  },
+  patchCustomerInfo (path, payload) {
+    return _axios({
+      url: `/info/link/${path}/customer/`,
+      method: 'patch',
+      data: payload
+    })
   }
 }
