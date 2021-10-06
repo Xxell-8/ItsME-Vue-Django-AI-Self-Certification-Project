@@ -18,6 +18,14 @@
   background-color: $dark;
   color: $secondary;
 }
+.btn-warning {
+  background-color: $danger;
+  color: $light;
+}
+.btn-grey {
+  background-color: #c4c4c4;
+  color: $grey-dark;
+}
 .btn-outline {
   border: 2px solid $light;
   background: none;

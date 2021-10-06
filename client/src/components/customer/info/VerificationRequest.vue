@@ -16,11 +16,12 @@
       </div>
     </div>
     <!-- progress button -->
-    <button class="btn-secondary btn-intro fw-700"><strong>본인 인증 하러 가기</strong></button>
+    <button @click="nextStep" class="btn-secondary btn-intro fw-700"><strong>본인 인증 하러 가기</strong></button>
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'VerificationRequest',
@@ -32,6 +33,13 @@ export default {
       partner: 'SSAFY 사무국',
       afterProcess: 'TEST 입장 코드'
     }  
-  }
+  },
+  methods: {
+    ...mapMutations('customer', ['SAVE_PATH']),
+    nextStep() {
+      this.SAVE_PATH(this.$route.params.path)
+      this.$router.push('/customer/face-recognition')
+    }
+  },
 }
 </script>

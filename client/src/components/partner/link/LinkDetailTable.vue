@@ -10,7 +10,7 @@
           <th>인증 완료 시간</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody v-if="linkInfo.customers.length">
         <LinkDetailTableRow
           v-for="(customer, idx) in paginatedData"
           :key="idx"
@@ -19,6 +19,9 @@
         />
       </tbody>
     </table>
+    <div v-if="!linkInfo.customers.length" class="empty">
+      인증을 완료한 고객이 없습니다.
+    </div>
 
     <ul class="pagination" v-if="totalPage && totalPage > 1">
       <li

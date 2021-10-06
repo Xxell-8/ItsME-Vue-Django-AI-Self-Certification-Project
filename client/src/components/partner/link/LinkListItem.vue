@@ -14,14 +14,21 @@
         <span>Expired at<span class="info">{{ end }}</span></span>
       </div>
     </div>
-    <button
-      class="btn btn-detail btn-dark fw-500"
-      @click="$router.push({ name: 'LinkDetail', params: { id: info.path }})"
-    >상세 보기</button>
+    <div class="f-column link-btns">
+      <button
+        class="btn btn-primary"
+        @click="$router.push({ name: 'LinkDetail', params: { id: info.path }})"
+      >상세 보기</button>
+      <button
+        class="btn btn-grey"
+        @click="onDeleteModal(linkData)"
+      >링크 삭제</button>
+    </div>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import moment from 'moment'
 export default {
   name: 'LinkListItem',
@@ -29,7 +36,7 @@ export default {
     info: Object
   },
   methods: {
-
+    ...mapActions('partner', ['onDeleteModal'])
   },
   computed: {
     start () {
@@ -38,6 +45,12 @@ export default {
     end () {
       return moment(this.info.expired_at).format('YYYY-MM-DD HH:mm')
     },
+    linkData () {
+      return {
+        name: this.info.name,
+        path: this.info.path
+      }
+    }
   }
 }
 </script>

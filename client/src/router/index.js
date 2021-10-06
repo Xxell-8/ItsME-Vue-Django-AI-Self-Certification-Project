@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import store from '@/store/'
 import Home from '@/views/intro/Home.vue'
 import Introduction from '@/views/customer/info/Introduction'
+import Result from '@/views/customer/info/Result'
 import FaceRecognition from '@/views/customer/verification/FaceRecognition'
 import MotionRecognition from '@/views/customer/verification/MotionRecognition'
 import CardRecognition from '@/views/customer/verification/CardRecognition'
@@ -51,11 +52,12 @@ const routes = [
   {
     path: '/partners/settings',
     name: 'Settings',
-    component: Settings
+    component: Settings,
+    meta: { requireAuth: true }
   },
   // Customer
   {
-    path: '/customer/introduction/',
+    path: '/customer/introduction/:path',
     name: 'Index',
     component: Introduction
   },
@@ -65,7 +67,7 @@ const routes = [
     component: FaceRecognition
   },
   {
-    path: '/customer/motion-recognition',
+    path: '/customer/motion-recognition/',
     name: 'MotionRecognition',
     component: MotionRecognition
   },
@@ -73,6 +75,11 @@ const routes = [
     path: '/customer/card-recognition/',
     name: 'CardRecognition',
     component: CardRecognition
+  },
+  {
+    path: '/customer/result/',
+    name: 'Result',
+    component: Result,
   },
   // Error
   { 
@@ -100,10 +107,18 @@ router.beforeEach(function (to, from, next) {
   if (to.matched.some(function(routeInfo) {
     return routeInfo.meta.requireAuth
   })) {
-    if (!store.state.accounts.isLogin) {
-      next('/partners/accounts/login')
+    if (to.name === 'Settings') {
+      if (!store.state.accounts.isLogin || !store.state.accounts.userInfo.auth) {
+        next('/partners')
+      } else {
+        next()
+      }
     } else {
-      next()
+      if (!store.state.accounts.isLogin) {
+        next('/partners/accounts/login')
+      } else {
+        next()
+      }
     }
   } else {
     if (to.name === 'Accounts') {
@@ -116,7 +131,6 @@ router.beforeEach(function (to, from, next) {
       next()
     }
   }
-  
 })
 
 export default router

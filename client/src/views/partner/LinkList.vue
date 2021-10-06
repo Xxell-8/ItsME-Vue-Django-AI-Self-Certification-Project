@@ -15,6 +15,9 @@
           :info="link"
         />
       </div>
+      <DeleteConfirm
+        v-if="deleteModal"
+      />
     </div>
   </div>
 </template>
@@ -25,19 +28,21 @@ import { mapState, mapActions } from 'vuex'
 import PartnerNav from '@/components/partner/common/PartnerNav'
 import UserNav from '@/components/partner/common/UserNav'
 import LinkListItem from '@/components/partner/link/LinkListItem'
+import DeleteConfirm from '@/components/partner/link/DeleteConfirm'
 
 export default {
   name: 'LinkList',
   components: {
     PartnerNav,
     UserNav,
-    LinkListItem
+    LinkListItem,
+    DeleteConfirm
   },
   methods: {
     ...mapActions('partner', ['getLinkList'])
   },
   computed: {
-    ...mapState('partner', ['linkList'])
+    ...mapState('partner', ['linkList', 'deleteModal'])
   },
   created () {
     this.getLinkList()

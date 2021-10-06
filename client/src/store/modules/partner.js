@@ -1,7 +1,11 @@
-// import router from '@/router'
+import router from '@/router'
 import partnerApi from '@/api/partner'
 
 const state = {
+  partnerInfo: {
+    userCnt: null,
+    linkCnt: null,
+  },
   homeMenu: [
     {
       title: '신규 링크 생성',
@@ -23,22 +27,25 @@ const state = {
     }
   ],
   currentLink: {
-    name: '임시 이름',
-    path: 'adhlkqwkrjl1234'
+    name: null,
+    path: null
   },
   successModal: false,
+  deleteModal: false,
   linkList: null,
   linkInfo: null,
+  
 }
 
 const actions = {
+  // newLink
   async onCreateLink({ commit, dispatch }, linkData) {
     if (!linkData.name.length) {
       linkData.name = linkData.path
     }
     await partnerApi.createLink(linkData)
-      .then((res) => {
-        console.log(res)
+      .then(() => {
+        // console.log(res)
         commit('SET_CURRENT_LINK', linkData)
         dispatch('onSuccessModal')
       })
@@ -49,22 +56,59 @@ const actions = {
   onSuccessModal({ commit }) {
     commit('SET_SUCCESS_MODAL', true)
   },
-  offSuccessModal({ commit }) {
+  offSuccessModal({ state, commit }, to) {
     commit('SET_SUCCESS_MODAL', false)
+    if (!to) {
+      router.push({ name: 'PartnerHome'})
+    } else {
+      router.push({ name: 'LinkDetail', params: { id: state.currentLink.path }})
+    }
     commit('RESET_CURRENT_LINK')
+  },
+  // 링크 삭제
+  onDeleteModal({ commit }, linkData) {
+    commit('SET_CURRENT_LINK', linkData)
+    commit('SET_DELETE_MODAL', true)
+  },
+  offDeleteModal({ commit }) {
+    commit('RESET_CURRENT_LINK')
+    commit('SET_DELETE_MODAL', false)
+  },
+  async onDeleteLink ({ dispatch, commit }, linkId) {
+    await partnerApi.deleteLink(linkId)
+      .then(() => {
+        // console.log(res)
+        dispatch('getLinkList')
+        commit('SET_DELETE_MODAL', false)
+        commit('RESET_CURRENT_LINK')
+      })
   },
   async getLinkList ({ commit }) {
     await partnerApi.getLinkList()
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_LINK_LIST', res.data)
       })
   },
   async getLinkDetail ({ commit }, linkId) {
     await partnerApi.getLinkDetail(linkId)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_LINK_INFO', res.data)
+      })
+  },
+  async getPartnerUserCnt ({ commit }, code) {
+    await partnerApi.getPartnerCnt(code)
+      .then((res) => {
+        // console.log(res.data)
+        commit('SET_USER_CNT', res.data.count)
+      })
+  },
+  async getPartnerLinkCnt ({ commit }, partnerId) {
+    await partnerApi.getPartnerLinkCnt(partnerId)
+      .then((res) => {
+        // console.log(res.data)
+        commit('SET_LINK_CNT', res.data.link_count)
       })
   },
 
@@ -82,12 +126,22 @@ const mutations = {
   SET_SUCCESS_MODAL (state, payload) {
     state.successModal = payload
   },
+  SET_DELETE_MODAL(state, payload) {
+    state.deleteModal = payload
+  },
   SET_LINK_LIST (state, payload) {
     state.linkList = payload
   },
   SET_LINK_INFO (state, payload) {
     state.linkInfo = payload
-  }
+  },
+  SET_USER_CNT (state, payload) {
+    state.partnerInfo.userCnt = payload
+  },
+  SET_LINK_CNT (state, payload) {
+    state.partnerInfo.linkCnt = payload
+  },
+  
 }
 
 const getters = {
