@@ -11,7 +11,7 @@
             class="account-input"
             v-model="email"
             type="text"
-            @keyup.enter="login"
+            @keyup.enter="onLogin(userData)"
             autocapitalize="off"
             required
           />
@@ -25,7 +25,7 @@
             class="account-input"
             v-model="password"
             type="password"
-            @keyup.enter="login"
+            @keyup.enter="onLogin(userData)"
             required
           />
             <label>비밀번호</label>
