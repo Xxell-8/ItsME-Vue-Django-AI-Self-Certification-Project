@@ -57,7 +57,7 @@ const routes = [
   },
   // Customer
   {
-    path: '/customer/introduction/:path',
+    path: '/identify/:path',
     name: 'Index',
     component: Introduction
   },

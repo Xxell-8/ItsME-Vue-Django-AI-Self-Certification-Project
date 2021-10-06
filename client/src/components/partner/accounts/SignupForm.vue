@@ -124,8 +124,8 @@ export default {
   methods: {
     async onSignup () {
       await accountApi.signup(this.userInfo)
-        .then((res) => {
-          console.log(res)
+        .then(() => {
+          // console.log(res)
           this.$store.commit('accounts/SET_TEMP_NAME', this.name)
           this.$emit('next')
         })
@@ -133,7 +133,7 @@ export default {
     async checkMail() {
       await accountApi.checkMail(this.email)
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           if (res.data.available) {
             this.isChecked = true
           } else {
