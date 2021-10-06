@@ -107,6 +107,7 @@ export default {
       ctx.canvas.width = vw
       ctx.canvas.height = vh
 
+      ctx.translate(vw, 0);
       ctx.scale(-1, 1);
       ctx.drawImage(this.$refs.camera, startX, 0, vw*videoRatio, this.$refs.camera.videoHeight, 0, 0, vw, vh);
 
