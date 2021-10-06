@@ -63,7 +63,7 @@ export default {
     createCameraElement() {
       const constraints = (window.constraints = {
 				audio: false,
-				video: { height: window.innerHeight },
+				video: { height: window.innerHeight, facingMode: { exact: 'user'} },
 			})
       navigator.mediaDevices
 				.getUserMedia(constraints)
