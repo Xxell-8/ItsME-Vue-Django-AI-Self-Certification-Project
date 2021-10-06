@@ -1,18 +1,30 @@
-from .models import Link, Customer
+from .models import Link, Customer, IdCard
 from rest_framework import serializers
+from .utils.image import image_to_base64
 
 
 
 class CustomerSerializer(serializers.ModelSerializer):
+    id_card_image = serializers.SerializerMethodField()
+
     class Meta:
         model = Customer
         fields = '__all__'
         read_only_fields = ['link']
+        extra_kwargs = {
+            'img': {'write_only': True}
+        }
+
+    def get_id_card_image(self, obj):
+        if obj.img:
+            return image_to_base64(f'media/{obj.img.name}')
+        return ''
 
 
 class LinkListSerializer(serializers.ModelSerializer):
     total = serializers.SerializerMethodField()
     complete_cnt = serializers.SerializerMethodField()
+
     class Meta:
         model = Link
         fields = '__all__'
@@ -23,6 +35,7 @@ class LinkListSerializer(serializers.ModelSerializer):
 
     def get_complete_cnt(self, obj):
         return obj.customers.filter(is_completed=True).count()
+
 
 class LinkDetailSerializer(serializers.ModelSerializer):
     customers = CustomerSerializer(many=True)
@@ -41,5 +54,17 @@ class LinkDetailSerializer(serializers.ModelSerializer):
             Customer.objects.create(link=link, **customer_data)
         return link
 
-class IdCardSerializer(serializers.Serializer):
-    image = serializers.ImageField()
+
+class IdCardSerializer(serializers.ModelSerializer):
+    id_card_image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = IdCard
+        fields = '__all__'
+        read_only_fields = ['link']
+        extra_kwargs = {
+            'img': {'write_only': True}
+        }
+
+    def get_id_card_image(self, obj):
+        return image_to_base64(f'media/{obj.img.name}')
