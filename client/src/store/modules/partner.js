@@ -49,9 +49,6 @@ const actions = {
         commit('SET_CURRENT_LINK', linkData)
         dispatch('onSuccessModal')
       })
-      .catch((err) => {
-        console.log(err.response)
-      })
   },
   onSuccessModal({ commit }) {
     commit('SET_SUCCESS_MODAL', true)
