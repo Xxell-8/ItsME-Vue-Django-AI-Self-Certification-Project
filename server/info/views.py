@@ -7,6 +7,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import IdCard, Link
 from .serializers import LinkListSerializer, CustomerSerializer, LinkDetailSerializer, IdCardSerializer
 from accounts.models import Partner
+from accounts.serializers import PartnerSerializer
 import cv2
 from django.utils import timezone
 from .utils.ocr import ocr
@@ -164,3 +165,11 @@ def link_count(request, partner_id):
         'link_count': link_count
     }
     return Response(data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def link_partner(request, link_path):
+    link = get_object_or_404(Link, path=link_path)
+    partner = get_object_or_404(Partner, pk=link.partner)
+    serializer = PartnerSerializer(partner)
+    return Response(serialzer.data, status=status.HTTP_200_OK)
