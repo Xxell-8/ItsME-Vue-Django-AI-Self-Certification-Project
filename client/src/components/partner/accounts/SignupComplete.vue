@@ -13,7 +13,7 @@
           환영합니다.
         </div>
         <div class="sub-text t-white fw-200">
-          <span class="fw-500">기업명</span> 담당자의 가입 승인 후,<br/>
+          기업 담당자의 가입 승인 후,<br/>
           잇츠미 서비스 이용이 가능합니다.
         </div>
       </div>

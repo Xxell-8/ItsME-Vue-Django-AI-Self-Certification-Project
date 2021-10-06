@@ -41,7 +41,7 @@ export default {
   methods: {
     ...mapActions('partner', ['offSuccessModal']),
     copyPath () {
-      navigator.clipboard.writeText('http://'+ this.path)
+      navigator.clipboard.writeText('https://'+ this.path)
         .then(() => {
           const alert = document.querySelector('.copy-msg')
           alert.style.opacity = 1
