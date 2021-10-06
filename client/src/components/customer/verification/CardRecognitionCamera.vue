@@ -106,8 +106,11 @@ export default {
       const ctx = this.$refs.canvas.getContext('2d');
       ctx.canvas.width = vw
       ctx.canvas.height = vh
+
+      ctx.save()
       ctx.scale(-1, 1);
       ctx.drawImage(this.$refs.camera, startX, 0, vw*videoRatio, this.$refs.camera.videoHeight, 0, 0, vw, vh);
+      ctx.restore()
 
       // 신분증 범위만 그려서 저장하기 - 캔버스 사이즈 추후 조정
       const cardCtx = this.$refs.cardCanvas.getContext('2d');
@@ -118,9 +121,12 @@ export default {
       this.$refs.cardCanvas.height = cardHeight
       cardCtx.width = cardWidth
       cardCtx.height = cardHeight
-      cardCtx.scale(-1, 1);
 
+      cardCtx.save()
+      cardCtx.scale(-1, 1);
       cardCtx.drawImage(this.$refs.canvas, 0.1*vw, 80, cardWidth, cardHeight, 0, 0, cardWidth, cardHeight);
+      cardCtx.restore()
+      
       const jpegImg = this.$refs.cardCanvas.toDataURL("image/jpeg")
       this.SAVE_ID_CARD(jpegImg)
       console.log(jpegImg)
@@ -138,12 +144,14 @@ export default {
         this.$refs.hiddenCanvas.height = height
         hiddenCtx.width = width
         hiddenCtx.height = height
-        hiddenCtx.scale(-1, 1);
 
+        hiddenCtx.save()
+        hiddenCtx.scale(-1, 1);
         hiddenCtx.drawImage(
           this.$refs.cardCanvas, 
           pred.topLeft[0], pred.topLeft[1], width, height, 0, 0, width, height
           )
+        hiddenCtx.restore()
       });
       const faceImg = this.$refs.hiddenCanvas.toDataURL("image/jpeg")
       this.SAVE_CARD_FACE(faceImg)
