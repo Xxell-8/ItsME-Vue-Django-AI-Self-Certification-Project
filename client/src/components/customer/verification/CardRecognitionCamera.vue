@@ -123,7 +123,6 @@ export default {
       
       const jpegImg = this.$refs.cardCanvas.toDataURL("image/jpeg")
       this.SAVE_ID_CARD(jpegImg)
-      window.open(jpegImg, '_blank').focus();
       console.log(jpegImg)
 
       // 얼굴 인식
