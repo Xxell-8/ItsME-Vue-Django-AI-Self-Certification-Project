@@ -9,4 +9,5 @@ urlpatterns = [
     path('link/<str:link_path>/', views.link_detail),
     path('link/<str:link_path>/id_card_ocr/', views.id_card_ocr),
     path('link/<str:link_path>/customer/', views.customer),
+    path('link/<str:link_path>/partner/', views.link_partner),
 ]
