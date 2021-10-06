@@ -141,7 +141,7 @@ export default {
 
         hiddenCtx.drawImage(
           this.$refs.cardCanvas, 
-          pred.topLeft[0] - 0.5*width, pred.topLeft[1] - height, width*2, height, 0, 0, width*2, height
+          pred.topLeft[0] - 0.5*width, pred.topLeft[1], width*2, height, 0, 0, width*2, height
           )
       });
       const faceImg = this.$refs.hiddenCanvas.toDataURL("image/jpeg")
