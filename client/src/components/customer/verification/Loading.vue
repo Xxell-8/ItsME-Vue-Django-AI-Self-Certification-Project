@@ -21,9 +21,6 @@
 <script>
 export default {
   name: 'Loading',
-  mounted() {
-    console.log(this.$route.name)
-  }
 }
 </script>
 
