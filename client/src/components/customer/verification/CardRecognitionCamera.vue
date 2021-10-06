@@ -107,8 +107,6 @@ export default {
       ctx.canvas.width = vw
       ctx.canvas.height = vh
 
-      ctx.translate(vw, 0);
-      ctx.scale(-1, 1);
       ctx.drawImage(this.$refs.camera, startX, 0, vw*videoRatio, this.$refs.camera.videoHeight, 0, 0, vw, vh);
 
       // 신분증 범위만 그려서 저장하기 - 캔버스 사이즈 추후 조정
