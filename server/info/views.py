@@ -170,6 +170,6 @@ def link_count(request, partner_id):
 @api_view(['GET'])
 def link_partner(request, link_path):
     link = get_object_or_404(Link, path=link_path)
-    partner = get_object_or_404(Partner, pk=link.partner)
+    partner = get_object_or_404(Partner, pk=link.partner.id)
     serializer = PartnerSerializer(partner)
-    return Response(serialzer.data, status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,5 +1,29 @@
 @import "@/assets/style/_color.scss";
 
+.link-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  button {
+    width: 80px;
+    height: 25px;
+    border-radius: 15px !important;
+    font-size: 0.9rem;
+    margin-top: 7px;
+    &:hover {
+      font-weight: 700;
+      font-size: 0.95rem;
+      background-color: $primary;
+    }
+    &.complete {
+      font-weight: 700;
+      font-size: 0.95rem;
+      background-color: $primary;
+    }
+  }
+}
+
 .expire-info {
   color: $white;
   font-size: 0.875rem;
