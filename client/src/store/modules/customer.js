@@ -62,6 +62,17 @@ const mutations = {
     state.maskedCard = data.id_card_image
     state.faceSimilarity = data.face_similarity
   },
+  RESET_STATE(state) {
+    state.path = null;
+    state.presentFaceImg = null;
+    state.cardFaceImg = null;
+    state.idCardImg = null;
+    state.customerId = null;
+    state.customerName = null;
+    state.customerBirth = null;
+    state.maskedCard = null;
+    state.faceSimilarity = null;
+  }
 }
 
 const getters = {

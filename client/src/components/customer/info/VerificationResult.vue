@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'VerificationResult',
@@ -39,8 +39,11 @@ export default {
   },
   methods: {
     ...mapActions('customer', ['getVerificationResult', 'patchCustomerInfo']),
+    ...mapMutations('customer', ['SAVE_PATH', 'RESET_STATE']),
     restart() {
-      // mutation 지워주기, path만 살리기
+      const path = this.$store.state.customer.path
+      this.RESET_STATE()
+      this.SAVE_PATH(path)
       this.$router.push('/customer/face-recognition/')
     },
     finish() {
@@ -51,7 +54,10 @@ export default {
         id_card: this.verificationResult.customerId
       }
       this.patchCustomerInfo(payload)
-      // mutation 지워주기, name만 안내 페이지로
+      // state 지워주기, 이름만 다음으로 보내기
+      const name = this.name
+      this.RESET_STATE()
+      this.$emit('finish', name)
     }
   },
   computed: {
