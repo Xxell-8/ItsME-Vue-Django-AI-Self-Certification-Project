@@ -191,7 +191,9 @@ $ python manage.py runserver
 
   ![image-20210929105329655](README.assets/image-20210929105329655.png)
 
+- 링크 상세 정보 조회
 
+  ![image-20210929220810909](README.assets/image-20210929220810909.png)
 
 - 로그인 (위치 조정 필요)
 

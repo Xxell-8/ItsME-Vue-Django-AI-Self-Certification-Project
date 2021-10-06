@@ -1,22 +1,23 @@
 <template>
-  <div class="code-box">
-    <div class="f-row-between">
-      <span>회사 CODE</span>
-      <button
-        class="btn btn-logout btn-outline fw-500"
-        @click="onLogout"
-      >로그아웃</button>
-    </div>
+  <div class="code-box shadow">
+    <span class="setting-name">회사 CODE</span>
     <div class="code">
-      <span id="code">{{ hiddenCode }}</span>
+      <span v-if="hidden" class="space">{{ hiddenCode }}</span>
+      <span v-else>{{ userInfo.code }}</span>
       <img 
         src="@/assets/image/iconSvg/copy.svg" 
         alt=""
         @click="copyCode"
       >
-    </div>
-    <div class="copy-alert" style="display: none;">
-      코드 복사 완료
+      <img 
+        class="eye"
+        :src=controlIcon 
+        alt=""
+        @click="changeHidden"
+      >
+      <div class="copy-msg" style="display: none;">
+        회사 CODE가 복사되었습니다!
+      </div>
     </div>
     <div>
 
@@ -28,28 +29,39 @@
 import { mapState } from 'vuex'
 export default {
   name: 'ManageCode',
+  data () {
+    return {
+      hidden: true,
+    }
+  },
   computed: {
     ...mapState('accounts', ['userInfo']),
     hiddenCode () {
-      const code = this.userInfo.code
-      return code.slice(0, 2) + '*'.repeat(code.length - 2)
+      if (this.userInfo) {
+        const code = this.userInfo.code
+        return code.slice(0, 2) + '•'.repeat(code.length - 2)
+      }
+      return ''
+    },
+    controlIcon () {
+      const name = this.hidden ? 'show' : 'hide'
+      return require(`@/assets/image/iconSvg/${name}.svg`)
     }
   },
   methods: {
+    changeHidden () {
+      this.hidden = !this.hidden
+    },
     copyCode () {
       navigator.clipboard.writeText(this.userInfo.code)
         .then(() => {
-          const alert = document.querySelector('.copy-alert')
+          const alert = document.querySelector('.copy-msg')
           alert.style.display = 'block'
           setTimeout(() => {
             alert.style.display = 'none'
-          }, 2000)
+          }, 1500)
         })
     }
   }
 }
 </script>
-
-<style>
-
-</style>

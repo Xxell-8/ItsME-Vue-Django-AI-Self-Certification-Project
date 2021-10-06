@@ -28,11 +28,22 @@ export default {
   },
   watch: {
     '$route' () {
-      this.current = this.$route.params.page
+      if (this.$route.name === 'Accounts') {
+        if (this.$route.params.page === 'login' || this.$route.params.page === 'signup') {
+          this.current = this.$route.params.page
+        } else {
+          this.$router.push('/404')
+        }
+      }
+
     }
   },
   created() {
-    this.current = this.$route.params.page
+    if (this.$route.params.page === 'login' || this.$route.params.page === 'signup') {
+      this.current = this.$route.params.page
+    } else {
+      this.$router.push('/404')
+    }
   }
 }
 </script>

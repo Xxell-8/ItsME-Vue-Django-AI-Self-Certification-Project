@@ -125,7 +125,7 @@
       font-weight: 300;
       min-width: 160px;
       box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-      z-index: 1060;
+      z-index: 1040;
       
       span {
         color: $secondary;
@@ -203,4 +203,96 @@
   stroke-dashoffset: 42;
   transition: all 0.2s linear;
   transition-delay: 0.15s;
+}
+
+.link-alert {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1060;
+
+  .alert-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 400px;
+    background-color: $white;
+    border-radius: 20px;
+    padding: 2rem;
+    
+    .exit-btn {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      width: 2rem;
+      height: auto;
+      cursor: pointer;
+      filter: invert(27%) sepia(7%) saturate(1403%) hue-rotate(186deg) brightness(89%) contrast(89%);
+    }
+    .header {
+      color: $dark;
+      gap: 0;
+      margin: 0;
+
+      span {
+        margin-top: 1.8rem;
+        font-weight: 700;
+        font-size: 4rem;
+      }
+    }
+    .subtitle {
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    .new-link {
+      margin-top: 2rem;
+      .name {
+        color: $primary;
+        font-weight: 500;
+      }
+      .path {
+        color: $dark;
+        font-weight: 700;
+        font-size: 1rem;
+        margin-top: 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+      }
+      img {
+        width: 1.5rem;
+        height: auto;
+        cursor: pointer;
+        filter: invert(27%) sepia(7%) saturate(1403%) hue-rotate(186deg) brightness(89%) contrast(89%);
+        &:hover {
+          width: 1.6rem;
+        }
+      }
+      .copy-msg {
+        color: $grey-dark;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 700;
+        opacity: 0;
+        background-color: rgba($secondary, 0.3);
+        padding: 0.1rem 0.3rem;
+      }
+    }
+
+    button {
+      margin-top: 1rem;
+      width: 250px;
+      height: 40px;
+      border-radius: 20px;
+      &:hover {
+        font-size: 1.05rem;
+        font-weight: 900;
+      }
+    }
+  }
 }

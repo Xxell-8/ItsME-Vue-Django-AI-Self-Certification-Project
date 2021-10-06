@@ -2,6 +2,7 @@
   <div class="form">
     <div class="f-column">
       <span class="title font-mont fw-900 t-white">It's Me!</span>
+      <span v-if="wrongInput" class="login-400 wrong">잘못된 이메일 혹은 비밀번호입니다.</span>
       <div class="account-inputs">
         <!-- 이메일 input -->
         <div class="account-input-box">
@@ -31,29 +32,29 @@
           <div class="error-text" v-if="error.password">{{error.password}}</div>
         </div>
         <!-- 로그인 버튼 -->
+        
         <button
-          :class="[ isSubmit ? 'btn-secondary' : 'btn-disabled', 'btn-submit font-mont fw-500']"
+          :class="[
+            isSubmit ? 'btn-secondary' : 'btn-disabled', 
+            'btn-submit font-mont fw-500'
+          ]"
           @click="onLogin(userData)"
         >Login</button>
       </div>
       <!-- 페이지 이동 버튼 -->
       <div class="move-btns fw-200">
+        <span class="t-white">아직 회원이 아니신가요?</span>
         <span
           class="btn t-white"
           @click="$router.push({ name: 'Accounts', params: { page: 'signup'}})"
         >회원가입</span>
-        <!-- <span class="t-white mx-1"> • </span>
-        <span
-          class="btn t-white"
-          @click="moveToFindPassword"
-        >비밀번호 찾기</span> -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import PV from "password-validator"
 import * as EmailValidator from "email-validator"
 
@@ -69,7 +70,6 @@ export default {
         passowrd: false
       },
       isSubmit: false,
-      wrongInput: false
     }
   },
   methods: {
@@ -104,9 +104,15 @@ export default {
     },
     password: function() {
       this.checkForm();
+    },
+    wrongInput: function() {
+      if (this.wrongInput) {
+        this.password = ''
+      }
     }
   },
   computed: {
+    ...mapState('accounts', ['wrongInput']),
     userData: function () {
       return {
         'email': this.email,

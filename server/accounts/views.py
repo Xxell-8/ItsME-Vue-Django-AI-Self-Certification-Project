@@ -116,7 +116,7 @@ def pending_list(request, code):
     if serializer.data:
         return JsonResponse(serializer.data, json_dumps_params={'ensure_ascii': False}, status=status.HTTP_200_OK, safe=False)
     else:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 # 해당 회사에 등록된 유저 수
 @api_view(['POST'])
@@ -146,7 +146,10 @@ def get_partner(request, code):
 # 이메일 중복체크
 @api_view(['POST'])
 def email(request):
-    if User.objects.filter(email=request.data.get('email')).count():
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response(status=status.HTTP_200_OK)
+    data = {
+        'available': True
+    }
+    if User.objects.filter(email=request.data.get('email')).exists():
+        data['available'] = False
+
+    return Response(data, status=status.HTTP_200_OK)
