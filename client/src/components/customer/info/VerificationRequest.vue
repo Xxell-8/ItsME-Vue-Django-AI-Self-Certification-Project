@@ -37,12 +37,13 @@ export default {
     }  
   },
   methods: {
-    ...mapMutations('customer', ['SAVE_PATH']),
+    ...mapMutations('customer', ['SAVE_PATH', 'RESET_STATE']),
     nextStep() {
       this.$router.push('/customer/face-recognition')
     }
   },
   async created () {
+    this.RESET_STATE()
     const path = this.$route.params.path
     await customerApi.getLinkPartner(path)
       .then((res) => {
