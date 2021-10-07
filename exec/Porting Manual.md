@@ -95,9 +95,11 @@ sudo systemctl restart nginx
 
 ## 데이터베이스
 
+[데이터베이스 덤프 파일 최신본](https://drive.google.com/file/d/1RHVsK6C_jkm9Aem6dRgV6BzhaCSaetjb/view?usp=sharing) (구글 드라이브 링크)
+
 
 
 ## 시연 시나리오
 
-
+별도의 파일로 제작하였습니다.
 
