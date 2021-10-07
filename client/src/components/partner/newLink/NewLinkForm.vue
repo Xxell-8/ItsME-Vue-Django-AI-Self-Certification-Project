@@ -210,7 +210,7 @@ export default {
   async created () {
     await accountApi.getUserList(this.userInfo.code)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         const users = res.data
         users.forEach((user) => {
           this.options.push({ 

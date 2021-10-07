@@ -24,8 +24,8 @@ const actions = {
         commit('SET_IS_LOGIN', true)
         dispatch('getUserInfo', res.data.user.pk)
       })
-      .catch((err) => {
-        console.log(err.response)
+      .catch(() => {
+        // console.log(err.response)
         commit('SET_WRONG_INPUT', true)
         setTimeout(() => {
           commit('SET_WRONG_INPUT', false)
@@ -46,9 +46,6 @@ const actions = {
         // console.log(res.data)
         commit('ADD_PARTNER_INFO', res.data.id)
       })
-      .catch((err) => {
-        console.log(err.response)
-      })
   },
   onLogout({ commit }) {
     commit('SET_IS_LOGIN', false)
@@ -60,9 +57,12 @@ const actions = {
   async getUnapprovedUsers ({ state, commit }) {
     await accountApi.getUnapprovedUsers(state.userInfo.code)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         if (res.status === 200) {
           commit('SET_UNAPPROVED_USR', res.data)
+        }
+        if (res.status === 204) {
+          commit('SET_UNAPPROVED_USR', [])
         }
       })
   },

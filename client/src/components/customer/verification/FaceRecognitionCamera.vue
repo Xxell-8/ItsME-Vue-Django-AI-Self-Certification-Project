@@ -129,7 +129,6 @@ export default {
       });
       const jpegImg = this.$refs.hiddenCanvas.toDataURL("image/jpeg")
       this.SAVE_PRESENT_FACE(jpegImg)
-      console.log(jpegImg)
 
       // 고객의 얼굴에 테두리 그리기
       prediction.forEach((pred) => {

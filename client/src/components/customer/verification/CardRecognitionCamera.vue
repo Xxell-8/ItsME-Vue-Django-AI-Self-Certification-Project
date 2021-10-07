@@ -2,8 +2,8 @@
   <div class="f-column" :key="componentKey">
     <!-- header -->
     <div class="camera-before-header" v-if="isCameraOn">
-      <p class="t-white fw-700">주민등록증을 테두리 안에 맞추고</p>
-      <p class="t-white fw-700"><strong class="text-secondary">촬영</strong> 버튼을 눌러주세요.</p>
+      <p class="t-white fw-700">주민등록증을 사진이 아래로 향하도록</p>
+      <p class="t-white fw-700">테두리에 맞추고, <strong class="text-secondary">촬영</strong> 버튼을 눌러주세요.</p>
     </div>
     <div class="camera-after-header" v-if="isPhotoTaken">
       <p class="t-white fw-700">테두리 내부의 주민등록증 사진을 확인하고</p>
@@ -123,7 +123,6 @@ export default {
       
       const jpegImg = this.$refs.cardCanvas.toDataURL("image/jpeg")
       this.SAVE_ID_CARD(jpegImg)
-      console.log(jpegImg)
 
       // 얼굴 인식
       const prediction = await this.model.estimateFaces(this.$refs.cardCanvas, false)
@@ -146,7 +145,6 @@ export default {
       });
       const faceImg = this.$refs.hiddenCanvas.toDataURL("image/jpeg")
       this.SAVE_CARD_FACE(faceImg)
-      console.log(faceImg)
 
       // 카메라 종료하기
       this.stopCameraStream();

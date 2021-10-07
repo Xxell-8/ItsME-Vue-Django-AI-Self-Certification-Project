@@ -29,7 +29,7 @@ export default {
       return moment(this.customer.birth, 'YYYYMMDD').format('YYYY-MM-DD')
     },
     completedAt () {
-      return moment(this.customer.completed_at).format('lll')
+      return moment(this.customer.completed_at).locale('ko').format('lll')
     }
   }
 }
