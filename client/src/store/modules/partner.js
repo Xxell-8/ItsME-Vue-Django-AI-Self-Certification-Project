@@ -94,6 +94,13 @@ const actions = {
         commit('SET_LINK_INFO', res.data)
       })
   },
+  async getLinkDetailByComplete ({ commit }, linkId) {
+    await partnerApi.getLinkDetailByComplete(linkId, 'completed_at')
+      .then((res) => {
+        // console.log(res)
+        commit('SET_LINK_INFO', res.data)
+      })
+  },
   async getPartnerUserCnt ({ commit }, code) {
     await partnerApi.getPartnerCnt(code)
       .then((res) => {
