@@ -104,11 +104,10 @@
     .exit-btn {
       position: fixed;
       top: 0.5rem;
-      right: 0.5rem;
-      width: 1.5rem;
-      height: auto;
+      right: 0.7rem;
+      font-size: 1.5rem;
       cursor: pointer;
-      filter: invert(27%) sepia(7%) saturate(1403%) hue-rotate(186deg) brightness(89%) contrast(89%);
+      color: rgba($light, 0.4);
     }
   }
 }

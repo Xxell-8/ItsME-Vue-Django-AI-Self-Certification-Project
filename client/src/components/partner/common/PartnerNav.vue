@@ -6,27 +6,21 @@
       src="@/assets/image/logo/white-sm.svg" 
       alt="go to Home"
     >
-    <img
-      class="icon" 
-      src="@/assets/image/iconSvg/user.svg"
-      alt="고객 정보 관리"
+    <i 
+      class="icon fi fi-sr-mode-portrait"
       title="고객 정보 관리"
       @click="$router.push({ name: 'LinkList' })"
-    >
-    <img
-      class="icon" 
-      src="@/assets/image/iconSvg/newlink.svg"
-      alt="신규 링크 생성"
+    ></i>
+    <i 
+      class="icon fi fi-sr-interactive"
       title="신규 링크 생성"
       @click="$router.push({ name: 'NewLink' })"
-    >
-    <img
+    ></i>
+    <i 
       v-if="userInfo && userInfo.auth"
-      class="icon" 
-      src="@/assets/image/iconSvg/company.svg"
-      alt="회사 설정"
+      class="fi fi-sr-building icon"
       @click="$router.push({ name: 'Settings' })"
-    >
+    ></i>
   </div>
 </template>
 

@@ -23,7 +23,14 @@ export default {
   getLinkDetail (linkId) {
     return _axios({
       url: `/info/link/${linkId}/`,
-      method: 'get'
+      method: 'get',
+    })
+  },
+  getLinkDetailByComplete (linkId, order) {
+    return _axios({
+      url: `/info/link/${linkId}/`,
+      method: 'get',
+      params: { 'order': order }
     })
   },
   getPartnerCnt (code) {
