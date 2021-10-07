@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import IdCard, Link
-from .serializers import LinkListSerializer, CustomerSerializer, LinkDetailSerializer, IdCardSerializer
+from .serializers import LinkListSerializer, CustomerSerializer, LinkDetailSerializer, IdCardSerializer, LinkDetailOrderByCompletedAtSerializer
 from accounts.models import Partner
 from accounts.serializers import PartnerSerializer
 import cv2
@@ -28,7 +28,7 @@ def link(request):
 
     if request.method == 'GET':
         # 링크 목록 조회
-        links = Link.objects.filter(managers__in=[user], expired_at__gt=timezone.now())
+        links = Link.objects.filter(managers__in=[user], expired_at__gt=timezone.now()).order_by('-created_at')
         serializer = LinkListSerializer(links, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -64,9 +64,12 @@ def link_detail(request, link_path):
                 'message': '만료된 링크입니다.'
             }
             return Response(data, status=status.HTTP_403_FORBIDDEN)
-
-        serializer = LinkDetailSerializer(link)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if request.GET.get('order', None) == 'completed_at':
+            serializer = LinkDetailOrderByCompletedAtSerializer(link)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            serializer = LinkDetailSerializer(link)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'DELETE':
         # 링크 삭제
