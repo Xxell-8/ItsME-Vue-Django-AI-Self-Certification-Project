@@ -8,12 +8,17 @@
         <div class="subtitle">본인 인증 데이터</div>
         <div class="title">고객 정보 관리</div>
       </div>
-      <div class="f-column-start links" v-if="linkList">
+      <div class="f-column-start links" v-if="linkList.length">
         <LinkListItem
           v-for="link in linkList"
           :key="link.id"
           :info="link"
         />
+      </div>
+      <div class="empty" v-else>
+        관리 중인 링크가 없습니다.<br/>
+        신규 링크를 생성하고 싶으시면,
+        <span @click="$router.push({ name: 'NewLink' })">여기</span>를 눌러주세요.
       </div>
       <DeleteConfirm
         v-if="deleteModal"
