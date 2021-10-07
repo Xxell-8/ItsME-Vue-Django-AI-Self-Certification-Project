@@ -69,18 +69,15 @@
         <span>고객 데이터 등록</span>
         <span v-if="fileName" class="file-info">
           {{ fileName }}
-          <img 
-            src="@/assets/image/iconSvg/del.svg"
-            alt="파일 등록 취소"
+          <i 
+            class="fi fi-rr-cross-small"
             @click="onDeleteFile"
-          >
+          ></i>
         </span>
         <span v-else class="descript">
-          <img 
-            class="icon"
-            src="@/assets/image/iconSvg/question.svg"
-            alt="파일 업로드 가이드"
-          >
+          <i 
+            class="icon fi fi-sr-interrogation"
+          ></i>
           <div class="descript-content">
             고객 정보 업로드는 <span>csv 파일</span>로 가능하며,<br/>
             <span>이름</span>과 <span>생년월일</span>을 사전에 등록해<br/> 

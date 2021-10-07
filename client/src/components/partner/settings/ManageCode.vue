@@ -4,17 +4,14 @@
     <div class="code">
       <span v-if="hidden" class="space">{{ hiddenCode }}</span>
       <span v-else>{{ userInfo.code }}</span>
-      <img 
-        src="@/assets/image/iconSvg/copy.svg" 
-        alt=""
+      <i 
+        class="fi fi-rr-copy"
         @click="copyCode"
-      >
-      <img 
-        class="eye"
-        :src=controlIcon 
-        alt=""
-        @click="changeHidden"
-      >
+      ></i>
+      <i 
+        :class="[hidden ? 'fi-rr-eye' : 'fi-rr-eye-crossed', 'fi eye']"
+         @click="changeHidden"
+      ></i>
       <div class="copy-msg" style="display: none;">
         회사 CODE가 복사되었습니다!
       </div>
@@ -43,10 +40,6 @@ export default {
       }
       return ''
     },
-    controlIcon () {
-      const name = this.hidden ? 'show' : 'hide'
-      return require(`@/assets/image/iconSvg/${name}.svg`)
-    }
   },
   methods: {
     changeHidden () {

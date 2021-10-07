@@ -4,9 +4,21 @@
       <thead>
         <tr>
           <th>No.</th>
-          <th>이름</th>
+          <th>
+            이름
+            <i 
+              :class="[!order ? 'active': '', 'fi fi-rr-arrow-small-down']"
+              @click="orderByName"
+            ></i>
+          </th>
           <th>생년월일</th>
-          <th>본인인증여부</th>
+          <th>
+            본인인증여부
+            <i 
+              :class="[order ? 'active': '', 'fi fi-rr-arrow-small-down']"
+              @click="orderByCompleted"
+            ></i>
+          </th>
           <th>인증 완료 시간</th>
         </tr>
       </thead>
@@ -45,7 +57,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import LinkDetailTableRow from './LinkDetailTableRow'
 export default {
   name: 'LinkDetailTable',
@@ -54,13 +66,25 @@ export default {
   },
   data () {
     return {
-      currentPage: 1
+      currentPage: 1,
+      order: 0
     }
   },
   methods: {
+    ...mapActions('partner', ['getLinkDetail', 'getLinkDetailByComplete']),
     changePage(page) {
       this.currentPage = page
-    }
+    },
+    orderByName () {
+      this.getLinkDetail(this.linkInfo.path)
+      this.order = 0
+
+    },
+    orderByCompleted () {
+      this.getLinkDetailByComplete(this.linkInfo.path)
+      this.order = 1
+
+    },
   },
   computed: {
     ...mapState('partner', ['linkInfo']),

@@ -1,12 +1,10 @@
 <template>
   <div class="confirm">
     <div class="confirm-box">
-      <img 
-        class="exit-btn" 
-        src="@/assets/image/iconSvg/del.svg" 
-        alt="알림창 끄기"
+      <i 
+        class="fi fi-sr-cross-small exit-btn"
         @click="offDeleteModal"
-      >
+      ></i>
       <div class="content">
         <div class="title">
           <span>{{ currentLink.name }}</span>을<br/>

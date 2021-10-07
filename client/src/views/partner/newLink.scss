@@ -90,11 +90,10 @@
     align-items: center;
     gap: 0.2rem;
 
-    img {
-      padding-top: 0.1rem;
-      width: 0.8rem;
+    i {
+      font-size: 0.8rem;
       height: 0.8rem;
-      filter: invert(99%) sepia(15%) saturate(0%) hue-rotate(245deg) brightness(112%) contrast(100%);
+      color: $white;
       cursor: pointer;
     }
   }
@@ -103,10 +102,8 @@
     position: relative;
     display: inline-block;
     .icon {
-      padding-top: 0.1rem;
-      width: 0.9rem;
-      height: 0.9rem;
-      filter: invert(31%) sepia(99%) saturate(4076%) hue-rotate(221deg) brightness(98%) contrast(97%);
+      font-size: 0.9rem;
+      color: $primary;
     }
     &:hover {
       .descript-content {
@@ -229,10 +226,9 @@
       position: fixed;
       top: 1rem;
       right: 1rem;
-      width: 2rem;
-      height: auto;
+      font-size: 2rem;
       cursor: pointer;
-      filter: invert(27%) sepia(7%) saturate(1403%) hue-rotate(186deg) brightness(89%) contrast(89%);
+      color: $dark;
     }
     .header {
       color: $dark;
@@ -262,15 +258,15 @@
         font-size: 1rem;
         margin-top: 0.5rem;
         display: flex;
+        align-items: center;
         gap: 0.5rem;
       }
-      img {
-        width: 1.5rem;
-        height: auto;
+      i {
+        font-size: 1.5rem;
         cursor: pointer;
-        filter: invert(27%) sepia(7%) saturate(1403%) hue-rotate(186deg) brightness(89%) contrast(89%);
+        color: $grey-dark;
         &:hover {
-          width: 1.6rem;
+          font-size: 1.6rem;
         }
       }
       .copy-msg {

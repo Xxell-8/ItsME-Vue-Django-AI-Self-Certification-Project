@@ -1,12 +1,10 @@
 <template>
   <div class="link-alert">
     <div class="alert-box f-column-top">
-      <img 
-        class="exit-btn" 
-        src="@/assets/image/iconSvg/del.svg" 
-        alt="알림창 끄기"
+      <i 
+        class="fi fi-sr-cross-small exit-btn"
         @click="offSuccessModal(0)"
-      >
+      ></i>
       <div class="header f-row">
         <img src="@/assets/image/logo/dark-sm.svg" alt="">
         <span class="font-mont">OK</span>
@@ -16,7 +14,10 @@
         <span class="name">{{ currentLink.name }}</span>
         <div class="path">
           <span>{{ path }}</span>
-          <img @click="copyPath" src="@/assets/image/iconSvg/copy.svg" alt="">
+          <i 
+            class="fi fi-rr-copy"
+            @click="copyPath"
+          ></i>
         </div>
         <span class="copy-msg">링크가 복사되었습니다!</span>
       </div>
