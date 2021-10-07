@@ -55,6 +55,19 @@ class LinkDetailSerializer(serializers.ModelSerializer):
         return link
 
 
+class LinkDetailOrderByCompletedAtSerializer(serializers.ModelSerializer):
+    customers = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Link
+        fields = '__all__'
+        read_only_fields = ['partner', 'created_at']
+    
+    def get_customers(self, obj):
+        customers = obj.customers.order_by('completed_at', 'is_completed')
+        return CustomerSerializer(customers, many=True).data
+
+
 class IdCardSerializer(serializers.ModelSerializer):
     id_card_image = serializers.SerializerMethodField()
 

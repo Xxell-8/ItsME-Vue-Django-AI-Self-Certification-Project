@@ -26,32 +26,127 @@
         border-radius: 25px;
         z-index: 1;
     }
+    .notification {
+        margin-top: 2rem;
+        height: 180px;
+        width: 280px;
+        position: relative;
+        background: rgba(14, 15, 22, 0.9);
+        border-radius: 0 20px 20px 20px;
+        z-index: 1;
+        .content {
+            font-size: 1.2rem;
+        }
+        .content-small {
+            font-size: 0.8rem;
+        }
+        .content-box {
+            display: flex;
+            flex-direction: column;
+        }
+        .t-green {
+            color: rgb(189, 255, 0)
+        }
+    }
+    
+    .partner-logo {
+        width: 70px;
+        position: absolute;
+        top: -35px;
+        left: 20px;
+    }
 }
 
 .result {
     background: $grey-dark;
     min-height: 100vh;
-    height: 100%;  
-    .title-small {
-      margin-top: 3rem;
-      font-size: 2rem;
-      padding-right: 5rem;
-      text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-      z-index: 1;
-    }
-    .title-big {
-      font-size: 3.5rem;
-      padding-left: 4rem;
-      text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-      z-index: 1;
-    }
-    .btn-intro {
-        margin-top: 50px;
-        height: 50px;
-        width: 280px;
-        font-size: 1.4rem;
-        border-radius: 25px;
+    height: 100%;
+    position: relative;
+    .title-container {
         z-index: 1;
+        .title-small {
+            margin-top: 3rem;
+            font-size: 2rem;
+            padding-right: 5rem;
+            text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            z-index: 1;
+        }
+        .title-big {
+            font-size: 3.5rem;
+            padding-left: 4rem;
+            text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            z-index: 1;
+        }
+    }
+    .notification {
+        height: 200px;
+        width: 280px;
+        position: absolute;
+        top: 50vh;
+        transform: translate(0, -50%);
+        z-index: 1;
+        .content-fail {
+            .title-container {
+                margin-bottom: 30px;
+            }
+            .content-title {
+                font-size: 1.5rem;
+            }
+        }
+        .content-success {
+            .title-container {
+                margin-bottom: 30px;
+                .content-title {
+                    font-size: 1.5rem;
+                }
+            }
+            .detail-box {
+                margin-bottom: 20px;
+            }
+            .input-container {
+                .input-item {
+                    height: 35px;
+                    margin-bottom: 5px;
+                    background: rgba(199, 203, 214, 0.9);
+                    box-shadow: 2px 10px 20px rgba(0, 0, 0, 0.25);
+                    border-radius: 20px;
+                }
+            }
+        }
+        .t-green {
+            color: rgb(189, 255, 0)
+        }
+    }
+    .btn-container {
+        position: absolute;
+        bottom: 50px;
+        .btn-intro {
+            height: 50px;
+            width: 280px;
+            font-size: 1.4rem;
+            border-radius: 25px;
+            z-index: 1;
+        }
+    }
+    .finished {
+        .title-container {
+            display: flex;
+            align-items: center;
+            margin-top: 70px;
+            .title-logo {
+                height: 70px;
+                margin-bottom: 30px;
+            }
+            .title-text {
+                font-size: 3rem;
+            }
+        }
+        .content-large {
+        font-size: 2rem;
+        }
+        .mt-2 {
+            margin-top: 2rem;
+        }
     }
 }
 
@@ -62,34 +157,4 @@
     transform: translate(10%, -10%);
     width: 70%;
     opacity: 0.7;
-}
-
-.notification {
-    margin-top: 2rem;
-    height: 180px;
-    width: 280px;
-    position: relative;
-    background: rgba(14, 15, 22, 0.9);
-    border-radius: 0 20px 20px 20px;
-    z-index: 1;
-    .content {
-        font-size: 1.2rem;
-    }
-    .content-small {
-        font-size: 0.8rem;
-    }
-    .content-box {
-        display: flex;
-        flex-direction: column;
-    }
-    .t-green {
-        color: rgb(189, 255, 0)
-    }
-}
-
-.partner-logo {
-    width: 70px;
-    position: absolute;
-    top: -35px;
-    left: 20px;
 }

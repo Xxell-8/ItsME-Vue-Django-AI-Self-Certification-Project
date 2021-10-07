@@ -24,6 +24,9 @@ class Customer(models.Model):
     birth = models.CharField(max_length=8)
     img = models.ImageField(null=True)
 
+    class Meta:
+        ordering = ['name']
+
 
 class IdCard(models.Model):
     link = models.ForeignKey(Link, on_delete=models.CASCADE)
