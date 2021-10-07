@@ -4,9 +4,15 @@
       <thead>
         <tr>
           <th>No.</th>
-          <th>이름</th>
+          <th>
+            이름
+            <i class="fi fi-rr-arrow-small-down"></i>
+          </th>
           <th>생년월일</th>
-          <th>본인인증여부</th>
+          <th>
+            본인인증여부
+            <i class="fi fi-rr-arrow-small-down"></i>
+          </th>
           <th>인증 완료 시간</th>
         </tr>
       </thead>

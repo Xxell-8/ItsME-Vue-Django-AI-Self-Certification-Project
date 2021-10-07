@@ -29,13 +29,13 @@
     font-weight: 900;
     margin: 0.2rem 0 0 0.3rem;
 
-    img {
-      width: 1.5rem;
+    i {
+      font-size: 1.5rem;
       height: 1.5rem;
       margin-left: 0.7rem;
       cursor: pointer;
       &.eye {
-        filter: invert(91%) sepia(0%) saturate(304%) hue-rotate(68deg) brightness(88%) contrast(83%);
+        color: #c4c4c4;
       }
     }
 
