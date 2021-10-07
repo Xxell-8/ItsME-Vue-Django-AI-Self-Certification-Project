@@ -3,8 +3,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.serializers import Serializer
+from rest_framework.permissions import IsAuthenticated
+
 
 from rest_framework.views import APIView
 from .models import Partner, User
@@ -17,7 +17,7 @@ from .serializers import ChangePasswordSerializer, PartnerRegisterSerializer, Us
 # 파트너 등록: PUT method를 통해 user의 auth를 0에서 1로, 1이면 0으로 바꿔줍니다.
 class PartnerRegisterView(generics.UpdateAPIView):
     queryset = User.objects.all()
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = PartnerRegisterSerializer
 
 
@@ -46,7 +46,7 @@ class PartnerListAPIView(generics.ListAPIView):
 # 가입신청 승인: PUT method를 통해 user의 approval을 0에서 1로, 1이면 0으로 바꿔줍니다.
 class UserApprovalView(generics.UpdateAPIView):
     queryset = User.objects.all()
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = UserApprovalSerializer
 
 # @renderer_classes((TemplateHTMLRenderer, JSONRenderer))
@@ -59,7 +59,7 @@ def profile(request, pk):
 
 # 참고 URL: https://stackoverflow.com/questions/38845051/how-to-update-user-password-in-django-rest-framework
 class ChangePasswordView(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -82,7 +82,7 @@ class ChangePasswordView(APIView):
 
 class UpdateProfileView(generics.UpdateAPIView):
     queryset = User.objects.all()
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = UpdateProfileSerializer
 
 
