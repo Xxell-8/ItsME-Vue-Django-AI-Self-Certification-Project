@@ -1,5 +1,7 @@
 # It's Me!
 
+> 인공지능을 활용한 본인인증 통합 솔루션, 잇츠미입니다.
+
 
 
 ## Introduction
@@ -167,47 +169,10 @@ $ python manage.py runserver
 
 ![A204 ERD](README.assets/A204 ERD.png)
 
+### Component Structure
 
+![컴포넌트구조](README.assets/컴포넌트구조.jpg)
 
-
-
-
-
-### 🍀 FE 파트 화면 정리
-
-- Partners Home
-
-  ![image-20210929105229795](README.assets/image-20210929105229795.png)
-
-
-
-- 신규 링크 생성
-
-  ![image-20210929105303450](README.assets/image-20210929105303450.png)
-
-
-
-- 링크 리스트 조회
-
-  ![image-20210929105329655](README.assets/image-20210929105329655.png)
-
-- 링크 상세 정보 조회
-
-  ![image-20210929220810909](README.assets/image-20210929220810909.png)
-
-- 로그인 (위치 조정 필요)
-
-  ![image-20210929105402789](README.assets/image-20210929105402789.png)
-
-
-
-- 회원가입 단계별 페이지
-
-  ![image-20210929105608282](README.assets/image-20210929105608282.png)
-
-![image-20210929105613843](README.assets/image-20210929105613843.png)
-
-![image-20210929105620465](README.assets/image-20210929105620465.png)
 
 
 
