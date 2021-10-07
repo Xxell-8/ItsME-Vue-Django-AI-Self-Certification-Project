@@ -4,9 +4,10 @@
     <PartnerNav/>
     <UserNav/>
     <div class="body-with-nav">
-      <div class="header f-column-start t-white">
+      <div v-if="userInfo" class="header f-column-start t-white">
         <div class="subtitle">안녕하세요,</div>
-        <div v-if="userInfo" class="title"><span>{{ userInfo.name }} {{ userInfo.fullname }}</span>님</div>
+        <div class="title"><span>{{ userInfo.name }} {{ userInfo.fullname }}</span>님</div>
+        <div v-if="!userInfo.approval">관리자 승인 이후 서비스 이용이 가능합니다.</div>
       </div>
       <HomeMenu/>
     </div>

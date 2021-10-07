@@ -32,17 +32,20 @@ const routes = [
   {
     path: '/partners/link/new',
     name: 'NewLink',
-    component: NewLink
+    component: NewLink,
+    meta: { requireAuth: true }
   },
   {
     path: '/partners/link',
     name: 'LinkList',
-    component: LinkList
+    component: LinkList,
+    meta: { requireAuth: true }
   },
   {
     path: '/partners/link/:id',
     name: 'LinkDetail',
-    component: LinkDetail
+    component: LinkDetail,
+    meta: { requireAuth: true }
   },
   {
     path: '/partners/accounts/:page',
@@ -109,6 +112,12 @@ router.beforeEach(function (to, from, next) {
   })) {
     if (to.name === 'Settings') {
       if (!store.state.accounts.isLogin || !store.state.accounts.userInfo.auth) {
+        next('/partners')
+      } else {
+        next()
+      }
+    } else if (to.name === 'NewLink' || to.name === 'LinkList' || to.name === 'LinkDetail') {
+      if (!store.state.accounts.isLogin || !store.state.accounts.userInfo.approval) {
         next('/partners')
       } else {
         next()
