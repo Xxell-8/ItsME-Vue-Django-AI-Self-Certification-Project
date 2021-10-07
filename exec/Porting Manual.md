@@ -13,8 +13,9 @@
 #### Front-end
 
 - Vue
-  - Vue.js :
+  - Vue.js : 3.0.0
   - Vue/Cli : 4.5.13
+- npm: 6.14.13
 
 #### Back-end
 
