@@ -1,5 +1,5 @@
 <template>
-  <div class="result">
+  <div class="result justify-around">
     <Loading v-if="faceSimilarity===null && finished===false"/>
     <VerificationResult @finish="onFinish" v-show="faceSimilarity!==null && finished===false"/>
     <VerificationFinished v-if="finished===true" :name="customerName" />
