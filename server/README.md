@@ -69,13 +69,17 @@ Link.objects.filter(managers__id=user.pk, expired_at__gt=timezone.now())
 
 #### 신분증 OCR 및 비식별화
 
+> 고객의 신분증 사진에서 이름과 생일을 인식
+>
+> 신분증 이미지에서 개인정보를 마스킹
+>
+> 얼굴 사진과 신분증의 얼굴사진의 유사도를 측정하여 동일인물인지 판별
 
+이 api를 위해 구현해야 하는 기능을 크게 나누어 보면 Text detection, Text recognition, image masking, compare face 네가지였습니다.
 
+Text detection은 OpenCV를 활용하여 구현하였습니다. 이미지 
 
-
-#### 고객 정보 저장
-
-
+우선 신분증 OCR 기능을 구현하기 위해서 인공지능 모델을 직접 학습시기는 것과 tesseract-ocr 오픈소스를 활용하는 것 두가지 방법이 있었는데 저희는 tesseract-ocr을 사용하기로 정하였습니다. 한글 OCR 인공지능 모델을 학습시키는 데에 시간이 오래 걸릴 뿐만 아니라 성능에 대한 확신이 부족했기 때문입니다. 
 
 
 

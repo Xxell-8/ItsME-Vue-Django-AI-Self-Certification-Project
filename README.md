@@ -50,7 +50,7 @@
  │   └── main.js
  ├── server
  │   ├── .config				<-- nginx, uwsgi configuration
- │	 	 ├── nginx
+ │       ├── nginx
  │       └── uwsgi
  │   ├── accounts				<-- accounts app
  │   ├── info					<-- info app
