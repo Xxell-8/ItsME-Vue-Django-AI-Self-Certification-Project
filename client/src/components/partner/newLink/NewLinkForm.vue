@@ -8,9 +8,7 @@
         v-model="company"
         class="link-input"
         placeholder="고객에게 보여지는 회사명입니다."
-        autocapitalize="off"
-        autofocus
-        required
+        disabled
       >
     </div>
     <!-- 1. 관리자 권한 설정-->
