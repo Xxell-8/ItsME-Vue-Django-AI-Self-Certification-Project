@@ -49,6 +49,12 @@ const actions = {
         commit('SET_CURRENT_LINK', linkData)
         dispatch('onSuccessModal')
       })
+      .catch((err) => {
+        // console.log(err.response)
+        if (err.response.data && Object.keys(err.response.data).includes('customers')) {
+          alert('고객 데이터 형식이 맞는지 확인해주세요.')
+        }
+      })
   },
   onSuccessModal({ commit }) {
     commit('SET_SUCCESS_MODAL', true)
