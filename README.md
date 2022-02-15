@@ -6,7 +6,8 @@
 
 ## 🌟 Overview
 
-[![앗츠마 소개 영상](./README.assets/thumbnail.jpeg)](https://www.youtube.com/watch?v=UK6KyklmZb4)
+[![잇츠미 소개 영상](./README.assets/thumbnail.jpeg)](https://www.youtube.com/watch?v=UK6KyklmZb4)
+
 
 - **It's ME!**는, 인공지능 모델을 활용한 본인인증 통합 솔루션입니다. 
 
