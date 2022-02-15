@@ -66,7 +66,7 @@
 
 ### Entity Relationship Diagram
 
-![A204 ERD](./README.assets/A204 ERD.png)
+![A204 ERD](./README.assets/A204ERD.png)
 
 ### Component Structure
 
