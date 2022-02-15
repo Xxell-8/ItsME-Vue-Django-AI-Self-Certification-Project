@@ -4,26 +4,23 @@
 
 
 
-## Introduction
+## 🌟 Overview
 
-본인 인증 통합 솔루션, **잇츠미**
+[![앗츠마 소개 영상](./README.assets/thumbnail.jpeg)](https://www.youtube.com/watch?v=UK6KyklmZb4)
 
-잇츠미는 인공지능 기술을 적용해 보다 정확하고 간편한 본인 인증 절차를 제공하는 웹 서비스를 목표로 합니다.
+- **It's ME!**는, 인공지능 모델을 활용한 본인인증 통합 솔루션입니다. 
 
-고객의 얼굴과 신분증 사진을 대조하여 **이미지 유사도 평가**를 진행하고, 실시간 **모션 인식**을 통해 본인 확인을 진행합니다.
-
-뿐만 아니라 **신분증 OCR**을 통해 빠르고 편리한 정보 확인은 물론, **비식별화** 기술로 개인 정보를 안전하게 처리할 수 있습니다.
-
-이 모든 과정을 웹 URL 하나로 해결하며, 워크 플랫폼을 통해 간편하게 본인 인증 결과를 확인할 수 있습니다.
+  비대면 상황에서 본인인증을 필요로 하는 기업을 타겟으로 **B2B 서비스**를 기획했습니다. 비즈니스 파트너사가 본인인증 링크를 생성하고 고객을 관리할 수 있는 **파트너 워크 플랫폼**을 제공합니다. 고객이 사용하는 본인인증 서비스는 `tensorflow.js`의 모델을 활용한 얼굴 인식과 실시간 모션 인식, `OpenCV`와 `Tesseract`를 활용한 신분증 OCR, `dlib` 기반의 이미지 유사도 판별로 진행됩니다.
 
 
 
-## Content
+## 🚀 Service
 
-- [Code organization](#code-organization)
-- [Install Dependencies & Run server](#install-dependencies-&-run-server)
-- [Feature](#feature)
-- [Design](#design)
+![intro1](./README.assets/intro1.jpeg)
+
+![intro2](./README.assets/intro2.jpg)
+
+![intro3](./README.assets/intro3.jpg)
 
 
 
@@ -61,6 +58,18 @@
  │   ├── manage.py
  │   └── requirements.txt
 ```
+
+
+
+## Design
+
+### Entity Relationship Diagram
+
+![A204 ERD](README.assets/A204 ERD.png)
+
+### Component Structure
+
+![컴포넌트구조](README.assets/컴포넌트구조.jpg)
 
 
 
@@ -161,17 +170,6 @@ sudo apt-get install tesseract-ocr-kor
 $ python manage.py runserver
 ```
 
-
-
-## Design
-
-### Entity Relationship Diagram
-
-![A204 ERD](README.assets/A204 ERD.png)
-
-### Component Structure
-
-![컴포넌트구조](README.assets/컴포넌트구조.jpg)
 
 
 
